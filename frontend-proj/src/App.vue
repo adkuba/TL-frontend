@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <div class="menu"></div>
     <Timeline/>
   </div>
 </template>
@@ -17,17 +18,29 @@ export default {
 
 <style>
 @font-face {
-  font-family: 'Raleway-Bold';
-  src: url('./assets/fonts/Raleway/Raleway-Bold.ttf');
+  font-family: 'Raleway-Regular';
+  src: url('./assets/fonts/Raleway/Raleway-Regular.ttf');
+}
+
+@font-face {
+  font-family: 'OpenSans-Regular';
+  src: url('./assets/fonts/OpenSans/OpenSans-Regular.ttf');
 }
 
 #app {
-  font-family: 'Raleway-Bold';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  color: #303030;
+}
+
+.menu{
+  background: #303030;
+  height: 50px;
+}
+
+body{
+  margin: 0;
 }
 
 </style>
