@@ -41,6 +41,11 @@ export default {
 
 body{
   margin: 0;
+  padding-bottom: 25%;
+}
+
+p{
+    font-family: 'OpenSans-Regular';
 }
 
 </style>

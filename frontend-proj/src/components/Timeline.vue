@@ -1,17 +1,21 @@
 <template>
     <div>
         <div id="timeline">
-            <div class="horizontal_line"></div>
+            <div class="line f_line"></div>
             <div v-for="(item, index) in items" :key="index">
-                <div class="line" v-if="item.type == 'line'"></div>
+                <div class="line n_line" v-if="item.type == 'line'"></div>
                 <div class="evt" v-else-if="item.type == 'circle'">
                     <div class="evt_date"> {{ item.date }} </div>
                     <div class="circle"></div>
-                    <div class="evt_text"> {{ item.title }} </div>
+                    <div class="evt_text"> 
+                        <h1 class="evt_h"> {{ item.title }} </h1>
+                        <p class="evt_p"> {{ item.desc }} </p>
+                    </div>
                 </div>
                 <div class="year" v-else> {{ item.message }} </div>
             </div>
-            <div class="horizontal_line"></div>
+            <div class="line l_line"></div>
+            
         </div>
         <div id="descr">
             <h1> {{ user }} </h1>
@@ -26,7 +30,7 @@ export default {
   props: [],
   data() {
     return {
-      items: [ {type: 'line'}, {type: 'circle', date: '2020 luty', title: 'Gra Unity'}, {type: 'line'}, {type: 'text', message: '2020'}, {type: 'line'} ],
+      items: [ {type: 'line'}, {type: 'circle', date: '2020 luty', title: 'Gravity', desc: 'Gra stworzona w unity na Androida'}, {type: 'line'}, {type: 'text', message: '2020'}, {type: 'line'} ],
       user: 'Jakub Adamski',
       description: 'To jest przykladowy tekst o mnie'
     }
@@ -37,50 +41,49 @@ export default {
 
 <style scoped>
 
-.evt{
-    margin-top: 50px;
-    font-size: 27px;
+.evt_h{
+    font-size: 30px;
+    margin: 0;
+    padding: 0;
+    letter-spacing: 2px;
 }
 
-/* transform przesuwa na srodek evt! */
+.evt_p{
+    margin-top: 0;
+    padding-top: 10px;
+}
+
+.evt{
+    margin: 40px auto;
+}
+
 .evt_date{
     float: left;
     width: 40%;
     text-align: right;
-}
-
-p{
-    font-family: 'OpenSans-Regular';
+    letter-spacing: 2px;
 }
 
 .evt_text{
     float: right;
     width: 40%;
     text-align: left;
+    /* 25 to wielkosc circle */
+    transform: translateY(-25px);
 }
-
-#descr{
-    margin-left: 30%;
-    margin-right: 30%;
-    margin-top: 60px;
-    font-family: 'Raleway-Regular';
-}
-
 
 .year{
-    margin-top: 50px;
+    margin: 40px auto;
     font-size: 19px;
+    letter-spacing: 2px;
 }
 
 .circle{
     display: inline-block;
     margin: 0 auto;
 
-    width: 21px;
-    height: 21px;
-    
-    /* moze tego nie dawac! */
-    transform: translateY(+10%);
+    width: 25px;
+    height: 25px;
     
     background: #B8352D;
     border-radius: 50%;
@@ -88,33 +91,37 @@ p{
 
 .line{
     display: block;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 50px;
+    margin: 0 auto;
 
-    width: 5px;
-    height: 35px;
+    width: 3px;
+    height: 80px;
+}
+
+.n_line{
     background: #303030;
+}
+
+.f_line{
+    background: rgb(255,255,255);
+    background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(48,48,48,1) 100%);
+}
+
+.l_line{
+    background: rgb(255,255,255);
+    background: linear-gradient(0deg, rgba(255,255,255,1) 0%, rgba(48,48,48,1) 100%);
 }
 
 #timeline{
     background: #F6F6F6;
-    margin-left: 15%;
-    margin-right: 15%;
+    margin: 0 15%;
 
-    padding-top: 1px;
-    padding-bottom: 1px;
+    padding: 80px 0;
     font-family: 'Raleway-Regular';
 }
 
-.horizontal_line{
-    height: 1px;
-    background: #a3a3a3;
-
-    margin-left: 38%;
-    margin-right: 38%;
-    margin-top: 70px;
-    margin-bottom: 70px;
+#descr{
+    margin: 60px 30%;
+    font-family: 'Raleway-Regular';
 }
 
 </style>
