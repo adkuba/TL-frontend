@@ -6,17 +6,21 @@
                 <h1 class="evt_h"> {{ items[index].title }} </h1>
                 <p class="evt_p"> {{ items[index].desc }} </p>
                 <p class="evt_desc_p"> {{ lorem }} </p>
-                
-                <p class="evt_desc_p2"> Lista linkow: </p>
-                <div class="evt_desc_img">IKONKA GALERIA</div>
-                
-                <ul class="evt_desc_ul">
-                    <li>link - to jest link</li>
-                    <li>link - to jest drugi</li>
-                </ul>
-
-                <div id="sub_timeline">
-                    TU BEDZIE DRUGI TIMELINE W POZIOMIE
+                <p class="evt_desc_p2" v-for="(item, index) in links" :key="index"> {{ item.title }} </p>
+            
+                <div id="sub_timeline" v-if="sub_yes">
+                    <div class="sub" v-for="(item, index) in items" :key="index">
+                        <div class="sub_line" v-if="item.type == 'line'"></div>
+                        <div class="sub_evt" v-else-if="item.type == 'circle'">
+                            <div class="sub_evt_text"> 
+                                <h1 class="sub_evt_h"> {{ item.title }} </h1>
+                                <p class="sub_evt_p"> {{ item.desc }} </p>
+                            </div>
+                            <div class="sub_circle"></div>
+                            <div class="sub_evt_date"> {{ item.date }} </div>
+                        </div>
+                        <div class="sub_year" v-else> {{ item.message }} </div>
+                    </div>
                 </div>
             </div>
             
@@ -36,7 +40,7 @@
         </div>
         <div id="descr">
             <h1> {{ user }} </h1>
-            <p style="text-align: justify;"> {{ lorem }} </p>
+            <p style="text-align: left;"> {{ lorem }} </p>
         </div>
     </div>
 </template>
@@ -46,20 +50,23 @@ export default {
   name: 'Timeline',
   props: [],
   created () {
-      window.addEventListener('scroll', this.handleScroll);
+      window.addEventListener('scroll', this.handleScroll, false);
   },
   data() {
     return {
+      links: [ {title: 'Repozytorium', link: 'mordoo'}, {title: 'Film', link: 'mordoo'}, {title: 'Google Play', link: 'mordoo'} ],
       items: [ {type: 'line'}, {type: 'line'}, {type: 'circle', date: '2020 luty', title: 'Gravity', desc: 'Gra stworzona w unity na Androida'}, {type: 'line'}, {type: 'line'}, {type: 'text', message: '2020'}, {type: 'line'}, {type: 'line'}, {type: 'line'}, {type: 'circle', date: '2019 pazdziernik', title: 'Object tracking', desc: 'Projekt o sledzeniu obiektow za pomoca ML'}, {type: 'line'}, {type: 'line'} ],
       user: 'Jakub Adamski',
       description: 'To jest przykladowy tekst o mnie',
+      open: false,
+      sub_yes: true,
       index: 2,
       lorem: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent dapibus scelerisque nisi ac finibus. Donec ac est odio. Fusce pharetra quis velit sed suscipit. Aliquam convallis metus nunc. Nam eu mollis turpis. Aenean quis sollicitudin arcu, vel sollicitudin nunc. Cras sit amet elementum purus, sit amet mollis lacus. Ut id enim sodales, tincidunt lorem nec, efficitur mi. Vivamus ut elit tortor."
     }
   },
   methods: {
     moveLeft() {
-        if (!open){
+        if (!this.open){
             document.getElementsByClassName("line").forEach(function moveLines(line) {line.classList.add('line_open');});
             document.getElementsByClassName("circle").forEach(function moveCircles(circle) {circle.classList.add('circle_open');});
             document.getElementsByClassName("year").forEach(function moveYears(year) {year.classList.add("year_open");});
@@ -67,7 +74,7 @@ export default {
             document.getElementsByClassName("evt_text").forEach(function moveTexts(text){text.classList.add("fade");});
             /* zmienic na id */
             document.getElementsByClassName("evt_desc").forEach(function openDesc(text){text.classList.remove("fade");});
-            open = !open;
+            this.open = !this.open;
         } else {
             document.getElementsByClassName("line").forEach(function centerLines(line) {line.classList.remove('line_open');});
             document.getElementsByClassName("circle").forEach(function centerCircles(circle) {circle.classList.remove('circle_open');});
@@ -76,23 +83,117 @@ export default {
             document.getElementsByClassName("evt_text").forEach(function centerTexts(text){text.classList.remove("fade");});
             /* zmienic na id */
             document.getElementsByClassName("evt_desc").forEach(function openDesc(text){text.classList.add("fade");});
-            open = !open;
+            this.open = !this.open;
         }
     },
 
     handleScroll(){
         //tutaj dodac to wyciszanie obiektow
     }
-  }
 
+  },
+  destroyed () {
+    window.removeEventListener('scroll', this.handleScroll);
 }
 
-var open = true;
+}
 
 </script>
 
 
 <style scoped>
+
+
+/* width */
+::-webkit-scrollbar {
+  height: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #e0e0e0;
+  border-radius: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #c7c7c7;
+  border-radius: 10px;
+}
+
+
+
+
+.sub_evt_text{
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.sub_evt_h{
+    font-size: 23px;
+    margin: 0;
+    padding: 0;
+    letter-spacing: 2px;
+}
+
+.sub_evt_p{
+    font-size: 15px;
+    margin-top: 0;
+    padding-top: 10px;
+}
+
+.sub_evt_date{
+    text-align: center;
+    margin-top: 20px;
+}
+
+.sub_line{
+    /* nie wiem czemu akurat 5px */
+    margin-bottom: 5px;
+    
+    width: 90px;
+    height: 3px;
+
+    background: #303030;
+}
+
+.sub_circle{
+    margin: 0 auto;
+    
+    width: 20px;
+    height: 20px;
+    
+    background: #14426B;
+    border-radius: 50%;
+}
+
+.sub_year{
+    margin: 0 40px;
+    font-size: 19px;
+    letter-spacing: 2px;
+}
+
+.sub_evt{
+    /* font size z year + margin 20px */
+    transform: translateY(+39px);
+}
+
+.sub{
+    display: inline-block;
+}
+
+#sub_timeline{
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    /* jest taki sam margin miedzy teksem ikonka galerii oraz linkami i sub_timeline */
+    margin-top: 160px;
+    height: 220px;
+}
+
+
+
+
 
 .evt_desc_p{
     margin-top: 40px;
@@ -100,18 +201,10 @@ var open = true;
 }
 
 .evt_desc_p2{
-    margin-right: 50%;
-    margin-top: 50px;
+    margin-right: 40px;
+    margin-top: 20px;
     display: inline-block;
-}
-
-.evt_desc_img{
-    display: inline-block;
-    margin-left: 50px;
-}
-
-.evt_desc_ul{
-    width: 70%;
+    color: #14426B;
 }
 
 .evt_desc{
@@ -163,6 +256,7 @@ var open = true;
 
 .year_open{
     margin: 40px 8% !important;
+    opacity: 0.2;
 }
 
 .year{
@@ -176,6 +270,7 @@ var open = true;
 
 .circle_open{
     margin: 0 8% !important;
+    opacity: 0.2;
 }
 
 .circle{
@@ -191,6 +286,7 @@ var open = true;
 
 .line_open{
     margin: 0 8% !important;
+    opacity: 0.2;
 }
 
 .line{
@@ -209,12 +305,6 @@ var open = true;
 
     padding: 80px 0;
     font-family: 'Raleway-Regular';
-}
-
-#sub_timeline{
-    margin-top: 100px;
-    height: 50px;
-    border: 2px solid black;
 }
 
 #descr{
