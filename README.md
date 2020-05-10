@@ -1,18 +1,27 @@
 # TL-frontend
 Frontend do strony Timeline
 
-## Instalacja
-Instalacja z vue cli i npm potem vue create itd. Jak uruchomic w README w projekcie.
+## Uruchomienie
+Nie wiem czy trzeba instalowac vue cli. Uruchomienie -> w folderze <code>frontend-proj</code> komendy <code>npm run serve</code>
 
-## Uwagi
-Lista:
-- Testowac rozne wyglady!
-- Refaktor kodu??
+## Co to jest?
+Strona umozliwiajaca stworzenie wlasnego portfolio, na podstawie zrealizowanych projektow. <br>
 
-## Kod
-Lista:
-- W pliku vue mam 3 sekcje: pierwsza to html, druga javascript, trzecia css. Moze pozniej to rozbic do osobnych plikow.
-- komponenty eksportuje sie tak jak mam w App.vue, uwaga przy export <code>name: 'App'</code> to musi byc nazwa danego komponentu, dopiero dalej definiujemy jakie zawiera w sobie inne komponenty.
-- Data() to lokalna prywatna pamiec danego komponentu, props podobnie [roznice](https://michaelnthiessen.com/vue-props-vs-data/), propsem mozna przekazac jakies dane z parenta, ale trzeba to zrobic w sekcji html!
-- Style scoped oznacza ze ten css bedzie dzialal tylko w danym pliku
-- Pomaga dodawanie border do diva bo widac co sie dzieje
+Istniejące rozwiązania:
+- kreatory stron takie jak WordPress - strony dostosowane do twoich potrzeb
+- kreatory osi czasu - do robienia timeline np przy projektach itd.
+- portale z ogłoszeniami pracy linkedin 
+
+Główne cechy mojej strony:
+- oparta na jednym szablonie dla wszystkich - oś czasu na której dodajemy projekty.
+- w punktach które dodajemy na oś może być JEDNA dodatkowa oś czasu - sa to szczegóły w danym projekcie
+- unifikacja, to co wyróżnia strony użytkowników to tylko treść - czyli nasze zrealizowane projekty
+- wyszukiwarka po kategoriach np. informatyka, zdjęcia
+
+Wyróżniki od istniejących rozwiązań
+- Kreatory stron - u mnie będzie unifikacja strony - przejrzystość
+- Kreatory osi czasu - u mnie focus na ładnie wyglądające portfolio i realizowane projekty
+- ogłoszenia pracy - u mnie nie ma ogłoszeń tylko w klarowny sposób prezentują się osoby
+
+Dodatkowe pomysły:
+- możliwość tworzenia backupu podawanych stron?

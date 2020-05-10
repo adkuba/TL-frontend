@@ -105,23 +105,25 @@ export default {
 
 
 /* width */
-::-webkit-scrollbar {
-  height: 10px;
+div#sub_timeline::-webkit-scrollbar {
+  height: 3px;
 }
 
 /* Track */
-::-webkit-scrollbar-track {
+div#sub_timeline::-webkit-scrollbar-track {
   background: #e0e0e0;
   border-radius: 10px;
 }
 
 /* Handle */
-::-webkit-scrollbar-thumb {
+div#sub_timeline::-webkit-scrollbar-thumb {
   background: #c7c7c7;
   border-radius: 10px;
 }
 
-
+div#sub_timeline:hover::-webkit-scrollbar {
+    height: 10px;
+}
 
 
 .sub_evt_text{
