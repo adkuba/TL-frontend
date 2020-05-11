@@ -1,34 +1,36 @@
 <template>
     <div>
-
         <div id="timeline">
-            <div class="fade_top trans"></div>
+            <div id="text_fade_top" class="text_fade trans"></div>
 
-            <div class="evt_desc fade trans">
+
+            <div id="evt_desc" class="fade trans">
                 <h1 class="evt_h"> {{ items[index].title }} </h1>
                 <p class="evt_p"> {{ items[index].desc }} </p>
                 <p class="evt_desc_p"> {{ lorem }} </p>
                 <p class="evt_desc_p2" v-for="(item, index) in links" :key="index"> {{ item.title }} </p>
             
+
                 <div id="sub_timeline" v-if="sub_yes">
-                    <div class="fade_left"></div>
-                    <div class="fade_right"></div>
+                    <div class="sub_fade sub_fade_left"></div>
+                    <div class="sub_fade sub_fade_right"></div>
                     <div class="sub" v-for="(item, index) in items" :key="index">
                         <div class="sub_line" v-if="item.type == 'line'"></div>
                         <div class="sub_evt" v-else-if="item.type == 'circle'">
-                            <div class="sub_evt_text"> 
+                            <div> 
                                 <h1 class="sub_evt_h"> {{ item.title }} </h1>
                                 <p class="sub_evt_p"> {{ item.desc }} </p>
                             </div>
                             <div class="sub_circle"></div>
-                            <div class="sub_evt_date"> {{ item.date }} </div>
+                            <div> {{ item.date }} </div>
                         </div>
                         <div class="sub_year" v-else> {{ item.message }} </div>
                     </div>
                 </div>
             </div>
             
-            <div class="line f_line trans"></div>
+
+            <div id="f_line" class="line trans"></div>
             <div v-for="(item, index) in items" :key="index">
                 <div class="line trans" v-if="item.type == 'line'"></div>
                 <div class="evt" v-else-if="item.type == 'circle'">
@@ -41,96 +43,92 @@
                 </div>
                 <div class="year trans" v-else> {{ item.message }} </div>
             </div>
-            <div class="line l_line trans"></div>
+            <div id="l_line" class="line trans"></div>
 
-            <div class="fade_bottom trans"></div>
-            
+
+            <div id="text_fade_bottom" class="text_fade trans"></div>
         </div>
+
+
         <div id="descr">
             <h1> {{ user }} </h1>
-            <p style="text-align: left;"> {{ lorem }} </p>
+            <p> {{ lorem }} </p>
         </div>
-        
-
     </div>
 </template>
 
+
 <script>
 export default {
-  name: 'Timeline',
-  props: [],
-  created () {
-      window.addEventListener('scroll', this.handleScroll, false);
-  },
-  data() {
-    return {
-      links: [ {title: 'Repozytorium', link: 'mordoo'}, {title: 'Film', link: 'mordoo'}, {title: 'Google Play', link: 'mordoo'} ],
-      items: [ {type: 'line'}, {type: 'line'}, {type: 'circle', date: '2020 luty', title: 'Gravity', desc: 'Gra stworzona w unity na Androida'}, {type: 'line'}, {type: 'line'}, {type: 'text', message: '2020'}, {type: 'line'}, {type: 'line'}, {type: 'line'}, {type: 'circle', date: '2019 pazdziernik', title: 'Object tracking', desc: 'Projekt o sledzeniu obiektow za pomoca ML'}, {type: 'line'}, {type: 'line'} ],
-      user: 'Jakub Adamski',
-      description: 'To jest przykladowy tekst o mnie',
-      open: false,
-      sub_yes: true,
-      index: 2,
-      lorem: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent dapibus scelerisque nisi ac finibus. Donec ac est odio. Fusce pharetra quis velit sed suscipit. Aliquam convallis metus nunc. Nam eu mollis turpis. Aenean quis sollicitudin arcu, vel sollicitudin nunc. Cras sit amet elementum purus, sit amet mollis lacus. Ut id enim sodales, tincidunt lorem nec, efficitur mi. Vivamus ut elit tortor."
-    }
-  },
-  methods: {
-    moveLeft() {
-        if (!this.open){
-            document.getElementsByClassName("line").forEach(function moveLines(line) {line.classList.add('line_open');});
-            document.getElementsByClassName("circle").forEach(function moveCircles(circle) {circle.classList.add('circle_open');});
-            document.getElementsByClassName("year").forEach(function moveYears(year) {year.classList.add("year_open");});
-            document.getElementsByClassName("evt_date").forEach(function moveDates(date){date.classList.add("fade");});
-            document.getElementsByClassName("evt_text").forEach(function moveTexts(text){text.classList.add("fade");});
-            /* zmienic na id */
-            document.getElementsByClassName("fade_top").forEach(function moveTexts(text){text.classList.add("fade");});
-            document.getElementsByClassName("fade_bottom").forEach(function moveTexts(text){text.classList.add("fade");});
-            document.getElementsByClassName("evt_desc").forEach(function openDesc(text){text.classList.remove("fade");});
-            this.open = !this.open;
-        } else {
-            document.getElementsByClassName("line").forEach(function centerLines(line) {line.classList.remove('line_open');});
-            document.getElementsByClassName("circle").forEach(function centerCircles(circle) {circle.classList.remove('circle_open');});
-            document.getElementsByClassName("year").forEach(function centerYears(year) {year.classList.remove('year_open');});
-            document.getElementsByClassName("evt_date").forEach(function centerDates(date){date.classList.remove("fade");});
-            document.getElementsByClassName("evt_text").forEach(function centerTexts(text){text.classList.remove("fade");});
-            document.getElementsByClassName("evt_text").forEach(function centerTexts(text){text.classList.remove("fade");});
-            /* zmienic na id */
-            document.getElementsByClassName("fade_top").forEach(function centerTexts(text){text.classList.remove("fade");});
-            document.getElementsByClassName("fade_bottom").forEach(function centerTexts(text){text.classList.remove("fade");});
-            document.getElementsByClassName("evt_desc").forEach(function openDesc(text){text.classList.add("fade");});
-            this.open = !this.open;
+    name: 'Timeline',
+    props: [],
+    created () {
+        window.addEventListener('scroll', this.handleScroll, false);
+    },
+    data() {
+        return {
+        links: [ {title: 'Repozytorium', link: 'mordoo'}, {title: 'Film', link: 'mordoo'}, {title: 'Google Play', link: 'mordoo'} ],
+        items: [ {type: 'line'}, {type: 'line'}, {type: 'circle', date: '2020 luty', title: 'Gravity', desc: 'Gra stworzona w unity na Androida'}, {type: 'line'}, {type: 'line'}, {type: 'text', message: '2020'}, {type: 'line'}, {type: 'line'}, {type: 'line'}, {type: 'circle', date: '2019 pazdziernik', title: 'Object tracking', desc: 'Projekt o sledzeniu obiektow za pomoca ML'}, {type: 'line'}, {type: 'line'} ],
+        user: 'Jakub Adamski',
+        description: 'To jest przykladowy tekst o mnie',
+        open: false,
+        sub_yes: true,
+        index: 2,
+        lorem: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent dapibus scelerisque nisi ac finibus. Donec ac est odio. Fusce pharetra quis velit sed suscipit. Aliquam convallis metus nunc. Nam eu mollis turpis. Aenean quis sollicitudin arcu, vel sollicitudin nunc. Cras sit amet elementum purus, sit amet mollis lacus. Ut id enim sodales, tincidunt lorem nec, efficitur mi. Vivamus ut elit tortor."
         }
     },
+    methods: {
+        moveLeft() {
+            if (!this.open){
+                document.getElementsByClassName("line").forEach(function moveLines(line) {line.classList.add('line_open');});
+                document.getElementsByClassName("circle").forEach(function moveCircles(circle) {circle.classList.add('circle_open');});
+                document.getElementsByClassName("year").forEach(function moveYears(year) {year.classList.add("year_open");});
+                document.getElementsByClassName("evt_date").forEach(function moveDates(date){date.classList.add("fade");});
+                document.getElementsByClassName("evt_text").forEach(function moveTexts(text){text.classList.add("fade");});
+                
+                document.getElementById("text_fade_top").classList.add("fade");
+                document.getElementById("text_fade_bottom").classList.add("fade");
+                document.getElementById("evt_desc").classList.remove("fade");
+                this.open = !this.open;
 
-    handleScroll(){
-        //tutaj dodac to wyciszanie obiektow
+            } else {
+                document.getElementsByClassName("line").forEach(function centerLines(line) {line.classList.remove('line_open');});
+                document.getElementsByClassName("circle").forEach(function centerCircles(circle) {circle.classList.remove('circle_open');});
+                document.getElementsByClassName("year").forEach(function centerYears(year) {year.classList.remove('year_open');});
+                document.getElementsByClassName("evt_date").forEach(function centerDates(date){date.classList.remove("fade");});
+                document.getElementsByClassName("evt_text").forEach(function centerTexts(text){text.classList.remove("fade");});
+                document.getElementsByClassName("evt_text").forEach(function centerTexts(text){text.classList.remove("fade");});
+                
+                document.getElementById("text_fade_top").classList.remove("fade");
+                document.getElementById("text_fade_bottom").classList.remove("fade");
+                document.getElementById("evt_desc").classList.add("fade");
+                this.open = !this.open;
+            }
+        },
+        handleScroll(){
+            //tutaj dodac to wyciszanie obiektow
+        }
+    },
+    destroyed () {
+        window.removeEventListener('scroll', this.handleScroll);
     }
-
-  },
-  destroyed () {
-    window.removeEventListener('scroll', this.handleScroll);
 }
 
-}
 
 </script>
 
 
 <style scoped>
-
-
-/* width */
+/* sub_timeline */
 div#sub_timeline::-webkit-scrollbar {
   height: 3px;
 }
 
-/* Track */
 div#sub_timeline::-webkit-scrollbar-track {
   background: #e0e0e0;
   border-radius: 10px;
 }
 
-/* Handle */
 div#sub_timeline::-webkit-scrollbar-thumb {
   background: #c7c7c7;
   border-radius: 10px;
@@ -140,50 +138,21 @@ div#sub_timeline:hover::-webkit-scrollbar {
     height: 10px;
 }
 
-.fade_top{
-    position: sticky;
+.sub_fade{
     z-index:2;
-    /* border: 2px solid black; */
-    top: 50px;
-    height: 150px;
-    background: rgb(246,246,246);
-    background: linear-gradient(0deg, rgba(246,246,246,0) 0%, rgba(246,246,246,1) 91%);
-}
-
-.fade_bottom{
-    z-index:2;
-    position: sticky;
-    /* border: 2px solid black; */
-    height: 150px;
-    bottom: 0;
-    background: rgb(246,246,246);
-    background: linear-gradient(180deg, rgba(246,246,246,0) 0%, rgba(246,246,246,1) 91%);
-}
-
-.fade_left{
-    z-index:2;
-    /* border: 2px solid black; */
     position: absolute;
     width: 70px;
     height: 200px;
     background: rgb(246,246,246);
+}
+
+.sub_fade_left{
     background: linear-gradient(270deg, rgba(246,246,246,0) 0%, rgba(246,246,246,1) 91%);
 }
 
-.fade_right{
-    z-index:2;
-    /* border: 2px solid black;  */
-    position: absolute;
+.sub_fade_right{
     right: 0;
-    width: 70px;
-    height: 200px;
-    background: rgb(246,246,246);
     background: linear-gradient(90deg, rgba(246,246,246,0) 0%, rgba(246,246,246,1) 91%);
-}
-
-.sub_evt_text{
-    margin-bottom: 20px;
-    text-align: center;
 }
 
 .sub_evt_h{
@@ -199,27 +168,17 @@ div#sub_timeline:hover::-webkit-scrollbar {
     padding-top: 10px;
 }
 
-.sub_evt_date{
-    text-align: center;
-    margin-top: 20px;
-}
-
 .sub_line{
-    /* nie wiem czemu akurat 5px */
     margin-bottom: 5px;
-    
     width: 90px;
     height: 3px;
-
     background: #303030;
 }
 
 .sub_circle{
-    margin: 0 auto;
-    
+    margin: 20px auto;
     width: 20px;
     height: 20px;
-    
     background: #14426B;
     border-radius: 50%;
 }
@@ -231,6 +190,7 @@ div#sub_timeline:hover::-webkit-scrollbar {
 }
 
 .sub_evt{
+    text-align: center;
     /* font size z year + margin 20px */
     transform: translateY(+39px);
 }
@@ -243,15 +203,13 @@ div#sub_timeline:hover::-webkit-scrollbar {
     overflow-x: auto;
     overflow-y: hidden;
     white-space: nowrap;
-    /* jest taki sam margin miedzy teksem ikonka galerii oraz linkami i sub_timeline */
     margin-top: 160px;
     height: 220px;
 }
 
 
 
-
-
+/* evt_desc */
 .evt_desc_p{
     margin-top: 40px;
     display: inline-block;
@@ -264,16 +222,35 @@ div#sub_timeline:hover::-webkit-scrollbar {
     color: #14426B;
 }
 
-.evt_desc{
+#evt_desc{
     position: absolute;
-    /* poprawic dodac wyliczanie z topki czy cos*/
     width: 45%;
     left: 30%;
     text-align: left;
 }
 
+
+
+/* main */
 .fade{
   opacity: 0;
+}
+
+.text_fade{
+    position: sticky;
+    z-index:2;
+    height: 150px;
+    background: rgb(246,246,246);
+}
+
+#text_fade_top{
+    top: 50px;
+    background: linear-gradient(0deg, rgba(246,246,246,0) 0%, rgba(246,246,246,1) 91%);
+}
+
+#text_fade_bottom{
+    bottom: 0;
+    background: linear-gradient(180deg, rgba(246,246,246,0) 0%, rgba(246,246,246,1) 91%);
 }
 
 .trans{
@@ -317,7 +294,6 @@ div#sub_timeline:hover::-webkit-scrollbar {
 
 .year{
     margin: 40px 50%;
-
     width: 20%;
     transform: translateX(-50%);
     font-size: 19px;
@@ -332,10 +308,8 @@ div#sub_timeline:hover::-webkit-scrollbar {
 .circle{
     margin: 0 50%;
     transform: translateX(-50%);
-
     width: 25px;
     height: 25px;
-    
     background: #B8352D;
     border-radius: 50%;
 }
@@ -348,31 +322,17 @@ div#sub_timeline:hover::-webkit-scrollbar {
 .line{
     display: block;
     margin: 0 50%;
-
     width: 3px;
     height: 80px;
-
     background: #303030;
 }
 
-.f_line{
-    display: block;
-    margin: 0 50%;
-
-    width: 3px;
-    height: 70px;
-
+#f_line{
     background: rgb(48,48,48);
     background: linear-gradient(180deg, rgba(48,48,48,0) 0%, rgba(48,48,48,1) 100%);
 }
 
-.l_line{
-    display: block;
-    margin: 0 50%;
-
-    width: 3px;
-    height: 70px;
-
+#l_line{
     background: rgb(48,48,48);
     background: linear-gradient(0deg, rgba(48,48,48,0) 0%, rgba(48,48,48,1) 100%);
 }
@@ -380,7 +340,6 @@ div#sub_timeline:hover::-webkit-scrollbar {
 #timeline{
     background: #F6F6F6;
     margin: 0 15%;
-
     font-family: 'Raleway-Regular';
 }
 
@@ -390,4 +349,7 @@ div#sub_timeline:hover::-webkit-scrollbar {
     font-family: 'Raleway-Regular';
 }
 
+#descr p{
+    text-align: left;
+}
 </style>
