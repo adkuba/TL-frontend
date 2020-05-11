@@ -1,7 +1,9 @@
 <template>
     <div>
+
         <div id="timeline">
-            
+            <div class="fade_top trans"></div>
+
             <div class="evt_desc fade trans">
                 <h1 class="evt_h"> {{ items[index].title }} </h1>
                 <p class="evt_p"> {{ items[index].desc }} </p>
@@ -9,6 +11,8 @@
                 <p class="evt_desc_p2" v-for="(item, index) in links" :key="index"> {{ item.title }} </p>
             
                 <div id="sub_timeline" v-if="sub_yes">
+                    <div class="fade_left"></div>
+                    <div class="fade_right"></div>
                     <div class="sub" v-for="(item, index) in items" :key="index">
                         <div class="sub_line" v-if="item.type == 'line'"></div>
                         <div class="sub_evt" v-else-if="item.type == 'circle'">
@@ -24,6 +28,7 @@
                 </div>
             </div>
             
+            <div class="line f_line trans"></div>
             <div v-for="(item, index) in items" :key="index">
                 <div class="line trans" v-if="item.type == 'line'"></div>
                 <div class="evt" v-else-if="item.type == 'circle'">
@@ -36,12 +41,17 @@
                 </div>
                 <div class="year trans" v-else> {{ item.message }} </div>
             </div>
+            <div class="line l_line trans"></div>
+
+            <div class="fade_bottom trans"></div>
             
         </div>
         <div id="descr">
             <h1> {{ user }} </h1>
             <p style="text-align: left;"> {{ lorem }} </p>
         </div>
+        
+
     </div>
 </template>
 
@@ -73,6 +83,8 @@ export default {
             document.getElementsByClassName("evt_date").forEach(function moveDates(date){date.classList.add("fade");});
             document.getElementsByClassName("evt_text").forEach(function moveTexts(text){text.classList.add("fade");});
             /* zmienic na id */
+            document.getElementsByClassName("fade_top").forEach(function moveTexts(text){text.classList.add("fade");});
+            document.getElementsByClassName("fade_bottom").forEach(function moveTexts(text){text.classList.add("fade");});
             document.getElementsByClassName("evt_desc").forEach(function openDesc(text){text.classList.remove("fade");});
             this.open = !this.open;
         } else {
@@ -81,7 +93,10 @@ export default {
             document.getElementsByClassName("year").forEach(function centerYears(year) {year.classList.remove('year_open');});
             document.getElementsByClassName("evt_date").forEach(function centerDates(date){date.classList.remove("fade");});
             document.getElementsByClassName("evt_text").forEach(function centerTexts(text){text.classList.remove("fade");});
+            document.getElementsByClassName("evt_text").forEach(function centerTexts(text){text.classList.remove("fade");});
             /* zmienic na id */
+            document.getElementsByClassName("fade_top").forEach(function centerTexts(text){text.classList.remove("fade");});
+            document.getElementsByClassName("fade_bottom").forEach(function centerTexts(text){text.classList.remove("fade");});
             document.getElementsByClassName("evt_desc").forEach(function openDesc(text){text.classList.add("fade");});
             this.open = !this.open;
         }
@@ -125,6 +140,46 @@ div#sub_timeline:hover::-webkit-scrollbar {
     height: 10px;
 }
 
+.fade_top{
+    position: sticky;
+    z-index:2;
+    /* border: 2px solid black; */
+    top: 50px;
+    height: 150px;
+    background: rgb(246,246,246);
+    background: linear-gradient(0deg, rgba(246,246,246,0) 0%, rgba(246,246,246,1) 91%);
+}
+
+.fade_bottom{
+    z-index:2;
+    position: sticky;
+    /* border: 2px solid black; */
+    height: 150px;
+    bottom: 0;
+    background: rgb(246,246,246);
+    background: linear-gradient(180deg, rgba(246,246,246,0) 0%, rgba(246,246,246,1) 91%);
+}
+
+.fade_left{
+    z-index:2;
+    /* border: 2px solid black; */
+    position: absolute;
+    width: 70px;
+    height: 200px;
+    background: rgb(246,246,246);
+    background: linear-gradient(270deg, rgba(246,246,246,0) 0%, rgba(246,246,246,1) 91%);
+}
+
+.fade_right{
+    z-index:2;
+    /* border: 2px solid black;  */
+    position: absolute;
+    right: 0;
+    width: 70px;
+    height: 200px;
+    background: rgb(246,246,246);
+    background: linear-gradient(90deg, rgba(246,246,246,0) 0%, rgba(246,246,246,1) 91%);
+}
 
 .sub_evt_text{
     margin-bottom: 20px;
@@ -213,7 +268,6 @@ div#sub_timeline:hover::-webkit-scrollbar {
     position: absolute;
     /* poprawic dodac wyliczanie z topki czy cos*/
     width: 45%;
-    
     left: 30%;
     text-align: left;
 }
@@ -296,20 +350,42 @@ div#sub_timeline:hover::-webkit-scrollbar {
     margin: 0 50%;
 
     width: 3px;
-    height: 90px;
+    height: 80px;
 
     background: #303030;
+}
+
+.f_line{
+    display: block;
+    margin: 0 50%;
+
+    width: 3px;
+    height: 70px;
+
+    background: rgb(48,48,48);
+    background: linear-gradient(180deg, rgba(48,48,48,0) 0%, rgba(48,48,48,1) 100%);
+}
+
+.l_line{
+    display: block;
+    margin: 0 50%;
+
+    width: 3px;
+    height: 70px;
+
+    background: rgb(48,48,48);
+    background: linear-gradient(0deg, rgba(48,48,48,0) 0%, rgba(48,48,48,1) 100%);
 }
 
 #timeline{
     background: #F6F6F6;
     margin: 0 15%;
 
-    padding: 80px 0;
     font-family: 'Raleway-Regular';
 }
 
 #descr{
+    height: 200px;
     margin: 60px 30%;
     font-family: 'Raleway-Regular';
 }

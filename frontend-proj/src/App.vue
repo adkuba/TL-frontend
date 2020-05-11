@@ -35,8 +35,11 @@ export default {
 }
 
 .menu{
-  background: #303030;
-  height: 50px;
+    z-index:3;
+    position: fixed;
+    background: #303030;
+    height: 50px;
+    width: 100%;
 }
 
 body{
