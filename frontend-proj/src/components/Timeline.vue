@@ -4,7 +4,7 @@
             <div id="text_fade_top" class="text_fade trans"></div>
 
 
-            <div id="evt_desc" class="fade trans">
+            <div id="evt_desc" class="fade evt_trans">
                 <h1 class="evt_h"> {{ items[index].title }} </h1>
                 <p class="evt_p"> {{ items[index].desc }} </p>
                 <p class="evt_desc_p"> {{ lorem }} </p>
@@ -34,9 +34,9 @@
             <div v-for="(item, index) in items" :key="index">
                 <div class="line trans" v-if="item.type == 'line'"></div>
                 <div class="evt" v-else-if="item.type == 'circle'">
-                    <div class="evt_date trans" v-if="!open"> {{ item.date }} </div>
-                    <div class="circle trans" v-on:click="moveLeft()"></div>
-                    <div class="evt_text trans"> 
+                    <div class="evt_date trans" v-on:click="moveLeft()"> {{ item.date }} </div>
+                    <div class="circle trans" v-on:click="move()"></div>
+                    <div class="evt_text trans" v-on:click="moveLeft()"> 
                         <h1 class="evt_h"> {{ item.title }} </h1>
                         <p class="evt_p"> {{ item.desc }} </p>
                     </div>
@@ -63,7 +63,6 @@ export default {
     name: 'Timeline',
     props: [],
     created () {
-        window.addEventListener('scroll', this.handleScroll, false);
     },
     data() {
         return {
@@ -78,8 +77,23 @@ export default {
         }
     },
     methods: {
-        moveLeft() {
+        move(){
             if (!this.open){
+                this.moveLeft();
+
+            } else{
+                this.moveRight();
+            }
+        },
+        moveLeft() {
+                var newPos = window.scrollY + 120;
+                var evt_desc = document.getElementById("evt_desc");
+                /* 80 = 60 margin od descr i 20 mojego offsetu */
+                if (newPos + evt_desc.offsetHeight > document.getElementById("descr").offsetTop - 80){
+                    newPos = document.getElementById("descr").offsetTop - evt_desc.offsetHeight - 120;
+                }
+                document.getElementById("evt_desc").style.top = newPos + "px";
+
                 document.getElementsByClassName("line").forEach(function moveLines(line) {line.classList.add('line_open');});
                 document.getElementsByClassName("circle").forEach(function moveCircles(circle) {circle.classList.add('circle_open');});
                 document.getElementsByClassName("year").forEach(function moveYears(year) {year.classList.add("year_open");});
@@ -90,8 +104,8 @@ export default {
                 document.getElementById("text_fade_bottom").classList.add("fade");
                 document.getElementById("evt_desc").classList.remove("fade");
                 this.open = !this.open;
-
-            } else {
+        },
+        moveRight(){
                 document.getElementsByClassName("line").forEach(function centerLines(line) {line.classList.remove('line_open');});
                 document.getElementsByClassName("circle").forEach(function centerCircles(circle) {circle.classList.remove('circle_open');});
                 document.getElementsByClassName("year").forEach(function centerYears(year) {year.classList.remove('year_open');});
@@ -103,10 +117,6 @@ export default {
                 document.getElementById("text_fade_bottom").classList.remove("fade");
                 document.getElementById("evt_desc").classList.add("fade");
                 this.open = !this.open;
-            }
-        },
-        handleScroll(){
-            //tutaj dodac to wyciszanie obiektow
         }
     },
     destroyed () {
@@ -229,6 +239,10 @@ div#sub_timeline:hover::-webkit-scrollbar {
     text-align: left;
 }
 
+.evt_trans{
+    transition: all 0.7s, top 1ms;
+}
+
 
 
 /* main */
@@ -274,6 +288,7 @@ div#sub_timeline:hover::-webkit-scrollbar {
 }
 
 .evt_date{
+    position: relative;
     float: left;
     width: 40%;
     text-align: right;
