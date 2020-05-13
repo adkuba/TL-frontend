@@ -1,14 +1,21 @@
 <template>
     <div>
+        <div class="menu">
+            <router-link class="home_b" :to="{ name: 'home' }">Home</router-link>
+            <div class="user_d"> {{ user }} </div>
+        </div>
+
         <div id="timeline">
             <div id="text_fade_top" class="text_fade trans"></div>
 
 
             <div id="evt_desc" class="fade evt_trans">
+                <div class="evt_button" v-on:click="moveRight()">Back</div>
                 <h1 class="evt_h"> {{ items[index].title }} </h1>
                 <p class="evt_p"> {{ items[index].desc }} </p>
                 <p class="evt_desc_p"> {{ lorem }} </p>
                 <p class="evt_desc_p2" v-for="(item, index) in links" :key="index"> {{ item.title }} </p>
+                <img class="evt_img" src="../assets/images/g2s.png" width="65" height="17" v-on:click="openGallery()">
             
 
                 <div id="sub_timeline" v-if="sub_yes">
@@ -27,6 +34,8 @@
                         <div class="sub_year" v-else> {{ item.message }} </div>
                     </div>
                 </div>
+
+                <div id="evt_gallery" class="fade gallery_trans"></div>
             </div>
             
 
@@ -63,14 +72,16 @@ export default {
     name: 'Timeline',
     props: [],
     created () {
+        //alert(this.$route.params.id);
     },
     data() {
         return {
-        links: [ {title: 'Repozytorium', link: 'mordoo'}, {title: 'Film', link: 'mordoo'}, {title: 'Google Play', link: 'mordoo'} ],
+        links: [ {title: 'Repozytorium', link: 'mordoo'}, {title: 'Google Play', link: 'mordoo'} ],
         items: [ {type: 'line'}, {type: 'line'}, {type: 'circle', date: '2020 luty', title: 'Gravity', desc: 'Gra stworzona w unity na Androida'}, {type: 'line'}, {type: 'line'}, {type: 'text', message: '2020'}, {type: 'line'}, {type: 'line'}, {type: 'line'}, {type: 'circle', date: '2019 pazdziernik', title: 'Object tracking', desc: 'Projekt o sledzeniu obiektow za pomoca ML'}, {type: 'line'}, {type: 'line'} ],
         user: 'Jakub Adamski',
         description: 'To jest przykladowy tekst o mnie',
         open: false,
+        g_open: false,
         sub_yes: true,
         index: 2,
         lorem: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent dapibus scelerisque nisi ac finibus. Donec ac est odio. Fusce pharetra quis velit sed suscipit. Aliquam convallis metus nunc. Nam eu mollis turpis. Aenean quis sollicitudin arcu, vel sollicitudin nunc. Cras sit amet elementum purus, sit amet mollis lacus. Ut id enim sodales, tincidunt lorem nec, efficitur mi. Vivamus ut elit tortor."
@@ -85,12 +96,25 @@ export default {
                 this.moveRight();
             }
         },
+        openGallery(){
+            var gallery = document.getElementById("evt_gallery");
+            if (!this.g_open){
+                gallery.classList.remove('fade');
+                gallery.style.zIndex=2;
+                this.g_open = !this.g_open;
+
+            } else{
+                gallery.classList.add('fade');
+                gallery.style.zIndex=-1;
+                this.g_open = !this.g_open;
+            }
+
+        },
         moveLeft() {
-                var newPos = window.scrollY + 120;
+                var newPos = window.scrollY + 160;
                 var evt_desc = document.getElementById("evt_desc");
-                /* 80 = 60 margin od descr i 20 mojego offsetu */
-                if (newPos + evt_desc.offsetHeight > document.getElementById("descr").offsetTop - 80){
-                    newPos = document.getElementById("descr").offsetTop - evt_desc.offsetHeight - 120;
+                if (newPos + evt_desc.offsetHeight > document.getElementById("descr").offsetTop - 100){
+                    newPos = document.getElementById("descr").offsetTop - evt_desc.offsetHeight - 160;
                 }
                 document.getElementById("evt_desc").style.top = newPos + "px";
 
@@ -220,6 +244,21 @@ div#sub_timeline:hover::-webkit-scrollbar {
 
 
 /* evt_desc */
+#evt_gallery{
+    position: absolute;
+    transform: translateY(-300px);
+    z-index: -1;
+    height: 350px;
+    width: 100%;
+    border: 2px solid red;
+    border-radius: 10px;
+    background: #F6F6F6;
+}
+
+.gallery_trans{
+    transition: all 0.4s, z-index 1ms;
+}
+
 .evt_desc_p{
     margin-top: 40px;
     display: inline-block;
@@ -227,7 +266,7 @@ div#sub_timeline:hover::-webkit-scrollbar {
 
 .evt_desc_p2{
     margin-right: 40px;
-    margin-top: 20px;
+    margin-top: 40px;
     display: inline-block;
     color: #14426B;
 }
@@ -243,9 +282,40 @@ div#sub_timeline:hover::-webkit-scrollbar {
     transition: all 0.7s, top 1ms;
 }
 
+.evt_button {
+    z-index: 2;
+    position: absolute;
+    right: 0;
+    background-color: #303030;
+    border: 0px solid #303030;
+    border-radius: 10px;
+    color: white;
+    padding: 3px 17px;
+    letter-spacing: 2px;
+    font-size: 13px;
+    transform: translateY(+5px);
+}
+
+.evt_img{
+    border-radius: 8px;
+    position: absolute;
+    z-index: 2;
+    right: 0;
+    margin-top: 40px;
+}
+
 
 
 /* main */
+.user_d{
+    z-index: 4;
+    color: white;
+    letter-spacing: 1px;
+    font-family: OpenSans-Regular;
+    width: 20%;
+    margin: 12px auto;
+}
+
 .fade{
   opacity: 0;
 }
