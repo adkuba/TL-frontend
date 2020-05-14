@@ -1,8 +1,8 @@
 <template>
-    <div>
+    <div v-if="timeline">
         <div class="menu">
             <router-link class="home_b" :to="{ name: 'home' }">Home</router-link>
-            <div class="user_d"> {{ user }} </div>
+            <div class="user_d"> {{ timeline.user.fullName }} </div>
         </div>
 
         <div id="timeline">
@@ -60,31 +60,45 @@
 
 
         <div id="descr">
-            <h1> {{ user }} </h1>
-            <p> {{ lorem }} </p>
+            <h1> {{ timeline.user.fullName }} </h1>
+            <p> {{ timeline.user.description }} </p>
         </div>
     </div>
 </template>
 
 
 <script>
+
 export default {
     name: 'Timeline',
     props: [],
     created () {
-        //alert(this.$route.params.id);
+        var timelineApi = this.baseApi + 'timelines?username=' + this.$route.params.id;
+        this.axios.get(timelineApi).then(response => {
+                                if (response.data.length != 0){
+                                    this.timeline = response.data;
+                                } else {
+                                    this.$router.push( {path: "/"} );
+                                } }).catch(err => console.log(err));
     },
     data() {
         return {
+        baseApi: 'http://localhost:8081/',
         links: [ {title: 'Repozytorium', link: 'mordoo'}, {title: 'Google Play', link: 'mordoo'} ],
         items: [ {type: 'line'}, {type: 'line'}, {type: 'circle', date: '2020 luty', title: 'Gravity', desc: 'Gra stworzona w unity na Androida'}, {type: 'line'}, {type: 'line'}, {type: 'text', message: '2020'}, {type: 'line'}, {type: 'line'}, {type: 'line'}, {type: 'circle', date: '2019 pazdziernik', title: 'Object tracking', desc: 'Projekt o sledzeniu obiektow za pomoca ML'}, {type: 'line'}, {type: 'line'} ],
-        user: 'Jakub Adamski',
-        description: 'To jest przykladowy tekst o mnie',
         open: false,
         g_open: false,
+        timeline: null,
+        events: null,
         sub_yes: true,
         index: 2,
         lorem: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent dapibus scelerisque nisi ac finibus. Donec ac est odio. Fusce pharetra quis velit sed suscipit. Aliquam convallis metus nunc. Nam eu mollis turpis. Aenean quis sollicitudin arcu, vel sollicitudin nunc. Cras sit amet elementum purus, sit amet mollis lacus. Ut id enim sodales, tincidunt lorem nec, efficitur mi. Vivamus ut elit tortor."
+        }
+    },
+    watch: {
+        timeline: function(){
+            var eventsApi = this.baseApi + 'events?timelineId=' + this.timeline.id;
+            this.axios.get(eventsApi).then(response => {this.events = response.data});
         }
     },
     methods: {
