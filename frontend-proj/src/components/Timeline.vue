@@ -10,12 +10,12 @@
 
 
             <div id="evt_desc" class="fade evt_trans">
-                <div v-if="openedEvent">
+                <div id="evt_desc_text" v-if="openedSub">
                     <div class="evt_button" v-on:click="moveRight()">Back</div>
-                    <h1 class="evt_h"> {{ eventsParsed[openedEvent].title }} </h1>
-                    <p class="evt_p"> {{ eventsParsed[openedEvent].shortDescription }} </p>
-                    <p class="evt_desc_p"> {{ eventsParsed[openedEvent].description }} </p>
-                    <p class="evt_desc_p2" v-for="(value, name) in eventsParsed[openedEvent].links" :key="name"> {{ name }} </p>
+                    <h1 class="evt_h"> {{ eventsSub[openedSub].title }} </h1>
+                    <p class="evt_p"> {{ eventsSub[openedSub].shortDescription }} </p>
+                    <p class="evt_desc_p"> {{ eventsSub[openedSub].description }} </p>
+                    <p class="evt_desc_p2" v-for="(value, name) in eventsSub[openedSub].links" :key="name"> {{ name }} </p>
                 </div>
 
                 <div id="sub_timeline" v-if="subTimelineEventsParsed">
@@ -24,12 +24,9 @@
                     <div class="sub" v-for="(evt, index) in subTimelineEventsParsed" :key="index">
                         <div class="sub_line" v-if="evt.type == 'line'"></div>
                         <div class="sub_evt" v-else-if="evt.type == 'circle'">
-                            <div> 
-                                <h1 class="sub_evt_h"> {{ evt.title }} </h1>
-                                <p class="sub_evt_p"> {{ evt.shortDescription }} </p>
-                            </div>
-                            <div class="sub_circle"></div>
-                            <div> {{ evt.date }} </div>
+                            <h1 class="sub_evt_h" v-on:click="subevent(index)"> {{ evt.title }} </h1>
+                            <div class="sub_circle" v-on:click="subevent(index)"></div>
+                            <div v-on:click="subevent(index)"> {{ evt.date.slice(0,7) }} </div>
                         </div>
                         <div class="sub_year" v-else> {{ evt.message }} </div>
                     </div>
@@ -43,7 +40,7 @@
             <div v-for="(evt, index) in eventsParsed" :key="index">
                 <div class="line trans" v-if="evt.type == 'line'"></div>
                 <div class="evt" v-else-if="evt.type == 'circle'">
-                    <div class="evt_date trans" v-on:click="moveLeft(index)"> {{ evt.date }} </div>
+                    <div class="evt_date trans" v-on:click="moveLeft(index)"> {{ evt.date.slice(0,7) }} </div>
                     <div class="circle trans" v-on:click="move(index)"></div>
                     <div class="evt_text trans" v-on:click="moveLeft(index)"> 
                         <h1 class="evt_h"> {{ evt.title }} </h1>
@@ -87,11 +84,18 @@ export default {
         open: false,
         timeline: null,
         events: null,
+
         eventsParsed: null,
+        eventsSub: null,
+
         openedEvent: null,
+        openedSub: null,
+
         subTimeline: null,
         subTimelineEvents: null,
         subTimelineEventsParsed: null,
+
+        options: { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
         }
     },
     watch: {
@@ -100,11 +104,13 @@ export default {
             this.axios.get(eventsApi).then(response => {this.events = response.data});
         },
         events: function(){
-            this.eventsParsed = this.parseTimeline(this.events);
+            this.eventsParsed = this.parseTimeline(this.events).reverse();
         },
         openedEvent: function(){
-            var subTimelineApi = this.baseApi + 'timelines/event?eventId=' + this.eventsParsed[this.openedEvent].id;
-            this.axios.get(subTimelineApi).then(response => {this.subTimeline = response.data});
+            if (this.openedEvent != null){
+                var subTimelineApi = this.baseApi + 'timelines/event?eventId=' + this.eventsParsed[this.openedEvent].id;
+                this.axios.get(subTimelineApi).then(response => {this.subTimeline = response.data});
+            }
         },
         subTimeline: function(){
             if (this.subTimeline != "" && this.subTimeline != null){
@@ -169,7 +175,6 @@ export default {
             output.push(linePrefab);
             output.push(linePrefab);
 
-            output = output.reverse();
             return output;
         },
         move(index){
@@ -181,19 +186,42 @@ export default {
             }
         },
         moveLeft(index) {
-                document.getElementsByClassName("line").forEach(function moveLines(line) {line.classList.add('line_open');});
-                document.getElementsByClassName("circle").forEach(function moveCircles(circle) {circle.classList.add('circle_open');});
-                document.getElementsByClassName("year").forEach(function moveYears(year) {year.classList.add("year_open");});
-                document.getElementsByClassName("evt_date").forEach(function moveDates(date){date.classList.add("fade");});
-                document.getElementsByClassName("evt_text").forEach(function moveTexts(text){text.classList.add("fade");});
-                
-                document.getElementById("text_fade_top").classList.add("fade");
-                document.getElementById("text_fade_bottom").classList.add("fade");
-                document.getElementById("evt_desc").classList.remove("fade");
-                this.open = !this.open;
-                this.openedEvent = index
+            //zerujemy przed startem
+            this.subTimeline = null;
+            this.subTimelineEvents = null;
+            this.subTimelineEventsParsed = null;
+
+            //160 to odstep od poczatku stront - menu
+            var newPos = window.scrollY + 160;
+            //-220 to margines, 870 to wysokosc opisu CZY NAPEWNO TYLE?
+            if (newPos + 934 > document.getElementById("descr").offsetTop - 220){
+                newPos -= newPos + 870 - (document.getElementById("descr").offsetTop - 220);
+            }
+            document.getElementById("evt_desc").style.top = newPos + "px";
+            window.scrollTo(0, newPos - 100);
+
+            document.getElementsByClassName("line").forEach(function moveLines(line) {line.classList.add('line_open');});
+            document.getElementsByClassName("circle").forEach(function moveCircles(circle) {circle.classList.add('circle_open');});
+            document.getElementsByClassName("year").forEach(function moveYears(year) {year.classList.add("year_open");});
+            document.getElementsByClassName("evt_date").forEach(function moveDates(date){date.classList.add("fade");});
+            document.getElementsByClassName("evt_text").forEach(function moveTexts(text){text.classList.add("fade");});
+            
+            document.getElementById("text_fade_top").classList.add("fade");
+            document.getElementById("text_fade_bottom").classList.add("fade");
+            document.getElementById("evt_desc").classList.remove("fade");
+            this.open = !this.open;
+            this.openedEvent = index;
+
+            this.eventsSub = this.eventsParsed;
+            this.openedSub = index;
         },
         moveRight(){
+            //jesli jestesmy w sub evencie
+            if (this.openedSub != this.openedEvent){
+                this.eventsSub = this.eventsParsed;
+                this.openedSub = this.openedEvent;
+
+            } else {
                 document.getElementsByClassName("line").forEach(function centerLines(line) {line.classList.remove('line_open');});
                 document.getElementsByClassName("circle").forEach(function centerCircles(circle) {circle.classList.remove('circle_open');});
                 document.getElementsByClassName("year").forEach(function centerYears(year) {year.classList.remove('year_open');});
@@ -204,21 +232,18 @@ export default {
                 document.getElementById("text_fade_top").classList.remove("fade");
                 document.getElementById("text_fade_bottom").classList.remove("fade");
                 document.getElementById("evt_desc").classList.add("fade");
+
                 this.open = !this.open;
-                this.subTimeline = null;
-                this.subTimelineEvents = null;
-                this.subTimelineEventsParsed = null;
+                this.openedEvent = null;
+            }
+        },
+        subevent(index){
+            this.eventsSub = this.subTimelineEventsParsed;
+            this.openedSub = index;
         }
     },
     updated: function(){
-        //poprawka pozycjonowania jak juz wszystkie dane wygeneruje
-        var newPos = window.scrollY + 160;
-        var evt_desc = document.getElementById("evt_desc");
-        console.log(evt_desc.offsetHeight);
-        if (newPos + evt_desc.offsetHeight > document.getElementById("descr").offsetTop - 100){
-            newPos = document.getElementById("descr").offsetTop - evt_desc.offsetHeight - 160;
-        }
-        document.getElementById("evt_desc").style.top = newPos + "px";
+        
     },
     destroyed () {
         window.removeEventListener('scroll', this.handleScroll);
@@ -253,7 +278,7 @@ div#sub_timeline:hover::-webkit-scrollbar {
     z-index:2;
     position: absolute;
     width: 70px;
-    height: 200px;
+    height: 140px;
     background: rgb(246,246,246);
 }
 
@@ -273,21 +298,14 @@ div#sub_timeline:hover::-webkit-scrollbar {
     letter-spacing: 2px;
 }
 
-.sub_evt_p{
-    font-size: 15px;
-    margin-top: 0;
-    padding-top: 10px;
-}
-
 .sub_line{
-    margin-bottom: 5px;
     width: 90px;
     height: 3px;
     background: #303030;
 }
 
 .sub_circle{
-    margin: 20px auto;
+    margin: 15px auto;
     width: 20px;
     height: 20px;
     background: #14426B;
@@ -310,12 +328,15 @@ div#sub_timeline:hover::-webkit-scrollbar {
     display: inline-block;
 }
 
+#evt_desc_text{
+    height: 300px;
+}
+
 #sub_timeline{
     overflow-x: auto;
     overflow-y: hidden;
     white-space: nowrap;
-    margin-top: 60px;
-    height: 220px;
+    height: 160px;
 }
 
 
@@ -325,9 +346,8 @@ div#sub_timeline:hover::-webkit-scrollbar {
     height: 350px;
     width: 100%;
     margin-top: 60px;
-    border: 2px solid red;
     border-radius: 10px;
-    background: #F6F6F6;
+    background: rgb(90, 90, 90);
 }
 
 .evt_desc_p{
