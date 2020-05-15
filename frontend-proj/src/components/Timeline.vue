@@ -1,5 +1,5 @@
 <template>
-    <div v-if="timeline">
+    <div v-if="eventsParsed">
         <div class="menu">
             <router-link class="home_b" :to="{ name: 'home' }">Home</router-link>
             <div class="user_d"> {{ timeline.user.fullName }} </div>
@@ -10,47 +10,47 @@
 
 
             <div id="evt_desc" class="fade evt_trans">
-                <div class="evt_button" v-on:click="moveRight()">Back</div>
-                <h1 class="evt_h"> {{ items[index].title }} </h1>
-                <p class="evt_p"> {{ items[index].desc }} </p>
-                <p class="evt_desc_p"> {{ lorem }} </p>
-                <p class="evt_desc_p2" v-for="(item, index) in links" :key="index"> {{ item.title }} </p>
-                <img class="evt_img" src="../assets/images/g2s.png" width="65" height="17" v-on:click="openGallery()">
-            
+                <div v-if="openedEvent">
+                    <div class="evt_button" v-on:click="moveRight()">Back</div>
+                    <h1 class="evt_h"> {{ eventsParsed[openedEvent].title }} </h1>
+                    <p class="evt_p"> {{ eventsParsed[openedEvent].shortDescription }} </p>
+                    <p class="evt_desc_p"> {{ eventsParsed[openedEvent].description }} </p>
+                    <p class="evt_desc_p2" v-for="(value, name) in eventsParsed[openedEvent].links" :key="name"> {{ name }} </p>
+                </div>
 
-                <div id="sub_timeline" v-if="sub_yes">
+                <div id="sub_timeline" v-if="subTimelineEventsParsed">
                     <div class="sub_fade sub_fade_left"></div>
                     <div class="sub_fade sub_fade_right"></div>
-                    <div class="sub" v-for="(item, index) in items" :key="index">
-                        <div class="sub_line" v-if="item.type == 'line'"></div>
-                        <div class="sub_evt" v-else-if="item.type == 'circle'">
+                    <div class="sub" v-for="(evt, index) in subTimelineEventsParsed" :key="index">
+                        <div class="sub_line" v-if="evt.type == 'line'"></div>
+                        <div class="sub_evt" v-else-if="evt.type == 'circle'">
                             <div> 
-                                <h1 class="sub_evt_h"> {{ item.title }} </h1>
-                                <p class="sub_evt_p"> {{ item.desc }} </p>
+                                <h1 class="sub_evt_h"> {{ evt.title }} </h1>
+                                <p class="sub_evt_p"> {{ evt.shortDescription }} </p>
                             </div>
                             <div class="sub_circle"></div>
-                            <div> {{ item.date }} </div>
+                            <div> {{ evt.date }} </div>
                         </div>
-                        <div class="sub_year" v-else> {{ item.message }} </div>
+                        <div class="sub_year" v-else> {{ evt.message }} </div>
                     </div>
                 </div>
 
-                <div id="evt_gallery" class="fade gallery_trans"></div>
+                <div id="evt_gallery"></div>
             </div>
             
 
             <div id="f_line" class="line trans"></div>
-            <div v-for="(item, index) in items" :key="index">
-                <div class="line trans" v-if="item.type == 'line'"></div>
-                <div class="evt" v-else-if="item.type == 'circle'">
-                    <div class="evt_date trans" v-on:click="moveLeft()"> {{ item.date }} </div>
-                    <div class="circle trans" v-on:click="move()"></div>
-                    <div class="evt_text trans" v-on:click="moveLeft()"> 
-                        <h1 class="evt_h"> {{ item.title }} </h1>
-                        <p class="evt_p"> {{ item.desc }} </p>
+            <div v-for="(evt, index) in eventsParsed" :key="index">
+                <div class="line trans" v-if="evt.type == 'line'"></div>
+                <div class="evt" v-else-if="evt.type == 'circle'">
+                    <div class="evt_date trans" v-on:click="moveLeft(index)"> {{ evt.date }} </div>
+                    <div class="circle trans" v-on:click="move(index)"></div>
+                    <div class="evt_text trans" v-on:click="moveLeft(index)"> 
+                        <h1 class="evt_h"> {{ evt.title }} </h1>
+                        <p class="evt_p"> {{ evt.shortDescription }} </p>
                     </div>
                 </div>
-                <div class="year trans" v-else> {{ item.message }} </div>
+                <div class="year trans" v-else> {{ evt.message }} </div>
             </div>
             <div id="l_line" class="line trans"></div>
 
@@ -75,63 +75,112 @@ export default {
     created () {
         var timelineApi = this.baseApi + 'timelines?username=' + this.$route.params.id;
         this.axios.get(timelineApi).then(response => {
-                                if (response.data.length != 0){
-                                    this.timeline = response.data;
-                                } else {
-                                    this.$router.push( {path: "/"} );
-                                } }).catch(err => console.log(err));
+            if (response.data.length != 0){
+                this.timeline = response.data;
+            } else {
+                this.$router.push( {path: "/"} );
+            } }).catch(err => console.log(err));
     },
     data() {
         return {
         baseApi: 'http://localhost:8081/',
-        links: [ {title: 'Repozytorium', link: 'mordoo'}, {title: 'Google Play', link: 'mordoo'} ],
-        items: [ {type: 'line'}, {type: 'line'}, {type: 'circle', date: '2020 luty', title: 'Gravity', desc: 'Gra stworzona w unity na Androida'}, {type: 'line'}, {type: 'line'}, {type: 'text', message: '2020'}, {type: 'line'}, {type: 'line'}, {type: 'line'}, {type: 'circle', date: '2019 pazdziernik', title: 'Object tracking', desc: 'Projekt o sledzeniu obiektow za pomoca ML'}, {type: 'line'}, {type: 'line'} ],
         open: false,
-        g_open: false,
         timeline: null,
         events: null,
-        sub_yes: true,
-        index: 2,
-        lorem: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent dapibus scelerisque nisi ac finibus. Donec ac est odio. Fusce pharetra quis velit sed suscipit. Aliquam convallis metus nunc. Nam eu mollis turpis. Aenean quis sollicitudin arcu, vel sollicitudin nunc. Cras sit amet elementum purus, sit amet mollis lacus. Ut id enim sodales, tincidunt lorem nec, efficitur mi. Vivamus ut elit tortor."
+        eventsParsed: null,
+        openedEvent: null,
+        subTimeline: null,
+        subTimelineEvents: null,
+        subTimelineEventsParsed: null,
         }
     },
     watch: {
         timeline: function(){
             var eventsApi = this.baseApi + 'events?timelineId=' + this.timeline.id;
             this.axios.get(eventsApi).then(response => {this.events = response.data});
+        },
+        events: function(){
+            this.eventsParsed = this.parseTimeline(this.events);
+        },
+        openedEvent: function(){
+            var subTimelineApi = this.baseApi + 'timelines/event?eventId=' + this.eventsParsed[this.openedEvent].id;
+            this.axios.get(subTimelineApi).then(response => {this.subTimeline = response.data});
+        },
+        subTimeline: function(){
+            if (this.subTimeline != "" && this.subTimeline != null){
+                var subTimelineEventsApi = this.baseApi + 'events?timelineId=' + this.subTimeline.id;
+                this.axios.get(subTimelineEventsApi).then(response => {this.subTimelineEvents = response.data});
+            }
+        },
+        subTimelineEvents: function(){
+            if (this.subTimelineEvents != null){
+                this.subTimelineEventsParsed = this.parseTimeline(this.subTimelineEvents);
+            }
         }
     },
     methods: {
-        move(){
+        parseTimeline(eventsList){
+            var yearsParsed = [];
+            var output = [];
+            var fullEvent;
+
+            //year parsing
+            for (var i = 0, len = eventsList.length; i < len-1; i++){
+                var firstDate = new Date(eventsList[i].date);
+                var secondDate = new Date(eventsList[i+1].date);
+                fullEvent = eventsList[i];
+                fullEvent.type = "circle";
+                yearsParsed.push(fullEvent);
+                
+                for (var j=0, len2 = secondDate.getFullYear() - firstDate.getFullYear(); j < len2; j++){
+                    //ZMIENIC POTEM text na year???? uwaga data roku jest zawsze z 31 grudnia poprzedniego!!
+                    var yearDate = firstDate.getFullYear() + '-12-31T00:00:00';
+                    var year = {type: 'text', message: 0, date: yearDate};
+                    year.message = firstDate.getFullYear() + (j + 1);
+                    yearsParsed.push(year);
+                }
+            }
+            fullEvent = eventsList[eventsList.length-1];
+            fullEvent.type = "circle";
+            yearsParsed.push(fullEvent);
+
+            //lines
+            j = 0;
+            var linePrefab = {type: 'line'};
+            output.push(linePrefab);
+            for (i = 0, len = yearsParsed.length; i < len-1; i++){
+                //min one line is required
+                output.push(linePrefab);
+                output.push(yearsParsed[i]);
+
+                firstDate = new Date(yearsParsed[i].date);
+                secondDate = new Date(yearsParsed[i+1].date);
+
+                var monthDiff = (secondDate.getFullYear() - firstDate.getFullYear()) * 12;
+                monthDiff -= firstDate.getMonth();
+                monthDiff += secondDate.getMonth();
+
+                //additional lines based on months
+                for (j = 0, len2 = monthDiff; j < len2; j++){
+                    output.push(linePrefab);
+                }
+            }
+            output.push(yearsParsed[yearsParsed.length-1]);
+            output.push(linePrefab);
+            output.push(linePrefab);
+
+            output = output.reverse();
+            return output;
+        },
+        move(index){
             if (!this.open){
-                this.moveLeft();
+                this.moveLeft(index);
 
             } else{
                 this.moveRight();
             }
         },
-        openGallery(){
-            var gallery = document.getElementById("evt_gallery");
-            if (!this.g_open){
-                gallery.classList.remove('fade');
-                gallery.style.zIndex=2;
-                this.g_open = !this.g_open;
-
-            } else{
-                gallery.classList.add('fade');
-                gallery.style.zIndex=-1;
-                this.g_open = !this.g_open;
-            }
-
-        },
-        moveLeft() {
-                var newPos = window.scrollY + 160;
-                var evt_desc = document.getElementById("evt_desc");
-                if (newPos + evt_desc.offsetHeight > document.getElementById("descr").offsetTop - 100){
-                    newPos = document.getElementById("descr").offsetTop - evt_desc.offsetHeight - 160;
-                }
-                document.getElementById("evt_desc").style.top = newPos + "px";
-
+        moveLeft(index) {
                 document.getElementsByClassName("line").forEach(function moveLines(line) {line.classList.add('line_open');});
                 document.getElementsByClassName("circle").forEach(function moveCircles(circle) {circle.classList.add('circle_open');});
                 document.getElementsByClassName("year").forEach(function moveYears(year) {year.classList.add("year_open");});
@@ -142,6 +191,7 @@ export default {
                 document.getElementById("text_fade_bottom").classList.add("fade");
                 document.getElementById("evt_desc").classList.remove("fade");
                 this.open = !this.open;
+                this.openedEvent = index
         },
         moveRight(){
                 document.getElementsByClassName("line").forEach(function centerLines(line) {line.classList.remove('line_open');});
@@ -155,7 +205,20 @@ export default {
                 document.getElementById("text_fade_bottom").classList.remove("fade");
                 document.getElementById("evt_desc").classList.add("fade");
                 this.open = !this.open;
+                this.subTimeline = null;
+                this.subTimelineEvents = null;
+                this.subTimelineEventsParsed = null;
         }
+    },
+    updated: function(){
+        //poprawka pozycjonowania jak juz wszystkie dane wygeneruje
+        var newPos = window.scrollY + 160;
+        var evt_desc = document.getElementById("evt_desc");
+        console.log(evt_desc.offsetHeight);
+        if (newPos + evt_desc.offsetHeight > document.getElementById("descr").offsetTop - 100){
+            newPos = document.getElementById("descr").offsetTop - evt_desc.offsetHeight - 160;
+        }
+        document.getElementById("evt_desc").style.top = newPos + "px";
     },
     destroyed () {
         window.removeEventListener('scroll', this.handleScroll);
@@ -251,7 +314,7 @@ div#sub_timeline:hover::-webkit-scrollbar {
     overflow-x: auto;
     overflow-y: hidden;
     white-space: nowrap;
-    margin-top: 160px;
+    margin-top: 60px;
     height: 220px;
 }
 
@@ -259,23 +322,17 @@ div#sub_timeline:hover::-webkit-scrollbar {
 
 /* evt_desc */
 #evt_gallery{
-    position: absolute;
-    transform: translateY(-300px);
-    z-index: -1;
     height: 350px;
     width: 100%;
+    margin-top: 60px;
     border: 2px solid red;
     border-radius: 10px;
     background: #F6F6F6;
 }
 
-.gallery_trans{
-    transition: all 0.4s, z-index 1ms;
-}
-
 .evt_desc_p{
     margin-top: 40px;
-    display: inline-block;
+    display: block;
 }
 
 .evt_desc_p2{
@@ -308,14 +365,6 @@ div#sub_timeline:hover::-webkit-scrollbar {
     letter-spacing: 2px;
     font-size: 13px;
     transform: translateY(+5px);
-}
-
-.evt_img{
-    border-radius: 8px;
-    position: absolute;
-    z-index: 2;
-    right: 0;
-    margin-top: 40px;
 }
 
 
