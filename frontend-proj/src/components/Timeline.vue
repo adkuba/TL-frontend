@@ -5,51 +5,53 @@
             <div class="user_d"> {{ timeline.user.fullName }} </div>
         </div>
 
-        <div id="timeline">
+        <div id="timeline" :class="$mq">
             <div id="text_fade_top" class="text_fade trans"></div>
 
-
-            <div id="evt_desc" class="fade evt_trans">
-                <div id="evt_desc_text" v-if="openedSub">
-                    <div class="evt_button" v-on:click="moveRight()">Back</div>
-                    <h1 class="evt_h"> {{ eventsSub[openedSub].title }} </h1>
-                    <p class="evt_p"> {{ eventsSub[openedSub].shortDescription }} </p>
-                    <p class="evt_desc_p"> {{ eventsSub[openedSub].description }} </p>
-                    <p class="evt_desc_p2" v-for="(value, name) in eventsSub[openedSub].links" :key="name"> {{ name }} </p>
-                </div>
-
-                <div id="sub_timeline" v-if="subTimelineEventsParsed">
-                    <div class="sub_fade sub_fade_left"></div>
-                    <div class="sub_fade sub_fade_right"></div>
-                    <div class="sub" v-for="(evt, index) in subTimelineEventsParsed" :key="index">
-                        <div class="sub_line" v-if="evt.type == 'line'"></div>
-                        <div class="sub_evt" v-else-if="evt.type == 'circle'">
-                            <h1 class="sub_evt_h" v-on:click="subevent(index)"> {{ evt.title }} </h1>
-                            <div class="sub_circle" v-on:click="subevent(index)"></div>
-                            <div v-on:click="subevent(index)"> {{ evt.date.slice(0,7) }} </div>
-                        </div>
-                        <div class="sub_year" v-else> {{ evt.message }} </div>
+            <div id="evt_container" :class="$mq">
+                <div id="evt_desc" class="fade evt_trans">
+                    <div id="evt_desc_text" v-if="openedSub">
+                        <div class="evt_button" v-on:click="moveRight()">Back</div>
+                        <h1 class="evt_h"> {{ eventsSub[openedSub].title }} </h1>
+                        <p class="evt_p"> {{ eventsSub[openedSub].shortDescription }} </p>
+                        <p class="evt_desc_p"> {{ eventsSub[openedSub].description }} </p>
+                        <p class="evt_desc_p2" v-for="(value, name) in eventsSub[openedSub].links" :key="name"> {{ name }} </p>
                     </div>
-                </div>
 
-                <div id="evt_gallery"></div>
+                    <div id="sub_timeline" v-if="subTimelineEventsParsed">
+                        <div class="sub_fade sub_fade_left"></div>
+                        <div class="sub_fade sub_fade_right"></div>
+                        <div class="sub" v-for="(evt, index) in subTimelineEventsParsed" :key="index">
+                            <div class="sub_line" v-if="evt.type == 'line'"></div>
+                            <div class="sub_evt" v-else-if="evt.type == 'circle'">
+                                <h1 class="sub_evt_h" v-on:click="subevent(index)"> {{ evt.title }} </h1>
+                                <div class="sub_circle" v-on:click="subevent(index)"></div>
+                                <div v-on:click="subevent(index)"> {{ evt.date.slice(0,7) }} </div>
+                            </div>
+                            <div class="sub_year" v-else> {{ evt.message }} </div>
+                        </div>
+                    </div>
+
+                    <div id="evt_gallery"></div>
+                </div>
             </div>
             
 
-            <div id="f_line" class="line trans"></div>
+            <div id="f_line" class="line trans" :class="$mq"></div>
             <div v-for="(evt, index) in eventsParsed" :key="index">
-                <div class="line trans" v-if="evt.type == 'line'"></div>
+                <div class="line trans" :class="$mq" v-if="evt.type == 'line'"></div>
                 <div class="evt" v-else-if="evt.type == 'circle'">
-                    <div class="evt_date trans" v-on:click="moveLeft(index)"> {{ evt.date.slice(0,7) }} </div>
-                    <div class="circle trans" v-on:click="move(index)"></div>
-                    <div class="evt_text trans" v-on:click="moveLeft(index)"> 
+                    <div class="evt_date trans" :class="$mq" v-on:click="moveLeft(index)"> {{ evt.date.slice(0,7) }} </div>
+                    <div class="circle trans" :class="$mq" v-on:click="move(index)"></div>
+                    <div class="evt_text trans" :class="$mq" v-on:click="moveLeft(index)"> 
                         <h1 class="evt_h"> {{ evt.title }} </h1>
                         <p class="evt_p"> {{ evt.shortDescription }} </p>
+                        <p class="evt_p" v-if="$mq == 'small'"> {{ evt.date.slice(0,7) }} </p>
                     </div>
                 </div>
-                <div class="year trans" v-else> {{ evt.message }} </div>
+                <div class="year trans" :class="$mq" v-else> {{ evt.message }} </div>
             </div>
-            <div id="l_line" class="line trans"></div>
+            <div id="l_line" class="line trans" :class="$mq"></div>
 
 
             <div id="text_fade_bottom" class="text_fade trans"></div>
@@ -94,8 +96,6 @@ export default {
         subTimeline: null,
         subTimelineEvents: null,
         subTimelineEventsParsed: null,
-
-        options: { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
         }
     },
     watch: {
@@ -254,270 +254,258 @@ export default {
 </script>
 
 
-<style scoped>
+<style scoped lang="sass">
 /* sub_timeline */
-div#sub_timeline::-webkit-scrollbar {
-  height: 3px;
-}
+div#sub_timeline::-webkit-scrollbar
+    height: 3px
 
-div#sub_timeline::-webkit-scrollbar-track {
-  background: #e0e0e0;
-  border-radius: 10px;
-}
+div#sub_timeline::-webkit-scrollbar-track
+    background: #e0e0e0
+    border-radius: 10px
 
-div#sub_timeline::-webkit-scrollbar-thumb {
-  background: #c7c7c7;
-  border-radius: 10px;
-}
+div#sub_timeline::-webkit-scrollbar-thumb
+    background: #c7c7c7
+    border-radius: 10px
 
-div#sub_timeline:hover::-webkit-scrollbar {
-    height: 10px;
-}
+div#sub_timeline:hover::-webkit-scrollbar
+    height: 10px
 
-.sub_fade{
-    z-index:2;
-    position: absolute;
-    width: 70px;
-    height: 140px;
-    background: rgb(246,246,246);
-}
+.sub_fade
+    z-index: return(2)
+    position: absolute
+    width: 70px
+    height: 140px
+    background: rgb(246,246,246)
 
-.sub_fade_left{
-    background: linear-gradient(270deg, rgba(246,246,246,0) 0%, rgba(246,246,246,1) 91%);
-}
+.sub_fade_left
+    background: linear-gradient(270deg, rgba(246,246,246,0) 0%, rgba(246,246,246,1) 91%)
 
-.sub_fade_right{
-    right: 0;
-    background: linear-gradient(90deg, rgba(246,246,246,0) 0%, rgba(246,246,246,1) 91%);
-}
+.sub_fade_right
+    right: 0
+    background: linear-gradient(90deg, rgba(246,246,246,0) 0%, rgba(246,246,246,1) 91%)
 
-.sub_evt_h{
-    font-size: 23px;
-    margin: 0;
-    padding: 0;
-    letter-spacing: 2px;
-}
+.sub_evt_h
+    font-size: 23px
+    margin: 0
+    padding: 0
+    letter-spacing: 2px
 
-.sub_line{
-    width: 90px;
-    height: 3px;
-    background: #303030;
-}
+.sub_line
+    width: 90px
+    height: 3px
+    background: #303030
 
-.sub_circle{
-    margin: 15px auto;
-    width: 20px;
-    height: 20px;
-    background: #14426B;
-    border-radius: 50%;
-}
+.sub_circle
+    margin: 15px auto
+    width: 20px
+    height: 20px
+    background: #14426B
+    border-radius: 50%
 
-.sub_year{
-    margin: 0 40px;
-    font-size: 19px;
-    letter-spacing: 2px;
-}
+.sub_year
+    margin: 0 40px
+    font-size: 19px
+    letter-spacing: 2px
 
-.sub_evt{
-    text-align: center;
-    /* font size z year + margin 20px */
-    transform: translateY(+39px);
-}
+.sub_evt
+    text-align: center
+    // font size z year + margin 20px
+    transform: translateY(+39px)
 
-.sub{
-    display: inline-block;
-}
+.sub
+    display: inline-block
 
-#evt_desc_text{
-    height: 300px;
-}
+#evt_desc_text
+    height: 300px
 
-#sub_timeline{
-    overflow-x: auto;
-    overflow-y: hidden;
-    white-space: nowrap;
-    height: 160px;
-}
+#sub_timeline
+    overflow-x: auto
+    overflow-y: hidden
+    white-space: nowrap
+    height: 160px
 
 
 
 /* evt_desc */
-#evt_gallery{
-    height: 350px;
-    width: 100%;
-    margin-top: 60px;
-    border-radius: 10px;
-    background: rgb(90, 90, 90);
-}
+#evt_gallery
+    height: 350px
+    width: 100%
+    margin-top: 60px
+    border-radius: 10px
+    background: rgb(90, 90, 90)
 
-.evt_desc_p{
-    margin-top: 40px;
-    display: block;
-}
+.evt_desc_p
+    margin-top: 40px
+    display: block
 
-.evt_desc_p2{
-    margin-right: 40px;
-    margin-top: 40px;
-    display: inline-block;
-    color: #14426B;
-}
+.evt_desc_p2
+    margin-right: 40px
+    margin-top: 40px
+    display: inline-block
+    color: #14426B
 
-#evt_desc{
-    position: absolute;
-    width: 45%;
-    left: 30%;
-    text-align: left;
-}
+/* evt_desc jest do js zeby dodawac i usuwac fade */
+/* evt_container do roznych wielkosci - gdy zmieniala sie wielkosc automatycznie dodawala mi sie klasa fade */
+#evt_container
+    position: absolute
+    text-align: left
+    &.large
+        width: 45%
+        left: 30%
+    &.medium
+        width: 65%
+        left: 20%
+    &.small
+        width: 70%
+        left: 21%
 
-.evt_trans{
-    transition: all 0.7s, top 1ms;
-}
+.evt_trans
+    transition: all 0.7s, top 1ms
 
-.evt_button {
-    z-index: 2;
-    position: absolute;
-    right: 0;
-    background-color: #303030;
-    border: 0px solid #303030;
-    border-radius: 10px;
-    color: white;
-    padding: 3px 17px;
-    letter-spacing: 2px;
-    font-size: 13px;
-    transform: translateY(+5px);
-}
+.evt_button 
+    z-index: 2
+    position: absolute
+    right: 0
+    background-color: #303030
+    border: 0px solid #303030
+    border-radius: 10px
+    color: white
+    padding: 3px 17px
+    letter-spacing: 2px
+    font-size: 13px
+    transform: translateY(+5px)
 
 
 
 /* main */
-.user_d{
-    z-index: 4;
-    color: white;
-    letter-spacing: 1px;
-    font-family: OpenSans-Regular;
-    width: 20%;
-    margin: 12px auto;
-}
+.user_d
+    z-index: 4
+    color: white
+    letter-spacing: 1px
+    font-family: OpenSans-Regular
+    width: 20%
+    margin: 12px auto
 
-.fade{
-  opacity: 0;
-}
+.fade
+  opacity: 0
 
-.text_fade{
-    position: sticky;
-    z-index:2;
-    height: 150px;
-    background: rgb(246,246,246);
-}
+.text_fade
+    position: sticky
+    z-index: return(2)
+    height: 150px
+    background: rgb(246,246,246)
 
-#text_fade_top{
-    top: 50px;
-    background: linear-gradient(0deg, rgba(246,246,246,0) 0%, rgba(246,246,246,1) 91%);
-}
+#text_fade_top
+    top: 50px
+    background: linear-gradient(0deg, rgba(246,246,246,0) 0%, rgba(246,246,246,1) 91%)
 
-#text_fade_bottom{
-    bottom: 0;
-    background: linear-gradient(180deg, rgba(246,246,246,0) 0%, rgba(246,246,246,1) 91%);
-}
+#text_fade_bottom
+    bottom: 0
+    background: linear-gradient(180deg, rgba(246,246,246,0) 0%, rgba(246,246,246,1) 91%)
 
-.trans{
-    transition: all 0.7s;
-}
+.trans
+    transition: all 0.7s
 
-.evt_h{
-    font-size: 30px;
-    margin: 0;
-    padding: 0;
-    letter-spacing: 2px;
-}
+.evt_h
+    font-size: 30px
+    margin: 0
+    padding: 0
+    letter-spacing: 2px
 
-.evt_p{
-    margin-top: 0;
-    padding-top: 10px;
-}
+.evt_p
+    margin-top: 0
+    padding-top: 10px
 
-.evt{
-    margin: 40px auto;
-}
+.evt
+    margin: 40px auto
 
-.evt_date{
-    position: relative;
-    float: left;
-    width: 40%;
-    text-align: right;
-    letter-spacing: 2px;
-}
+.evt_date
+    position: relative
+    float: left
+    width: 40%
+    text-align: right
+    letter-spacing: 2px
+    &.small
+        z-index: return(-1)
+        opacity: 0
+        
 
-.evt_text{
-    float: right;
-    width: 40%;
-    text-align: left;
-    transform: translateY(-50%);
-}
+.evt_text
+    float: right
+    width: 40%
+    height: 150px
+    text-align: left
+    transform: translateY(-45px)
+    &.small
+        width: 65%
+        transform: translateY(-50%)
 
-.year_open{
-    margin: 40px 8% !important;
-    opacity: 0.2;
-}
+.year_open
+    margin: 40px 8% !important
+    opacity: 0.2
+    &.small
+        margin: 40px 10% !important
 
-.year{
-    margin: 40px 50%;
-    width: 20%;
-    transform: translateX(-50%);
-    font-size: 19px;
-    letter-spacing: 2px;
-}
+.year
+    margin: 40px 50%
+    width: 20%
+    transform: translateX(-50%)
+    font-size: 19px
+    letter-spacing: 2px
+    &.small
+        margin: 40px 15%
 
-.circle_open{
-    margin: 0 8% !important;
-    opacity: 0.2;
-}
+.circle_open
+    margin: 0 8% !important
+    opacity: 0.2
+    &.small
+        margin: 0 10% !important
 
-.circle{
-    margin: 0 50%;
-    transform: translateX(-50%);
-    width: 25px;
-    height: 25px;
-    background: #B8352D;
-    border-radius: 50%;
-}
+.circle
+    margin: 0 50%
+    transform: translateX(-50%)
+    width: 25px
+    height: 25px
+    background: #B8352D
+    border-radius: 50%
+    &.small
+        margin: 0 15%
 
-.line_open{
-    margin: 0 8% !important;
-    opacity: 0.2;
-}
+.line_open
+    margin: 0 8% !important
+    opacity: 0.2
+    &.small
+        margin: 0 10% !important
 
-.line{
-    display: block;
-    margin: 0 50%;
-    width: 3px;
-    height: 80px;
-    background: #303030;
-}
+.line
+    display: block
+    margin: 0 50%
+    width: 3px
+    height: 80px
+    background: #303030
+    &.small
+        margin: 0 15%
 
-#f_line{
-    background: rgb(48,48,48);
-    background: linear-gradient(180deg, rgba(48,48,48,0) 0%, rgba(48,48,48,1) 100%);
-}
+#f_line
+    background: rgb(48,48,48)
+    background: linear-gradient(180deg, rgba(48,48,48,0) 0%, rgba(48,48,48,1) 100%)
 
-#l_line{
-    background: rgb(48,48,48);
-    background: linear-gradient(0deg, rgba(48,48,48,0) 0%, rgba(48,48,48,1) 100%);
-}
+#l_line
+    background: rgb(48,48,48)
+    background: linear-gradient(0deg, rgba(48,48,48,0) 0%, rgba(48,48,48,1) 100%)
 
-#timeline{
-    background: #F6F6F6;
-    margin: 0 15%;
-    font-family: 'Raleway-Regular';
-}
+#timeline
+    background: #F6F6F6
+    font-family: 'Raleway-Regular'
+    &.large
+        margin: 0 10%
 
-#descr{
-    height: 200px;
-    margin: 60px 30%;
-    font-family: 'Raleway-Regular';
-}
+#descr
+    height: 200px
+    margin: 60px 30%
+    font-family: 'Raleway-Regular'
 
-#descr p{
-    text-align: left;
-}
+#descr p
+    text-align: left
+
 </style>

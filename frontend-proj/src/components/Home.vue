@@ -14,7 +14,7 @@ export default {
 
 </script>
 
-<style>
+<style scoped>
 .hh{
     margin-top: 60px;
 }
