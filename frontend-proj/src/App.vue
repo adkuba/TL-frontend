@@ -31,17 +31,6 @@ export default {
   color: #303030;
 }
 
-.home_b{
-  z-index: 4;
-  color: white;
-  letter-spacing: 1px;
-  font-family: OpenSans-Regular;
-  float: left;
-  margin-top: 12px;
-  margin-left: 20px;
-  text-decoration: none;
-}
-
 .menu{
     z-index:3;
     position: fixed;

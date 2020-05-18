@@ -1,8 +1,8 @@
 <template>
     <div v-if="eventsParsed">
         <div class="menu">
-            <router-link class="home_b" :to="{ name: 'home' }">Home</router-link>
-            <div class="user_d"> {{ timeline.user.fullName }} </div>
+            <router-link :to="{ name: 'home' }" class="home_b"></router-link>
+            <div class="user_d" :class="$mq"> {{ timeline.user.fullName }} </div>
         </div>
 
         <div id="timeline" :class="$mq">
@@ -17,22 +17,32 @@
                         <p class="evt_desc_p"> {{ eventsSub[openedSub].description }} </p>
                         <p class="evt_desc_p2" v-for="(value, name) in eventsSub[openedSub].links" :key="name"> {{ name }} </p>
                     </div>
-
-                    <div id="sub_timeline" v-if="subTimelineEventsParsed">
+                    
+                    <div style="text-align: center">
+                        <div class="sub" v-show="evt.title" v-for="(evt, index) in subTimelineEventsParsed" :key="index">
+                            <div v-if="evt.type == 'circle'">
+                                <h1 class="sub_nav_h"  v-on:click="subScroll(index)"> {{ evt.title }} </h1>
+                                <div class="hor-l"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="sub_timeline" :class="$mq" v-if="subTimelineEventsParsed">
                         <div class="sub_fade sub_fade_left"></div>
-                        <div class="sub_fade sub_fade_right"></div>
+                        <div class="sub_fade sub_fade_right" :class="$mq"></div>
+                        <div class="sub_sline"></div>
                         <div class="sub" v-for="(evt, index) in subTimelineEventsParsed" :key="index">
                             <div class="sub_line" v-if="evt.type == 'line'"></div>
-                            <div class="sub_evt" v-else-if="evt.type == 'circle'">
-                                <h1 class="sub_evt_h" v-on:click="subevent(index)"> {{ evt.title }} </h1>
-                                <div class="sub_circle" v-on:click="subevent(index)"></div>
-                                <div v-on:click="subevent(index)"> {{ evt.date.slice(0,7) }} </div>
+                            <div v-else-if="evt.type == 'circle'">
+                                <p class="sub_evt_p" v-on:click="subevent(index)"> {{ evt.shortDescription }} </p>
+                                <div class="sub_evt_date" v-on:click="subevent(index)"> {{ evt.date.slice(0,7) }} </div>
                             </div>
                             <div class="sub_year" v-else> {{ evt.message }} </div>
                         </div>
+                        <div class="sub_sline"></div>
                     </div>
 
-                    <div id="evt_gallery"></div>
+                    <div id="evt_gallery" v-if="false"></div>
                 </div>
             </div>
             
@@ -43,7 +53,7 @@
                 <div class="evt" v-else-if="evt.type == 'circle'">
                     <div class="evt_date trans" :class="$mq" v-on:click="moveLeft(index)"> {{ evt.date.slice(0,7) }} </div>
                     <div class="circle trans" :class="$mq" v-on:click="move(index)"></div>
-                    <div class="evt_text trans" :class="$mq" v-on:click="moveLeft(index)"> 
+                    <div class="evt_text trans" :class="$mq" v-on:click="moveLeft(index)">
                         <h1 class="evt_h"> {{ evt.title }} </h1>
                         <p class="evt_p"> {{ evt.shortDescription }} </p>
                         <p class="evt_p" v-if="$mq == 'small'"> {{ evt.date.slice(0,7) }} </p>
@@ -58,9 +68,9 @@
         </div>
 
 
-        <div id="descr">
-            <h1> {{ timeline.user.fullName }} </h1>
-            <p> {{ timeline.user.description }} </p>
+        <div id="descr" :class="$mq">
+            <h1> {{ timeline.descriptionTitle }} </h1>
+            <p> {{ timeline.description }} </p>
         </div>
     </div>
 </template>
@@ -72,9 +82,9 @@ export default {
     name: 'Timeline',
     props: [],
     created () {
-        var timelineApi = this.baseApi + 'timelines?username=' + this.$route.params.id;
+        var timelineApi = this.baseApi + 'timelines?id=' + this.$route.params.id;
         this.axios.get(timelineApi).then(response => {
-            if (response.data.length != 0){
+            if (response.data != null){
                 this.timeline = response.data;
             } else {
                 this.$router.push( {path: "/"} );
@@ -86,6 +96,7 @@ export default {
         open: false,
         timeline: null,
         events: null,
+        newPos: null,
 
         eventsParsed: null,
         eventsSub: null,
@@ -125,6 +136,13 @@ export default {
         }
     },
     methods: {
+        subScroll(index){
+            var subT = document.getElementById("sub_timeline");
+            var searchedE = subT.children[index+3];
+            //subT.offsetLeft to margin sub timeline przy .large
+            var newScroll = searchedE.offsetLeft - subT.offsetWidth/2 + searchedE.offsetWidth/2 - subT.offsetLeft;
+            subT.scroll({top: 0, left: newScroll, behavior: 'smooth'});
+        },
         parseTimeline(eventsList){
             var yearsParsed = [];
             var output = [];
@@ -186,40 +204,43 @@ export default {
             }
         },
         moveLeft(index) {
-            //zerujemy przed startem
-            this.subTimeline = null;
-            this.subTimelineEvents = null;
-            this.subTimelineEventsParsed = null;
+            if (!this.open){
+                //zerujemy przed startem
+                this.subTimeline = null;
+                this.subTimelineEvents = null;
+                this.subTimelineEventsParsed = null;
 
-            //160 to odstep od poczatku stront - menu
-            var newPos = window.scrollY + 160;
-            //-220 to margines, 870 to wysokosc opisu CZY NAPEWNO TYLE?
-            if (newPos + 934 > document.getElementById("descr").offsetTop - 220){
-                newPos -= newPos + 870 - (document.getElementById("descr").offsetTop - 220);
+                //160 to odstep od poczatku stront - menu
+                this.newPos = window.scrollY + 160;
+                //-220 to margines, 870 to wysokosc opisu CZY NAPEWNO TYLE?
+                if (this.newPos + 934 > document.getElementById("descr").offsetTop - 220){
+                    this.newPos -= this.newPos + 870 - (document.getElementById("descr").offsetTop - 220);
+                }
+                document.getElementById("evt_container").style.top = this.newPos + "px";
+                window.scroll({top: this.newPos-100, left: 0, behavior: 'smooth'});
+
+                document.getElementsByClassName("line").forEach(function moveLines(line) {line.classList.add('line_open');});
+                document.getElementsByClassName("circle").forEach(function moveCircles(circle) {circle.classList.add('circle_open');});
+                document.getElementsByClassName("year").forEach(function moveYears(year) {year.classList.add("year_open");});
+                document.getElementsByClassName("evt_date").forEach(function moveDates(date){date.classList.add("fade");});
+                document.getElementsByClassName("evt_text").forEach(function moveTexts(text){text.classList.add("fade");});
+                
+                document.getElementById("text_fade_top").classList.add("fade");
+                document.getElementById("text_fade_bottom").classList.add("fade");
+                document.getElementById("evt_desc").classList.remove("fade");
+                this.open = !this.open;
+                this.openedEvent = index;
+
+                this.eventsSub = this.eventsParsed;
+                this.openedSub = index;
             }
-            document.getElementById("evt_desc").style.top = newPos + "px";
-            window.scrollTo(0, newPos - 100);
-
-            document.getElementsByClassName("line").forEach(function moveLines(line) {line.classList.add('line_open');});
-            document.getElementsByClassName("circle").forEach(function moveCircles(circle) {circle.classList.add('circle_open');});
-            document.getElementsByClassName("year").forEach(function moveYears(year) {year.classList.add("year_open");});
-            document.getElementsByClassName("evt_date").forEach(function moveDates(date){date.classList.add("fade");});
-            document.getElementsByClassName("evt_text").forEach(function moveTexts(text){text.classList.add("fade");});
-            
-            document.getElementById("text_fade_top").classList.add("fade");
-            document.getElementById("text_fade_bottom").classList.add("fade");
-            document.getElementById("evt_desc").classList.remove("fade");
-            this.open = !this.open;
-            this.openedEvent = index;
-
-            this.eventsSub = this.eventsParsed;
-            this.openedSub = index;
         },
         moveRight(){
             //jesli jestesmy w sub evencie
             if (this.openedSub != this.openedEvent){
                 this.eventsSub = this.eventsParsed;
                 this.openedSub = this.openedEvent;
+                window.scroll({top: this.newPos-100, left: 0, behavior: 'smooth'});
 
             } else {
                 document.getElementsByClassName("line").forEach(function centerLines(line) {line.classList.remove('line_open');});
@@ -240,6 +261,7 @@ export default {
         subevent(index){
             this.eventsSub = this.subTimelineEventsParsed;
             this.openedSub = index;
+            window.scroll({top: this.newPos-100, left: 0, behavior: 'smooth'});
         }
     },
     updated: function(){
@@ -257,92 +279,124 @@ export default {
 <style scoped lang="sass">
 /* sub_timeline */
 div#sub_timeline::-webkit-scrollbar
-    height: 3px
-
-div#sub_timeline::-webkit-scrollbar-track
-    background: #e0e0e0
-    border-radius: 10px
-
-div#sub_timeline::-webkit-scrollbar-thumb
-    background: #c7c7c7
-    border-radius: 10px
-
-div#sub_timeline:hover::-webkit-scrollbar
-    height: 10px
+    display: none
 
 .sub_fade
-    z-index: return(2)
+    z-index: 2
     position: absolute
-    width: 70px
-    height: 140px
+    width: 30px
+    height: 60px
     background: rgb(246,246,246)
 
 .sub_fade_left
     background: linear-gradient(270deg, rgba(246,246,246,0) 0%, rgba(246,246,246,1) 91%)
+    transform: translateX(-2px)
 
 .sub_fade_right
     right: 0
     background: linear-gradient(90deg, rgba(246,246,246,0) 0%, rgba(246,246,246,1) 91%)
+    transform: translateX(+2px)
+    &.large
+        right: 12%
 
-.sub_evt_h
-    font-size: 23px
-    margin: 0
+.sub_evt_p
+    margin: 10px 30px
     padding: 0
-    letter-spacing: 2px
 
 .sub_line
+    transform: translateY(-20px)
     width: 90px
-    height: 3px
+    height: 1px
     background: #303030
 
-.sub_circle
-    margin: 15px auto
-    width: 20px
-    height: 20px
-    background: #14426B
-    border-radius: 50%
+.sub_sline
+    display: inline-block
+    transform: translateY(-20px)
+    width: 20vw
+    height: 1px
+    background: #303030
 
 .sub_year
     margin: 0 40px
     font-size: 19px
     letter-spacing: 2px
 
-.sub_evt
+.sub_nav_h
+    font-family: Raleway-Regular
+    font-size: 20px
+    letter-spacing: 1px
+    margin: 10px 20px
+
+.sub_evt_date
     text-align: center
-    // font size z year + margin 20px
-    transform: translateY(+39px)
+    margin: 0 30px
+    font-size: 15px
 
 .sub
+    position: relative
+    z-index: 1
     display: inline-block
 
 #evt_desc_text
-    height: 300px
+    margin-bottom: 100px
+
+.sub_nav
+    background: #14426B
+    display: inline-block
+    color: white
+    border-radius: 50%
+    width: 22px
+    height: 22px
+    letter-spacing: 2px
+    font-size: 13px
+
+.sub_nav_right
+    float: right
+    
 
 #sub_timeline
     overflow-x: auto
     overflow-y: hidden
     white-space: nowrap
-    height: 160px
+    height: 80px
+    margin-top: 40px
+    &.large
+        margin-left: auto
+        margin-right: auto
+        width: 76%
 
 
+.hor-l
+    height: 1px
+    background: #b3b3b3
 
-/* evt_desc */
+
+/* wysokosc zalezna od szerokosci */
+@mixin responsive-box($height)
+    position: relative
+    &:before
+        content: ''
+        display: block
+        padding-top: $height
+
 #evt_gallery
-    height: 350px
+    @include responsive-box(50%)
     width: 100%
-    margin-top: 60px
+    margin-top: 70px
     border-radius: 10px
     background: rgb(90, 90, 90)
 
 .evt_desc_p
     margin-top: 40px
     display: block
+    text-align: justify
 
 .evt_desc_p2
-    margin-right: 40px
-    margin-top: 40px
+    margin-top: 10px
+    margin-right: 20px 
     display: inline-block
     color: #14426B
+    
 
 /* evt_desc jest do js zeby dodawac i usuwac fade */
 /* evt_container do roznych wielkosci - gdy zmieniala sie wielkosc automatycznie dodawala mi sie klasa fade */
@@ -356,9 +410,10 @@ div#sub_timeline:hover::-webkit-scrollbar
         width: 65%
         left: 20%
     &.small
-        width: 70%
-        left: 21%
+        width: 85%
+        left: 10%
 
+//za pomoca sass mozna wszytskie trans wrzucic do jednej klasy 
 .evt_trans
     transition: all 0.7s, top 1ms
 
@@ -378,39 +433,55 @@ div#sub_timeline:hover::-webkit-scrollbar
 
 
 /* main */
+.home_b
+    z-index: 4
+    float: left
+    width: 25px
+    height: 10px
+    border-radius: 6px
+    border: 1px solid white
+    margin: 20px
+
 .user_d
     z-index: 4
     color: white
-    letter-spacing: 1px
-    font-family: OpenSans-Regular
+    letter-spacing: 2px
+    font-family: Raleway-Regular
+    font-size: 16px
     width: 20%
-    margin: 12px auto
+    margin: 15px auto
+    &.small
+        width: 60%
 
 .fade
   opacity: 0
 
 .text_fade
     position: sticky
-    z-index: return(2)
-    height: 150px
+    z-index: 2
+    height: 50px
     background: rgb(246,246,246)
+    
 
 #text_fade_top
     top: 50px
-    background: linear-gradient(0deg, rgba(246,246,246,0) 0%, rgba(246,246,246,1) 91%)
+    background: linear-gradient(180deg, rgba(246,246,246,1) 30%, rgba(246,246,246,0) 100%)
+    transform: translateY(-5px)
 
 #text_fade_bottom
     bottom: 0
-    background: linear-gradient(180deg, rgba(246,246,246,0) 0%, rgba(246,246,246,1) 91%)
+    background: linear-gradient(0deg, rgba(246,246,246,1) 30%, rgba(246,246,246,0) 100%)
+    transform: translateY(+5px)
 
 .trans
     transition: all 0.7s
 
 .evt_h
-    font-size: 30px
+    font-size: 35px
     margin: 0
     padding: 0
     letter-spacing: 2px
+    width: 70%
 
 .evt_p
     margin-top: 0
@@ -426,25 +497,28 @@ div#sub_timeline:hover::-webkit-scrollbar
     text-align: right
     letter-spacing: 2px
     &.small
-        z-index: return(-1)
+        z-index: -1
         opacity: 0
         
 
 .evt_text
+    margin-right: 10px
     float: right
     width: 40%
     height: 150px
     text-align: left
     transform: translateY(-45px)
     &.small
-        width: 65%
+        width: 64%
         transform: translateY(-50%)
 
 .year_open
     margin: 40px 8% !important
     opacity: 0.2
     &.small
-        margin: 40px 10% !important
+        opacity: 0.05
+        margin: 40px 0 !important
+        transform: translateX(-50%) rotateZ(-90deg)
 
 .year
     margin: 40px 50%
@@ -459,7 +533,8 @@ div#sub_timeline:hover::-webkit-scrollbar
     margin: 0 8% !important
     opacity: 0.2
     &.small
-        margin: 0 10% !important
+        opacity: 0.05
+        margin: 0 0% !important
 
 .circle
     margin: 0 50%
@@ -475,7 +550,8 @@ div#sub_timeline:hover::-webkit-scrollbar
     margin: 0 8% !important
     opacity: 0.2
     &.small
-        margin: 0 10% !important
+        opacity: 0.05
+        margin: 0 0% !important
 
 .line
     display: block
@@ -504,8 +580,11 @@ div#sub_timeline:hover::-webkit-scrollbar
     height: 200px
     margin: 60px 30%
     font-family: 'Raleway-Regular'
-
-#descr p
-    text-align: left
+    p
+        text-align: justify
+    &.small
+        margin: 60px 10%
+    &.medium
+        margin: 50px 15%
 
 </style>
