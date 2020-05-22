@@ -1,5 +1,7 @@
 import Home from '../components/Home.vue';
 import Timeline from '../components/Timeline.vue';
+import Login from '../components/Login.vue';
+import Creator from '../components/Creator.vue';
 
 // the routes are simply an array of objects
 const routes = [
@@ -16,6 +18,16 @@ const routes = [
         path: '/timeline/:id',
         name: 'timeline',
         component: Timeline
+    },
+    {
+        path: '/login',
+        name: 'login',
+        component: Login
+    },
+    {
+        path: '/creator',
+        name: 'creator',
+        component: Creator
     }
 ];
 

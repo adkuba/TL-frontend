@@ -82,7 +82,7 @@ export default {
     name: 'Timeline',
     props: [],
     created () {
-        var timelineApi = this.baseApi + 'timelines?id=' + this.$route.params.id;
+        var timelineApi = this.baseApi + 'timelines/public?id=' + this.$route.params.id;
         this.axios.get(timelineApi).then(response => {
             if (response.data != null){
                 this.timeline = response.data;
@@ -92,7 +92,7 @@ export default {
     },
     data() {
         return {
-        baseApi: 'http://localhost:8081/',
+        baseApi: 'http://localhost:8081/api/',
         open: false,
         timeline: null,
         events: null,
@@ -111,7 +111,7 @@ export default {
     },
     watch: {
         timeline: function(){
-            var eventsApi = this.baseApi + 'events?timelineId=' + this.timeline.id;
+            var eventsApi = this.baseApi + 'events/public?timelineId=' + this.timeline.id;
             this.axios.get(eventsApi).then(response => {this.events = response.data});
         },
         events: function(){
@@ -119,13 +119,13 @@ export default {
         },
         openedEvent: function(){
             if (this.openedEvent != null){
-                var subTimelineApi = this.baseApi + 'timelines/event?eventId=' + this.eventsParsed[this.openedEvent].id;
+                var subTimelineApi = this.baseApi + 'timelines/public/event?eventId=' + this.eventsParsed[this.openedEvent].id;
                 this.axios.get(subTimelineApi).then(response => {this.subTimeline = response.data});
             }
         },
         subTimeline: function(){
             if (this.subTimeline != "" && this.subTimeline != null){
-                var subTimelineEventsApi = this.baseApi + 'events?timelineId=' + this.subTimeline.id;
+                var subTimelineEventsApi = this.baseApi + 'events/public?timelineId=' + this.subTimeline.id;
                 this.axios.get(subTimelineEventsApi).then(response => {this.subTimelineEvents = response.data});
             }
         },
@@ -138,10 +138,12 @@ export default {
     methods: {
         subScroll(index){
             var subT = document.getElementById("sub_timeline");
-            var searchedE = subT.children[index+3];
-            //subT.offsetLeft to margin sub timeline przy .large
-            var newScroll = searchedE.offsetLeft - subT.offsetWidth/2 + searchedE.offsetWidth/2 - subT.offsetLeft;
-            subT.scroll({top: 0, left: newScroll, behavior: 'smooth'});
+            if (subT){
+                var searchedE = subT.children[index+3];
+                //subT.offsetLeft to margin sub timeline przy .large
+                var newScroll = searchedE.offsetLeft - subT.offsetWidth/2 + searchedE.offsetWidth/2 - subT.offsetLeft;
+                subT.scroll({top: 0, left: newScroll, behavior: 'smooth'});
+            }
         },
         parseTimeline(eventsList){
             var yearsParsed = [];
@@ -264,8 +266,8 @@ export default {
             window.scroll({top: this.newPos-100, left: 0, behavior: 'smooth'});
         }
     },
-    updated: function(){
-        
+    updated() {
+        this.subScroll(2)
     },
     destroyed () {
         window.removeEventListener('scroll', this.handleScroll);
@@ -433,14 +435,6 @@ div#sub_timeline::-webkit-scrollbar
 
 
 /* main */
-.home_b
-    z-index: 4
-    float: left
-    width: 25px
-    height: 10px
-    border-radius: 6px
-    border: 1px solid white
-    margin: 20px
 
 .user_d
     z-index: 4
@@ -572,6 +566,8 @@ div#sub_timeline::-webkit-scrollbar
 
 #timeline
     background: #F6F6F6
+    margin-top: 50px
+    padding: 40px 0
     font-family: 'Raleway-Regular'
     &.large
         margin: 0 10%
