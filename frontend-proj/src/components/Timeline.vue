@@ -267,7 +267,9 @@ export default {
         }
     },
     updated() {
-        this.subScroll(2)
+        if (this.openedSub == this.openedEvent){
+            this.subScroll(2)
+        }
     },
     destroyed () {
         window.removeEventListener('scroll', this.handleScroll);
@@ -550,7 +552,7 @@ div#sub_timeline::-webkit-scrollbar
 .line
     display: block
     margin: 0 50%
-    width: 3px
+    width: 2px
     height: 80px
     background: #303030
     &.small
@@ -567,7 +569,7 @@ div#sub_timeline::-webkit-scrollbar
 #timeline
     background: #F6F6F6
     margin-top: 50px
-    padding: 40px 0
+    padding: 100px 0
     font-family: 'Raleway-Regular'
     &.large
         margin: 0 10%
