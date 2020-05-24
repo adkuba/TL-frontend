@@ -1,26 +1,24 @@
 <template lang="html">
     <div>
-        <div class="menu">
-                <router-link :to="{ name: 'home' }" class="home_b"></router-link>
-                <router-link :to="{ name: 'creator' }" class="creator_b">Nowa strona</router-link>
-        </div>
 
-        <div v-if="!jwt" id="login" :class="$mq">
-            <form class="login_form">
+        <div v-if="!$store.state.jwt" id="login" :class="$mq">
+            <div class="login_form">
                 <h1>Sign in</h1>
-                <input class="fin" type="text" placeholder="Username"><br>
-                <input class="fin" type="password" placeholder="Password"><br><br>
-                <input class="fsubmit" type="submit" value="Login" v-on:click="jwt='d'">
+                <input class="fin" type="text" id="username" placeholder="Username"><br>
+                <input class="fin" type="password" id="password" placeholder="Password"><br><br>
+                <div class="fsignup error" v-if="errMessage">Can't login! {{ errMessage }}</div>
+                <div class="fsubmit" v-on:click="signin()"> Login </div>
                 <div class="fsignup">Sign up</div>
-            </form> 
+            </div> 
         </div>
 
-        <div v-if='jwt' id="settings" :class="$mq">
+        <div v-else id="settings" :class="$mq">
             <div class="s_item">
                 <div class="s_left">Dane</div>
                 <div class="s_right">
-                    <div>Email: akuba</div>
-                    <div>Haslo: **</div>
+                    <div class="daneh">Username:</div><div class="danev">{{ $store.state.jwt.username }}</div><br>
+                    <div class="daneh">Email:</div><div class="danev">{{ $store.state.jwt.email }}</div><br>
+                    <div class="daneh">Password:</div><div class="danev">Change password</div>
                 </div>
                 <div class="s_line"></div>
             </div>
@@ -38,17 +36,28 @@
 
   export default  {
     name: 'Login',
-    props: [],
     mounted () {
 
     },
     data () {
       return {
-          jwt: ''
+          baseApi: 'http://localhost:8081/api/',
+          response: '',
+          errMessage: ''
       }
     },
     methods: {
-
+        signin(){
+            var loginApi = this.baseApi + 'auth/signin';
+            this.axios.post(loginApi, {
+                username: document.getElementById("username").value, 
+                password: document.getElementById("password").value
+                })
+                .then(response => {this.$store.commit('set', response.data)})
+                .catch(error => {if (error.toString().includes("401")) this.errMessage = "Bad credentials" });
+            document.getElementById("password").value = '';
+            document.getElementById("username").value = '';
+        }
     },
     computed: {
 
@@ -59,14 +68,17 @@
 </script>
 
 <style scoped lang="sass">
-.creator_b
-    z-index: 4
-    color: white
-    background: #B8352D
-    float: right
-    margin: 15px
-    text-decoration: none
-    font-family: Raleway-Regular
+.error
+    color: #B8352D
+
+.daneh
+    display: inline-block
+    width: 20%
+    margin-bottom: 10px
+
+.danev
+    display: inline-block
+    color: #14426B
 
 .s_line
     width: 100%
@@ -134,10 +146,10 @@
         outline: none
 
 .fsubmit
-    margin-top: 10px
+    margin: 10px auto
     border-radius: 5px
-    height: 40px
     width: 300px
+    padding: 10px 0px
     font-family: 'Raleway-Regular'
     letter-spacing: 1px
     font-weight: bold

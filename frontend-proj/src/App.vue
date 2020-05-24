@@ -1,5 +1,10 @@
 <template>
   <div id="app">
+    <div class="menu">
+      <router-link :to="{ name: 'home' }" class="home_b"></router-link>
+      <router-link :to="{ name: 'creator' }" class="creator_b">Nowa strona</router-link>
+      <router-link :to="{ name: 'login' }" class="login_b"> login </router-link>
+    </div>
     <router-view></router-view>
   </div>
 </template>
@@ -41,6 +46,15 @@ export default {
     border-radius: 6px
     border: 1px solid white
     margin: 20px
+
+.creator_b
+    z-index: 4
+    color: white
+    background: #B8352D
+    float: right
+    margin: 15px
+    text-decoration: none
+    font-family: Raleway-Regular
 
 .menu
     z-index: 3

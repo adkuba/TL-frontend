@@ -1,9 +1,6 @@
 <template>
     <div v-if="eventsParsed">
-        <div class="menu">
-            <router-link :to="{ name: 'home' }" class="home_b"></router-link>
-            <div class="user_d" :class="$mq"> {{ timeline.user.fullName }} </div>
-        </div>
+        <div class="user_d" :class="$mq" v-if="!mockEvents"> {{ timeline.user.fullName }} </div>
 
         <div id="timeline" :class="$mq">
             <div id="text_fade_top" class="text_fade trans"></div>
@@ -80,15 +77,19 @@
 
 export default {
     name: 'Timeline',
-    props: [],
+    props: {
+        mockEvents: Array,
+    },
     created () {
-        var timelineApi = this.baseApi + 'timelines/public?id=' + this.$route.params.id;
-        this.axios.get(timelineApi).then(response => {
-            if (response.data != null){
-                this.timeline = response.data;
-            } else {
-                this.$router.push( {path: "/"} );
-            } }).catch(err => console.log(err));
+        if (!this.mockEvents){
+            var timelineApi = this.baseApi + 'timelines/public?id=' + this.$route.params.id;
+            this.axios.get(timelineApi).then(response => {
+                if (response.data != null){
+                    this.timeline = response.data;
+                } else {
+                    this.$router.push( {path: "/"} );
+                } }).catch(err => console.log(err));
+        }
     },
     data() {
         return {
@@ -110,17 +111,26 @@ export default {
         }
     },
     watch: {
+        mockEvents: function(){
+            this.events = this.mockEvents;
+            this.timeline = {descriptionTitle: 'pieski', description: 'lubie pieski'}
+        },
         timeline: function(){
-            var eventsApi = this.baseApi + 'events/public?timelineId=' + this.timeline.id;
-            this.axios.get(eventsApi).then(response => {this.events = response.data});
+            if (!this.mockEvents){
+                var eventsApi = this.baseApi + 'events/public?timelineId=' + this.timeline.id;
+                this.axios.get(eventsApi).then(response => {this.events = response.data});
+            }
         },
         events: function(){
             this.eventsParsed = this.parseTimeline(this.events).reverse();
         },
         openedEvent: function(){
             if (this.openedEvent != null){
-                var subTimelineApi = this.baseApi + 'timelines/public/event?eventId=' + this.eventsParsed[this.openedEvent].id;
-                this.axios.get(subTimelineApi).then(response => {this.subTimeline = response.data});
+                if(!this.mockEvents){
+                    var subTimelineApi = this.baseApi + 'timelines/public/event?eventId=' + this.eventsParsed[this.openedEvent].id;
+                    this.axios.get(subTimelineApi).then(response => {this.subTimeline = response.data});
+
+                } 
             }
         },
         subTimeline: function(){
@@ -439,13 +449,16 @@ div#sub_timeline::-webkit-scrollbar
 /* main */
 
 .user_d
-    z-index: 4
+    z-index: 3
+    position: fixed
     color: white
     letter-spacing: 2px
     font-family: Raleway-Regular
     font-size: 16px
     width: 20%
-    margin: 15px auto
+    margin: 15px 50%
+    transform: translate3d(-50%, +100%, 0) scale(2, 2)
+    zoom: 0.5
     &.small
         width: 60%
 
@@ -570,6 +583,7 @@ div#sub_timeline::-webkit-scrollbar
     background: #F6F6F6
     margin-top: 50px
     padding: 100px 0
+    padding-bottom: 300px
     font-family: 'Raleway-Regular'
     &.large
         margin: 0 10%
