@@ -39,7 +39,7 @@
                         <div class="sub_sline"></div>
                     </div>
 
-                    <div id="evt_gallery" v-if="false"></div>
+                    <div id="evt_gallery" :class="$mq" v-if="!false" ></div>
                 </div>
             </div>
             
@@ -47,7 +47,7 @@
             <div id="f_line" class="line trans" :class="$mq"></div>
             <div v-for="(evt, index) in eventsParsed" :key="index">
                 <div class="line trans" :class="$mq" v-if="evt.type == 'line'"></div>
-                <div class="evt" v-else-if="evt.type == 'circle'">
+                <div class="evt" v-else-if="evt.type == 'circle'" :id="'circle'+index">
                     <div class="evt_date trans" :class="$mq" v-on:click="moveLeft(index)"> {{ evt.date.slice(0,7) }} </div>
                     <div class="circle trans" :class="$mq" v-on:click="move(index)"></div>
                     <div class="evt_text trans" :class="$mq" v-on:click="moveLeft(index)">
@@ -222,12 +222,8 @@ export default {
                 this.subTimelineEvents = null;
                 this.subTimelineEventsParsed = null;
 
-                //160 to odstep od poczatku stront - menu
-                this.newPos = window.scrollY + 160;
-                //-220 to margines, 870 to wysokosc opisu CZY NAPEWNO TYLE?
-                if (this.newPos + 934 > document.getElementById("descr").offsetTop - 220){
-                    this.newPos -= this.newPos + 870 - (document.getElementById("descr").offsetTop - 220);
-                }
+                var distanceTop = window.pageYOffset + document.getElementById("circle"+index).getBoundingClientRect().top;
+                this.newPos = distanceTop - 100;
                 document.getElementById("evt_container").style.top = this.newPos + "px";
                 window.scroll({top: this.newPos-100, left: 0, behavior: 'smooth'});
 
@@ -385,16 +381,12 @@ div#sub_timeline::-webkit-scrollbar
     background: #b3b3b3
 
 
-/* wysokosc zalezna od szerokosci */
-@mixin responsive-box($height)
-    position: relative
-    &:before
-        content: ''
-        display: block
-        padding-top: $height
-
 #evt_gallery
-    @include responsive-box(50%)
+    height: 200px
+    &.medium
+        height: 180px
+    &.small
+        height: 150px
     width: 100%
     margin-top: 70px
     border-radius: 10px
@@ -582,11 +574,19 @@ div#sub_timeline::-webkit-scrollbar
 #timeline
     background: #F6F6F6
     margin-top: 50px
-    padding: 100px 0
-    padding-bottom: 300px
+    //wyskokosc evt desc to ok 866 desktop, 1149 mobile
+    //pojawia sie 100px nad circle, po circle musza byc dwie linie czyli 160px
+    //czyli 866-260px = 606 padding bottom
+    //w praktyce gdzies 450 starczy
+    padding-top: 100px
+    padding-bottom: 450px
     font-family: 'Raleway-Regular'
     &.large
         margin: 0 10%
+    &.small
+        padding-bottom: 750px
+    &.medium
+        padding-bottom: 520px
 
 #descr
     height: 200px

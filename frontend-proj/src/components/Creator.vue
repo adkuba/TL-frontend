@@ -43,7 +43,6 @@
             </div>
             <div class="masterC" v-on:click="preview()">Preview</div>
             <div class="masterC">Submit</div>
-            <div class="p_line" v-if="eventsParsed.length > 0"></div>
         </div>
         <div style="margin-top: 100px" v-else>Login!!</div>
 
@@ -264,7 +263,6 @@
 //kolejnosc klas ma znaczenie te nizej sa wazniejsze
 #creator
     padding: 1px 0
-    padding-bottom: 400px
     margin: 0 10%
     background: #f6f6f6
 
