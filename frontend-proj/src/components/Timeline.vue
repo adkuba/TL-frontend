@@ -25,7 +25,7 @@
                     </div>
                     
                     <div id="sub_timeline" :class="$mq" v-if="subTimelineEventsParsed">
-                        <div class="sub_fade sub_fade_left"></div>
+                        <div class="sub_fade sub_fade_left" :class="$mq"></div>
                         <div class="sub_fade sub_fade_right" :class="$mq"></div>
                         <div class="sub_sline"></div>
                         <div class="sub" v-for="(evt, index) in subTimelineEventsParsed" :key="index">
@@ -39,7 +39,19 @@
                         <div class="sub_sline"></div>
                     </div>
 
-                    <div id="evt_gallery" :class="$mq" v-if="!false" ></div>
+                    <div class="gallery-container" v-if="openedSub">
+                        <div class="gallery-controls" @mousedown="galleryScroll(0, 'sub')" @mouseleave="galleryScrollStop()" @mouseup="galleryScrollStop()" @touchstart="galleryScroll(0, 'sub')" @touchend="galleryScrollStop()" @touchcancel="galleryScrollStop()" v-if="eventsSub[openedSub].pictures">&#8249;</div>
+                        <div id="sub_gallery" class="gallery" :class="$mq" v-if="eventsSub[openedSub].pictures">
+                            <div class="gallery_fade gallery_fade_left" :class="$mq"></div>
+                            <div class="gallery_fade gallery_fade_right" :class="$mq"></div>
+                            <div class="gallery-padding"></div>
+                            <div class="image-container" v-for="(img, index) in eventsSub[openedSub].pictures" :key="index">
+                                <img class="image" :src="img">
+                            </div>
+                            <div class="gallery-padding"></div>
+                        </div>
+                        <div class="gallery-controls" @mousedown="galleryScroll(1, 'sub')" @mouseleave="galleryScrollStop()" @mouseup="galleryScrollStop()" @touchstart="galleryScroll(1, 'sub')" @touchend="galleryScrollStop()" @touchcancel="galleryScrollStop()" v-if="eventsSub[openedSub].pictures">&#8250;</div>
+                    </div>
                 </div>
             </div>
             
@@ -68,6 +80,19 @@
         <div id="descr" :class="$mq">
             <h1> {{ timeline.descriptionTitle }} </h1>
             <p> {{ timeline.description }} </p>
+        </div>
+        <div class="gallery-container" v-if="timeline.pictures" >
+            <div class="gallery-controls" @mousedown="galleryScroll(0, 'main')" @mouseleave="galleryScrollStop()" @mouseup="galleryScrollStop()" @touchstart="galleryScroll(0, 'main')" @touchend="galleryScrollStop()" @touchcancel="galleryScrollStop()" >&#8249;</div>
+            <div id="tl_gallery" class="gallery" :class="$mq">
+                <div class="gallery_fade gallery_fade_left" :class="$mq"></div>
+                <div class="gallery_fade gallery_fade_right" :class="$mq"></div>
+                <div class="gallery-padding"></div>
+                <div class="image-container" v-for="(img, index) in timeline.pictures" :key="index">
+                    <img class="image" :src="img">
+                </div>
+                <div class="gallery-padding"></div>
+            </div>
+            <div class="gallery-controls" @mousedown="galleryScroll(1, 'main')" @mouseleave="galleryScrollStop()" @mouseup="galleryScrollStop()" @touchstart="galleryScroll(1, 'main')" @touchend="galleryScrollStop()" @touchcancel="galleryScrollStop()" >&#8250;</div>
         </div>
     </div>
 </template>
@@ -98,6 +123,7 @@ export default {
         timeline: null,
         events: null,
         newPos: null,
+        galleryScrolling: false,
 
         eventsParsed: null,
         eventsSub: null,
@@ -128,15 +154,18 @@ export default {
             if (this.openedEvent != null){
                 if(!this.mockEvents){
                     var subTimelineApi = this.baseApi + 'timelines/public/event?eventId=' + this.eventsParsed[this.openedEvent].id;
-                    this.axios.get(subTimelineApi).then(response => {this.subTimeline = response.data});
-
+                    this.axios.get(subTimelineApi)
+                    .then(response => {this.subTimeline = response.data})
+                    .catch(err => console.log(err));
+                    //czasem moze nie byc subTimeline wtedy catch
                 } 
             }
         },
         subTimeline: function(){
             if (this.subTimeline != "" && this.subTimeline != null){
                 var subTimelineEventsApi = this.baseApi + 'events/public?timelineId=' + this.subTimeline.id;
-                this.axios.get(subTimelineEventsApi).then(response => {this.subTimelineEvents = response.data});
+                this.axios.get(subTimelineEventsApi)
+                .then(response => {this.subTimelineEvents = response.data});
             }
         },
         subTimelineEvents: function(){
@@ -146,6 +175,36 @@ export default {
         }
     },
     methods: {
+        galleryScroll(direction, type){
+            if (!this.galleryScrolling){
+                this.galleryScrolling = setInterval(() => this.galleryScrollAction(direction, type), 5)
+            }
+        },
+        galleryScrollStop(){
+            clearInterval(this.galleryScrolling)
+            this.galleryScrolling = false
+
+        },
+        galleryScrollAction(direction, type){
+            if (type == 'sub'){
+                var gallery = document.getElementById("sub_gallery");
+                if (direction == 0){
+                    gallery.scroll(gallery.scrollLeft-2, 0)
+
+                } else {
+                    gallery.scroll(gallery.scrollLeft+2, 0)
+                }
+
+            } else {
+                gallery = document.getElementById("tl_gallery");
+                if (direction == 0){
+                    gallery.scroll(gallery.scrollLeft-2, 0)
+
+                } else {
+                    gallery.scroll(gallery.scrollLeft+2, 0)
+                }
+            }
+        },
         subScroll(index){
             var subT = document.getElementById("sub_timeline");
             if (subT){
@@ -287,6 +346,70 @@ export default {
 
 
 <style scoped lang="sass">
+.gallery-padding
+    display: inline-block
+    width: 20px
+
+.gallery_fade
+    z-index: 2
+    position: absolute
+    width: 60px
+    height: 160px
+    background: rgb(255,255,255)
+    #evt_container &
+        background: rgb(246,246,246)
+
+.gallery_fade_left
+    background: linear-gradient(90deg, rgba(255,255,255,1) 50%, rgba(255,255,255,0) 100%)
+    transform: translateX(-2px)
+    #evt_container &
+        background: linear-gradient(270deg, rgba(246,246,246,0) 0%, rgba(246,246,246,1) 60%)
+
+.gallery_fade_right
+    right: 23%
+    background: linear-gradient(-90deg, rgba(255,255,255,1) 50%, rgba(255,255,255,0) 100%)
+    transform: translateX(+2px)
+    #evt_container &
+        right: 5%
+        background: linear-gradient(-270deg, rgba(246,246,246,0) 0%, rgba(246,246,246,1) 60%)
+        
+
+.gallery-controls
+    color: #303030
+    display: inline-block
+    text-align: center
+    font-family: none
+    vertical-align: top
+    margin-top: 75px
+    transform: translateY(-50%)
+    width: 5%
+    font-size: 35px
+
+.image-container
+    display: inline-block
+    margin: 0 20px
+
+.image
+    height: 150px
+    border-radius: 10px
+
+.gallery
+    display: inline-block
+    overflow-x: auto
+    overflow-y: hidden
+    white-space: nowrap
+    width: 90%
+    &::-webkit-scrollbar
+        display: none
+
+.gallery-container
+    width: 60%
+    margin: 250px auto
+    #evt_container &
+        width: 110%
+        transform: translateX(-5%)
+        margin: 150px 0
+
 /* sub_timeline */
 div#sub_timeline::-webkit-scrollbar
     display: none
@@ -344,7 +467,7 @@ div#sub_timeline::-webkit-scrollbar
 
 .sub
     position: relative
-    z-index: 1
+    z-index: 3
     display: inline-block
 
 #evt_desc_text
@@ -380,17 +503,6 @@ div#sub_timeline::-webkit-scrollbar
     height: 1px
     background: #b3b3b3
 
-
-#evt_gallery
-    height: 200px
-    &.medium
-        height: 180px
-    &.small
-        height: 150px
-    width: 100%
-    margin-top: 70px
-    border-radius: 10px
-    background: rgb(90, 90, 90)
 
 .evt_desc_p
     margin-top: 40px
