@@ -3,11 +3,12 @@
         <div class="user_d" :class="$mq" v-if="!mockEvents"> {{ timeline.user.fullName }} </div>
 
         <div id="image-viewer">
-            <div class="viewer viewer-prev" v-on:click="imageViewerScroll(mainImageIndex-1)">&#8249;</div>
-            <img :src="mainImages[mainImageIndex]" id="main-image" v-if="mainImages">
-            <div class="viewer" v-on:click="imageViewerScroll(mainImageIndex+1)">
-                <div class="gallery-exit" v-on:click="closeImage()">x</div>
-                &#8250;
+            <div class="viewer viewer-prev" :class="$mq" v-on:click="imageViewerScroll(mainImageIndex-1)">
+                <div class="arrow"> &#8249; </div>
+            </div>
+            <img v-on:click="closeImage()" :src="mainImages[mainImageIndex]" id="main-image" v-if="mainImages">
+            <div class="viewer" :class="$mq" v-on:click="imageViewerScroll(mainImageIndex+1)">
+                <div class="arrow right-arrow"> &#8250; </div>
             </div>
         </div>
 
@@ -305,7 +306,6 @@ export default {
         },
         moveLeft(index) {
             if (!this.open){
-                //zerujemy przed startem
                 this.subTimeline = null;
                 this.subTimelineEvents = null;
                 this.subTimelineEventsParsed = null;
@@ -375,45 +375,52 @@ export default {
 
 
 <style scoped lang="sass">
-.gallery-exit
+.right-arrow
+    right: 0
+
+.arrow
+    top: calc(50% - 40px)
+    margin: 10px
     position: absolute
-    top: 0
-    text-align: right
-    width: 95px
-    margin-top: 80px
-    font-family: Raleway-Regular
-    font-size: 22px
-    font-weight: bold
-    color: white 
 
 .viewer-prev
     transform: translateX(0) !important
     background: linear-gradient(-90deg, rgba(48,48,48,0) 0%, rgba(48,48,48,1) 100%) !important
 
 .viewer
-    transition: all 0.5s
+    transition: all 0.2s
     position: absolute
     display: inline-block
-    color: rgba(0,0,0,0)
-    padding: 40vh 0
+    color: white
+    top: 0
+    height: calc(100% - 50px)
     font-size: 60px
     width: 100px
     z-index: 5
     transform: translateX(-100px)
-    opacity: 0
+    opacity: 0.4
     background: rgb(48,48,48)
     background: linear-gradient(90deg, rgba(48,48,48,0) 0%, rgba(48,48,48,1) 100%)
-    &:hover
-        color: white
-        opacity: 0.8
-        
+    //tylko dla urzadzen obslugujacych hover
+    @media(hover: hover) and (pointer: fine)
+        &:hover
+            opacity: 0.6
+    &:active
+        opacity: 0.6
+    &.medium
+        width: 80px
+        transform: translateX(-80px)
+    &.small
+        width: 50px
+        transform: translateX(-50px)
 
 #main-image
     border-radius: 5px
     display: inline-block
     height: 80%
+    max-width: 100%
     object-fit: contain
-    margin-top: 80px
+    margin-top: 50px
 
 #image-viewer
     user-select: none
@@ -442,9 +449,13 @@ export default {
     font-size: 35px
     font-family: none
     text-align: center
-    color: rgba(0, 0, 0, 0)
-    &:hover
+    color: #808080
+    &:active
         color: #303030
+    &.small
+        width: 40px
+    &.medium
+        width: 60px
     #evt_container &
         background: rgb(246,246,246)
 
@@ -455,11 +466,10 @@ export default {
         background: linear-gradient(270deg, rgba(246,246,246,0) 0%, rgba(246,246,246,1) 60%)
 
 .gallery_fade_right
-    right: 20%
+    right: 0
     background: linear-gradient(-90deg, rgba(255,255,255,1) 50%, rgba(255,255,255,0) 100%)
     transform: translateX(+2px) translateY(-2px)
     #evt_container &
-        right: 0
         background: linear-gradient(-270deg, rgba(246,246,246,0) 0%, rgba(246,246,246,1) 60%)
 
 
@@ -482,14 +492,19 @@ export default {
         display: none
 
 .gallery-container
-    width: 60%
-    margin: 250px auto
+    z-index: 2
+    position: relative
+    margin: 250px 20%
+    &.medium
+        margin: 250px 10%
+    &.small
+        margin: 100px 0
     #evt_container &
         width: 110%
         transform: translateX(-5%)
         margin: 150px 0
 
-/* sub_timeline */
+
 div#sub_timeline::-webkit-scrollbar
     display: none
 
@@ -627,9 +642,6 @@ div#sub_timeline::-webkit-scrollbar
     transform: translateY(+5px)
 
 
-
-/* main */
-
 .user_d
     z-index: 3
     position: fixed
@@ -639,6 +651,7 @@ div#sub_timeline::-webkit-scrollbar
     font-size: 16px
     width: 20%
     margin: 15px 50%
+    top: 0
     transform: translate3d(-50%, +100%, 0) scale(2, 2)
     zoom: 0.5
     &.small
@@ -787,7 +800,7 @@ div#sub_timeline::-webkit-scrollbar
         text-align: justify
     &.small
         margin: 60px 10%
-        height: 450px
+        height: 500px
     &.medium
         margin: 50px 15%
 

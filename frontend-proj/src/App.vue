@@ -2,8 +2,8 @@
   <div id="app">
     <div class="menu">
       <router-link :to="{ name: 'home' }" class="home_b"></router-link>
-      <router-link :to="{ name: 'creator' }" class="creator_b">Nowa strona</router-link>
-      <router-link :to="{ name: 'login' }" class="login_b"> login </router-link>
+      <router-link :to="{ name: 'creator' }" class="creator_b">+</router-link>
+      <router-link :to="{ name: 'login' }" class="login_b"> log </router-link>
     </div>
     <router-view></router-view>
   </div>
