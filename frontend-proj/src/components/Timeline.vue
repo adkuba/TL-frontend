@@ -2,6 +2,15 @@
     <div v-if="eventsParsed">
         <div class="user_d" :class="$mq" v-if="!mockEvents"> {{ timeline.user.fullName }} </div>
 
+        <div id="image-viewer">
+            <div class="viewer viewer-prev" v-on:click="imageViewerScroll(mainImageIndex-1)">&#8249;</div>
+            <img :src="mainImages[mainImageIndex]" id="main-image" v-if="mainImages">
+            <div class="viewer" v-on:click="imageViewerScroll(mainImageIndex+1)">
+                <div class="gallery-exit" v-on:click="closeImage()">x</div>
+                &#8250;
+            </div>
+        </div>
+
         <div id="timeline" :class="$mq">
             <div id="text_fade_top" class="text_fade trans"></div>
 
@@ -39,18 +48,16 @@
                         <div class="sub_sline"></div>
                     </div>
 
-                    <div class="gallery-container" v-if="openedSub">
-                        <div class="gallery-controls" @mousedown="galleryScroll(0, 'sub')" @mouseleave="galleryScrollStop()" @mouseup="galleryScrollStop()" @touchstart="galleryScroll(0, 'sub')" @touchend="galleryScrollStop()" @touchcancel="galleryScrollStop()" v-if="eventsSub[openedSub].pictures">&#8249;</div>
+                    <div class="gallery-container" :class="$mq" v-if="openedSub">
                         <div id="sub_gallery" class="gallery" :class="$mq" v-if="eventsSub[openedSub].pictures">
-                            <div class="gallery_fade gallery_fade_left" :class="$mq"></div>
-                            <div class="gallery_fade gallery_fade_right" :class="$mq"></div>
+                            <div class="gallery_fade gallery_fade_left" :class="$mq" @mousedown="galleryScroll(0, 'sub')" @mouseleave="galleryScrollStop()" @mouseup="galleryScrollStop()" @touchstart="galleryScroll(0, 'sub')" @touchend="galleryScrollStop()" @touchcancel="galleryScrollStop()" >&#8249;</div>
+                            <div class="gallery_fade gallery_fade_right" :class="$mq" @mousedown="galleryScroll(1, 'sub')" @mouseleave="galleryScrollStop()" @mouseup="galleryScrollStop()" @touchstart="galleryScroll(1, 'sub')" @touchend="galleryScrollStop()" @touchcancel="galleryScrollStop()" >&#8250;</div>
                             <div class="gallery-padding"></div>
                             <div class="image-container" v-for="(img, index) in eventsSub[openedSub].pictures" :key="index">
-                                <img class="image" :src="img">
+                                <img class="image" :class="$mq" :src="img" v-on:click="openImage(eventsSub[openedSub].pictures, index)">
                             </div>
                             <div class="gallery-padding"></div>
                         </div>
-                        <div class="gallery-controls" @mousedown="galleryScroll(1, 'sub')" @mouseleave="galleryScrollStop()" @mouseup="galleryScrollStop()" @touchstart="galleryScroll(1, 'sub')" @touchend="galleryScrollStop()" @touchcancel="galleryScrollStop()" v-if="eventsSub[openedSub].pictures">&#8250;</div>
                     </div>
                 </div>
             </div>
@@ -81,18 +88,16 @@
             <h1> {{ timeline.descriptionTitle }} </h1>
             <p> {{ timeline.description }} </p>
         </div>
-        <div class="gallery-container" v-if="timeline.pictures" >
-            <div class="gallery-controls" @mousedown="galleryScroll(0, 'main')" @mouseleave="galleryScrollStop()" @mouseup="galleryScrollStop()" @touchstart="galleryScroll(0, 'main')" @touchend="galleryScrollStop()" @touchcancel="galleryScrollStop()" >&#8249;</div>
+        <div class="gallery-container" :class="$mq" v-if="timeline.pictures" >
             <div id="tl_gallery" class="gallery" :class="$mq">
-                <div class="gallery_fade gallery_fade_left" :class="$mq"></div>
-                <div class="gallery_fade gallery_fade_right" :class="$mq"></div>
+                <div class="gallery_fade gallery_fade_left" :class="$mq" @mousedown="galleryScroll(0, 'main')" @mouseleave="galleryScrollStop()" @mouseup="galleryScrollStop()" @touchstart="galleryScroll(0, 'main')" @touchend="galleryScrollStop()" @touchcancel="galleryScrollStop()" >&#8249;</div>
+                <div class="gallery_fade gallery_fade_right" :class="$mq" @mousedown="galleryScroll(1, 'main')" @mouseleave="galleryScrollStop()" @mouseup="galleryScrollStop()" @touchstart="galleryScroll(1, 'main')" @touchend="galleryScrollStop()" @touchcancel="galleryScrollStop()" >&#8250;</div>
                 <div class="gallery-padding"></div>
                 <div class="image-container" v-for="(img, index) in timeline.pictures" :key="index">
-                    <img class="image" :src="img">
+                    <img class="image" :class="$mq" :src="img" v-on:click="openImage(timeline.pictures, index)" >
                 </div>
                 <div class="gallery-padding"></div>
             </div>
-            <div class="gallery-controls" @mousedown="galleryScroll(1, 'main')" @mouseleave="galleryScrollStop()" @mouseup="galleryScrollStop()" @touchstart="galleryScroll(1, 'main')" @touchend="galleryScrollStop()" @touchcancel="galleryScrollStop()" >&#8250;</div>
         </div>
     </div>
 </template>
@@ -124,6 +129,9 @@ export default {
         events: null,
         newPos: null,
         galleryScrolling: false,
+
+        mainImages: null,
+        mainImageIndex: null,
 
         eventsParsed: null,
         eventsSub: null,
@@ -175,6 +183,27 @@ export default {
         }
     },
     methods: {
+        imageViewerScroll(newIndex){
+            if (this.mainImages){
+                if (newIndex >= this.mainImages.length){
+                    newIndex=this.mainImages.length-1
+                }
+                if (newIndex < 0){
+                    newIndex = 0
+                }
+                this.mainImageIndex = newIndex
+            }
+        },
+        closeImage(){
+            document.getElementById("image-viewer").style.display = "none"
+            this.mainImages = null
+            this.mainImageIndex = null
+        },
+        openImage(images, index){
+            this.mainImages = images
+            this.mainImageIndex = index
+            document.getElementById("image-viewer").style.display = "block"
+        },
         galleryScroll(direction, type){
             if (!this.galleryScrolling){
                 this.galleryScrolling = setInterval(() => this.galleryScrollAction(direction, type), 5)
@@ -346,44 +375,93 @@ export default {
 
 
 <style scoped lang="sass">
+.gallery-exit
+    position: absolute
+    top: 0
+    text-align: right
+    width: 95px
+    margin-top: 80px
+    font-family: Raleway-Regular
+    font-size: 22px
+    font-weight: bold
+    color: white 
+
+.viewer-prev
+    transform: translateX(0) !important
+    background: linear-gradient(-90deg, rgba(48,48,48,0) 0%, rgba(48,48,48,1) 100%) !important
+
+.viewer
+    transition: all 0.5s
+    position: absolute
+    display: inline-block
+    color: rgba(0,0,0,0)
+    padding: 40vh 0
+    font-size: 60px
+    width: 100px
+    z-index: 5
+    transform: translateX(-100px)
+    opacity: 0
+    background: rgb(48,48,48)
+    background: linear-gradient(90deg, rgba(48,48,48,0) 0%, rgba(48,48,48,1) 100%)
+    &:hover
+        color: white
+        opacity: 0.8
+        
+
+#main-image
+    border-radius: 5px
+    display: inline-block
+    height: 80%
+    object-fit: contain
+    margin-top: 80px
+
+#image-viewer
+    user-select: none
+    color: white
+    position: fixed
+    z-index: 3
+    background: #303030
+    width: 100%
+    height: calc( 100% - 50px )
+    bottom: 0
+    left: 0
+    display: none
+
 .gallery-padding
     display: inline-block
-    width: 20px
+    width: 50px
 
 .gallery_fade
+    transition: all 0.5s
     z-index: 2
     position: absolute
-    width: 60px
+    width: 80px
     height: 160px
+    line-height: 150px
     background: rgb(255,255,255)
+    font-size: 35px
+    font-family: none
+    text-align: center
+    color: rgba(0, 0, 0, 0)
+    &:hover
+        color: #303030
     #evt_container &
         background: rgb(246,246,246)
 
 .gallery_fade_left
     background: linear-gradient(90deg, rgba(255,255,255,1) 50%, rgba(255,255,255,0) 100%)
-    transform: translateX(-2px)
+    transform: translateX(-2px) translateY(-2px)
     #evt_container &
         background: linear-gradient(270deg, rgba(246,246,246,0) 0%, rgba(246,246,246,1) 60%)
 
 .gallery_fade_right
-    right: 23%
+    right: 20%
     background: linear-gradient(-90deg, rgba(255,255,255,1) 50%, rgba(255,255,255,0) 100%)
-    transform: translateX(+2px)
+    transform: translateX(+2px) translateY(-2px)
     #evt_container &
-        right: 5%
+        right: 0
         background: linear-gradient(-270deg, rgba(246,246,246,0) 0%, rgba(246,246,246,1) 60%)
-        
 
-.gallery-controls
-    color: #303030
-    display: inline-block
-    text-align: center
-    font-family: none
-    vertical-align: top
-    margin-top: 75px
-    transform: translateY(-50%)
-    width: 5%
-    font-size: 35px
 
 .image-container
     display: inline-block
@@ -394,11 +472,12 @@ export default {
     border-radius: 10px
 
 .gallery
+    user-select: none
     display: inline-block
     overflow-x: auto
     overflow-y: hidden
     white-space: nowrap
-    width: 90%
+    width: 100%
     &::-webkit-scrollbar
         display: none
 
@@ -516,8 +595,6 @@ div#sub_timeline::-webkit-scrollbar
     color: #14426B
     
 
-/* evt_desc jest do js zeby dodawac i usuwac fade */
-/* evt_container do roznych wielkosci - gdy zmieniala sie wielkosc automatycznie dodawala mi sie klasa fade */
 #evt_container
     position: absolute
     text-align: left
@@ -535,7 +612,8 @@ div#sub_timeline::-webkit-scrollbar
 .evt_trans
     transition: all 0.7s, top 1ms
 
-.evt_button 
+.evt_button
+    user-select: none
     z-index: 2
     position: absolute
     right: 0
@@ -604,6 +682,7 @@ div#sub_timeline::-webkit-scrollbar
     margin: 40px auto
 
 .evt_date
+    user-select: none
     position: relative
     float: left
     width: 40%
@@ -708,6 +787,7 @@ div#sub_timeline::-webkit-scrollbar
         text-align: justify
     &.small
         margin: 60px 10%
+        height: 450px
     &.medium
         margin: 50px 15%
 
