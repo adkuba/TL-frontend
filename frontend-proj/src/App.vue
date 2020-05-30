@@ -3,7 +3,10 @@
     <div class="menu">
       <router-link :to="{ name: 'home' }" class="home_b"></router-link>
       <router-link :to="{ name: 'creator' }" class="creator_b">+</router-link>
-      <router-link :to="{ name: 'login' }" class="login_b"> log </router-link>
+      <router-link :to="{ name: 'settings' }" class="login_b">
+        <div v-if="!$store.state.jwt"> login </div>
+        <div v-else> settings </div>
+      </router-link>
     </div>
     <router-view></router-view>
   </div>
@@ -12,7 +15,36 @@
 <script>
 
 export default {
-  name: 'App',
+    name: 'App',
+    created(){
+        this.refreshToken()
+        this.tokenRefresh = setInterval(() => this.refreshTry(), 840000)
+
+    },
+    data(){
+        return {
+        baseApi: 'http://localhost:8081/api/',
+        tokenRefresh: null
+        }
+    },
+    methods: {
+        refreshTry(){
+            //if token exists and outdated(14min - 1min before expire)
+            if(this.$store.state.jwt){
+                var expires = new Date(this.$store.state.jwt.creationTime)
+                var now = new Date()
+                if (now.getTime() - expires.getTime() >= 840000){
+                    this.refreshToken()
+                }
+            }
+        },
+        refreshToken(){
+            var refreshApi = this.baseApi + 'auth/refreshToken'
+            this.axios.post(refreshApi, {}, {withCredentials: true})
+                    .then(response => {this.$store.commit('set', response.data)})
+                    .catch(error => {console.log(error)})
+        }
+    }
 }
 
 </script>
