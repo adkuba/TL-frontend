@@ -643,19 +643,15 @@ div#sub_timeline::-webkit-scrollbar
 
 
 .user_d
-    z-index: 3
+    z-index: 4
     position: fixed
     color: white
     letter-spacing: 2px
     font-family: Raleway-Regular
     font-size: 16px
-    width: 20%
-    margin: 15px 50%
-    top: 0
-    transform: translate3d(-50%, +100%, 0) scale(2, 2)
-    zoom: 0.5
-    &.small
-        width: 60%
+    top: 16px
+    left: 50%
+    transform: translateX(-50%) scale(1.005)
 
 .fade
   opacity: 0

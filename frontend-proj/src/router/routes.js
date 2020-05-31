@@ -3,6 +3,8 @@ import Timeline from '../components/Timeline.vue';
 import Login from '../components/Login.vue';
 import Creator from '../components/Creator.vue';
 import Settings from '../components/Settings.vue';
+import EmailChange from '../components/EmailChange.vue';
+import NameChange from '../components/NameChange.vue';
 
 // the routes are simply an array of objects
 const routes = [
@@ -38,6 +40,22 @@ const routes = [
         path: '/settings',
         name: 'settings',
         component: Settings,
+        meta: {
+            requiresAuth: true
+          }
+    },
+    {
+        path: '/emailChange',
+        name: 'emailChange',
+        component: EmailChange,
+        meta: {
+            requiresAuth: true
+          }
+    },
+    {
+        path: '/nameChange',
+        name: 'nameChange',
+        component: NameChange,
         meta: {
             requiresAuth: true
           }

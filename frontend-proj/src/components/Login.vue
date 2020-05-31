@@ -1,15 +1,21 @@
 <template lang="html">
     <div>
-
         <div v-if="!$store.state.jwt" id="login" :class="$mq">
-            <div class="login_form">
-                <h1>Sign in</h1>
+            <form action="javascript:void(0);" class="login_form" :class="$mq">
+                <h1>{{action}}</h1>
                 <input class="fin" type="text" id="username" placeholder="Username"><br>
-                <input class="fin" type="password" id="password" placeholder="Password"><br><br>
-                <div class="fsignup error" v-if="errMessage">Can't login! {{ errMessage }}</div>
-                <div class="fsubmit" v-on:click="signin()"> Login </div>
-                <div class="fsignup">Sign up</div>
-            </div>
+                <div v-if="action=='Sign up'">
+                    <input class="fin" type="text" id="email" placeholder="Email"><br>
+                </div>
+                <input class="fin" type="password" id="password" placeholder="Password"><br>
+                <div v-if="action=='Sign up'">
+                    <input class="fin" type="password" id="repeat-password" placeholder="Repeat password"><br>
+                </div>
+                <br v-if="!errMessage">
+                <div class="fsignup error" v-if="errMessage">{{ errMessage }}</div>
+                <input type="submit" value="Submit" class="fsubmit" v-on:click="signin()">
+                <div class="fsignup" v-on:click="signupShow()">{{signupText}}</div>
+            </form>
         </div>
     </div>
 </template>
@@ -35,27 +41,86 @@
       return {
           baseApi: 'http://localhost:8081/api/',
           errMessage: '',
-          routerPath: null
+          routerPath: null,
+          action: 'Sign in',
+          signupText: 'Sign up'
       }
     },
     methods: {
         signin(){
             let self = this;
-            var loginApi = this.baseApi + 'auth/signin'
-            this.axios.post(loginApi, {
-                username: document.getElementById("username").value, 
-                password: document.getElementById("password").value
-                },
-                {withCredentials: true})
-                .then(response => {this.$store.commit('set', response.data); self.$router.push({ path: this.routerPath })})
-                .catch(error => {if (error.toString().includes("401")) this.errMessage = "Bad credentials" })
-            document.getElementById("password").value = ''
-            document.getElementById("username").value = ''
+
+            if(this.action == "Sign in"){
+                var loginApi = this.baseApi + 'auth/signin'
+                this.axios.post(loginApi, {
+                    username: document.getElementById("username").value, 
+                    password: document.getElementById("password").value
+                    },
+                    {withCredentials: true})
+                    .then(response => {this.$store.commit('set', response.data); self.$router.push({ path: this.routerPath })})
+                    .catch(error => {if (error.toString().includes("401")) this.errMessage = "Can't login! Bad credentials" })
+                this.clearData()
+
+            } else {
+                var signupApi = this.baseApi + 'auth/signup'
+                var passwordValue = document.getElementById("password").value
+
+                if (passwordValue != document.getElementById("repeat-password").value){
+                    this.errMessage = "Passwords not matching"
+                    this.clearData(true)
+                    return
+                }
+
+                this.axios.post(signupApi, {
+                    username: document.getElementById("username").value,
+                    password: passwordValue,
+                    email: document.getElementById("email").value
+                }, {
+                    withCredentials: true
+                })
+                .then(() => {
+                    self.errMessage = "Created!"
+                    self.signupShow()
+                    self.clearData()
+                })
+                .catch(error => {
+                    console.log(error)
+                    self.clearData()
+                })
+            }
+            
         },
         redirect(){
             if(this.$store.state.jwt){
                 this.$router.push({ path: this.routerPath })
             }
+        },
+        signupShow(){
+            if(this.signupText == 'Sign in'){
+                this.action = 'Sign in'
+                this.signupText = 'Sign up'
+
+            } else {
+                this.signupText = 'Sign in'
+                this.action = 'Sign up'
+            }
+        },
+        clearData(onlyPassword = false){
+            if (onlyPassword){
+                document.getElementById("password").value = ''
+                document.getElementById("repeat-password").value = ''
+
+            } else {
+                document.getElementById("password").value = ''
+                if (document.getElementById("email")){
+                    document.getElementById("email").value = ''
+                }
+                document.getElementById("username").value = ''
+                if (document.getElementById("repeat-password")){
+                    document.getElementById("repeat-password").value = ''
+                }
+            }
+            
         }
     },
     updated() {
@@ -66,24 +131,38 @@
 
 </script>
 
-<style scoped lang="sass">
+<style lang="sass">
 .error
-    color: #B8352D
+    padding-left: 5px
+    color: #B8352D !important
 
 #login
+    position: fixed
     background: #F6F6F6
     font-family: 'Raleway-Regular'
-    &.large
-        margin: 50px 10%
+    height: calc( 100% - 50px )
+    width: 80%
+    margin: 0 10%
+    margin-top: 50px
+    &.medium
+        margin: 0
+        margin-top: 50px
+        width: 100%
+    &.small
+        margin: 0
+        margin-top: 50px
+        width: 100%
 
 .login_form
-    padding: 120px 0
+    padding-top: 150px
+    &.small
+        padding-top: 100px
     letter-spacing: 2px
     h1
         margin: 0 auto
         margin-bottom: 40px
         text-align: left
-        width: 300px
+        width: 290px
         font-size: 40px
 
 .fin
@@ -92,7 +171,7 @@
     border: 0px
     background: #e6e6e6
     height: 40px
-    width: 280px
+    width: 270px
     padding-left: 20px
     font-size: 15px
     font-family: 'OpenSans-Regular'
@@ -101,9 +180,9 @@
         outline: none
 
 .fsubmit
-    margin: 10px auto
-    border-radius: 5px
-    width: 300px
+    border-radius: 3px
+    text-align: center
+    width: 290px
     padding: 10px 0px
     font-family: 'Raleway-Regular'
     letter-spacing: 1px
@@ -117,6 +196,7 @@
         background: #a42e28
 
 .fsignup
+    color: #14426B
     font-size: 14px
     text-align: left
     margin: 15px auto

@@ -1,11 +1,11 @@
 <template>
   <div id="app">
     <div class="menu">
-      <router-link :to="{ name: 'home' }" class="home_b"></router-link>
-      <router-link :to="{ name: 'creator' }" class="creator_b">+</router-link>
-      <router-link :to="{ name: 'settings' }" class="login_b">
-        <div v-if="!$store.state.jwt"> login </div>
-        <div v-else> settings </div>
+      <router-link :to="{ name: 'home' }" class="home_b" :class="$mq">&#9903;</router-link>
+      <router-link :to="{ name: 'creator' }" class="creator_b" :class="$mq">+</router-link>
+      <router-link :to="{ name: 'settings' }" class="login_b" :class="$mq">
+        <div v-if="!$store.state.jwt">&#9868;</div>
+        <div v-else style="margin-top: 3px"> &#9881; </div>
       </router-link>
     </div>
     <router-view></router-view>
@@ -65,28 +65,39 @@ export default {
     color: #303030
 
 .login_b
+    text-decoration: none
+    font-family: Raleway-Regular
     z-index: 4
     color: white
     float: right
-    margin: 15px
+    margin: 7px
+    margin-right: 12px
+    font-size: 23px
+    &.small
+        margin-right: 2px
 
 .home_b
     z-index: 4
+    color: white
+    text-decoration: none
     float: left
-    width: 25px
-    height: 10px
-    border-radius: 6px
-    border: 1px solid white
-    margin: 20px
+    margin: 11px
+    font-size: 25px
+    margin-left: 30px
 
 .creator_b
     z-index: 4
     color: white
-    background: #B8352D
+    padding: 0 9px
+    border-radius: 5px
+    font-size: 30px
     float: right
-    margin: 15px
+    margin: 7px
+    margin-right: 30px
     text-decoration: none
     font-family: Raleway-Regular
+    &.small
+        margin-right: 5px
 
 .menu
     z-index: 3
