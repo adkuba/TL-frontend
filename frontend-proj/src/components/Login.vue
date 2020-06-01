@@ -58,7 +58,14 @@
                     },
                     {withCredentials: true})
                     .then(response => {this.$store.commit('set', response.data); self.$router.push({ path: this.routerPath })})
-                    .catch(error => {if (error.toString().includes("401")) this.errMessage = "Can't login! Bad credentials" })
+                    .catch(error => {
+                        if (error.toString().includes("401")){
+                            this.errMessage = "Can't login! Bad credentials"
+
+                        } else {
+                            this.errMessage = error
+                        }
+                    })
                 this.clearData()
 
             } else {
@@ -71,22 +78,39 @@
                     return
                 }
 
-                this.axios.post(signupApi, {
-                    username: document.getElementById("username").value,
-                    password: passwordValue,
-                    email: document.getElementById("email").value
-                }, {
-                    withCredentials: true
-                })
-                .then(() => {
-                    self.errMessage = "Created!"
-                    self.signupShow()
-                    self.clearData()
-                })
-                .catch(error => {
-                    console.log(error)
-                    self.clearData()
-                })
+                if (document.getElementById("username").value.length < 3 || document.getElementById("username").value.length > 20){
+                    this.errMessage = "Username needs to be between 3 and 20 characters long."
+                    document.getElementById("username").value = ""
+                    return
+                }
+
+                if (document.getElementById("password").value.length < 6 || document.getElementById("password").value.length > 40){
+                    this.errMessage = "Password needs to be between 6 and 40 characters long."
+                    this.clearData(true)
+                    return
+                }
+
+                if (this.validEmail(document.getElementById("email").value)){
+                    this.axios.post(signupApi, {
+                        username: document.getElementById("username").value,
+                        password: passwordValue,
+                        email: document.getElementById("email").value
+                    }, {
+                        withCredentials: true
+                    })
+                    .then(() => {
+                        self.errMessage = "Created!"
+                        self.signupShow()
+                        self.clearData()
+                    })
+                    .catch(error => {
+                        console.log(error)
+                        self.errMessage = error.response.data.message
+                        self.clearData()
+                    })
+                } else{
+                    this.errMessage = "Wrong email."
+                }
             }
             
         },
@@ -96,6 +120,7 @@
             }
         },
         signupShow(){
+            this.errMessage = ''
             if(this.signupText == 'Sign in'){
                 this.action = 'Sign in'
                 this.signupText = 'Sign up'
@@ -120,7 +145,10 @@
                     document.getElementById("repeat-password").value = ''
                 }
             }
-            
+        },
+        validEmail(email) {
+            var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            return re.test(email);
         }
     },
     updated() {
@@ -132,13 +160,15 @@
 </script>
 
 <style lang="sass">
+@import '../assets/saas-vars.sass'
+
 .error
     padding-left: 5px
     color: #B8352D !important
 
 #login
     position: fixed
-    background: #F6F6F6
+    background: $bg-color
     font-family: 'Raleway-Regular'
     height: calc( 100% - 50px )
     width: 80%

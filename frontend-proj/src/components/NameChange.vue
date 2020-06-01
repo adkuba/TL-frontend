@@ -3,8 +3,11 @@
         <div id="login" :class="$mq">
             <form action="javascript:void(0);" class="login_form" :class="$mq">
                 <h1>Change name</h1>
-                <input class="fin" type="text" id="name" placeholder="New name"><br>
+                <input class="fin" type="text" id="name" placeholder="New name">
+                <br v-if="!errMessage">
+                <div class="fsignup error" v-if="errMessage">{{ errMessage }}</div>
                 <input type="submit" value="Submit" class="fsubmit" v-on:click="changeName()">
+                <div class="description">Leave empty and submit to delete name.</div>
             </form>
         </div>
     </div>
@@ -17,6 +20,7 @@
     data () {
       return {
           baseApi: 'http://localhost:8081/api/',
+          errMessage: ''
       }
     },
     methods: {
@@ -38,6 +42,7 @@
             })
             .catch(error => {
                 console.log(error)
+                this.errMessage = error
             })
         },
         refreshToken(){
@@ -53,5 +58,9 @@
 </script>
 
 <style scoped lang="sass">
+.description
+    text-align: left  
+    width: 280px
+    margin: 50px auto
 
 </style>

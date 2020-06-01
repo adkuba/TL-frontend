@@ -156,6 +156,8 @@
 </script>
 
 <style scoped lang="sass">
+@import '../assets/saas-vars.sass'
+
 .p_line
     width: 100%
     height: 5px
@@ -264,7 +266,7 @@
 #creator
     padding: 1px 0
     margin: 0 10%
-    background: #f6f6f6
+    background: $bg-color
 
 #tform
     margin: 0 auto

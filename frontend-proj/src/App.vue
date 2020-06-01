@@ -50,6 +50,7 @@ export default {
 </script>
 
 <style lang="sass">
+
 @font-face
     font-family: 'Raleway-Regular'
     src: url('./assets/fonts/Raleway/Raleway-Regular.ttf')

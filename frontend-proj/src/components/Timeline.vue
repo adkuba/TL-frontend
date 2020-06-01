@@ -375,6 +375,8 @@ export default {
 
 
 <style scoped lang="sass">
+@import '../assets/saas-vars.sass'
+
 .right-arrow
     right: 0
 
@@ -660,17 +662,17 @@ div#sub_timeline::-webkit-scrollbar
     position: sticky
     z-index: 2
     height: 50px
-    background: rgb(246,246,246)
+    background: $bg-color
     
 
 #text_fade_top
     top: 50px
-    background: linear-gradient(180deg, rgba(246,246,246,1) 30%, rgba(246,246,246,0) 100%)
+    background: linear-gradient(180deg, rgba($bg-color,1) 30%, rgba($bg-color,0) 100%)
     transform: translateY(-5px)
 
 #text_fade_bottom
     bottom: 0
-    background: linear-gradient(0deg, rgba(246,246,246,1) 30%, rgba(246,246,246,0) 100%)
+    background: linear-gradient(0deg, rgba($bg-color,1) 30%, rgba($bg-color,0) 100%)
     transform: translateY(+5px)
 
 .trans
@@ -772,7 +774,7 @@ div#sub_timeline::-webkit-scrollbar
     background: linear-gradient(0deg, rgba(48,48,48,0) 0%, rgba(48,48,48,1) 100%)
 
 #timeline
-    background: #F6F6F6
+    background: $bg-color
     margin-top: 50px
     //wyskokosc evt desc to ok 866 desktop, 1149 mobile
     //pojawia sie 100px nad circle, po circle musza byc dwie linie czyli 160px

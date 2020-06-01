@@ -1,34 +1,35 @@
 <template lang="html">
     <div>
         <div id="settings" :class="$mq">
-            <div class="logout" v-on:click="logout()">Logout</div>
+            <div class="logout" :class="$mq" v-on:click="logout()">Logout</div>
             <div class="s_item">
-                <div class="s_left">Details</div>
-                <div class="s_right">
-                    <div class="daneh">Username:</div>
-                    <div class="danev">{{ $store.state.jwt.username }}</div><br>
+                <div class="s_left" :class="$mq">Details</div>
+                <div class="s_right" :class="$mq">
+                    <div class="daneh" :class="$mq">Username:</div>
+                    <div class="danev" :class="$mq">{{ $store.state.jwt.username }}</div>
+                    <div class="danea"></div><br>
 
-                    <div class="daneh">Email:</div>
-                    <div class="danev">{{ $store.state.jwt.email }}</div>
-                    <router-link :to="{ name: 'emailChange' }" class="danea">Change email</router-link><br>
+                    <div class="daneh" :class="$mq">Email:</div>
+                    <div class="danev" :class="$mq">{{ $store.state.jwt.email }}</div>
+                    <router-link :to="{ name: 'emailChange' }" class="danea" :class="$mq">Change email</router-link><br>
 
-                    <div class="daneh">Password:</div>
-                    <div class="danev">*****</div>
-                    <div class="danea">Change password</div><br>
+                    <div class="daneh" :class="$mq">Password:</div>
+                    <div class="danev" :class="$mq">*****</div>
+                    <router-link :to="{ name: 'passwordChange' }" class="danea" :class="$mq">Change password</router-link><br>
 
-                    <div class="daneh">Name:</div>
-                    <div class="danev">{{ $store.state.jwt.fullName }}</div>
-                    <router-link :to="{ name: 'nameChange' }" class="danea">Change name</router-link>
+                    <div class="daneh" :class="$mq">Name:</div>
+                    <div class="danev" :class="$mq">{{ $store.state.jwt.fullName }}</div>
+                    <router-link :to="{ name: 'nameChange' }" class="danea" :class="$mq">Change name</router-link>
                 </div>
                 <div class="s_line"></div>
             </div>
             <div class="s_item" v-for="(timeline, index) in timelines" :key="index">
-                <div class="s_left"> {{ index+1 }}. 
-                    <router-link style="color: #303030; text-decoration: none" :to="{ path: 'timeline/' + timeline.id }"> {{ timeline.descriptionTitle }} </router-link>
+                <div class="s_left" :class="$mq">
+                    <router-link style="color: #303030; text-decoration: none" :to="{ path: 'timeline/' + timeline.id }"> {{ timeline.descriptionTitle }} </router-link><br>
                     <div class="edit">Edit</div>
                     <div class="edit">Delete</div>
                 </div>
-                <div class="s_right">{{ timeline.description.substring(0, timeline.description.length/2) }}</div>
+                <div class="s_right" :class="$mq">{{ timeline.description.substring(0, timeline.description.length/2) }}</div>
                 <div class="s_line"></div>
             </div>
         </div>
@@ -71,9 +72,12 @@
 </script>
 
 <style scoped lang="sass">
+@import '../assets/saas-vars.sass'
+
 .edit
-    margin-top: 10px
-    margin-left: 2px
+    display: inline-block
+    margin-top: 15px
+    margin-right: 20px
     font-weight: normal
     font-size: 15px
     color: #14426B
@@ -81,6 +85,10 @@
 .danea
     display: inline-block
     color: #14426B
+    width: 30%
+    &.small
+        width: 100%
+        margin-bottom: 40px
 
 .logout
     position: absolute
@@ -89,16 +97,31 @@
     top: 70px
     font-family: Raleway-Regular
     font-size: 20px
+    &.small
+        right: 0
+        margin-right: 15px
+        top: 65px
+        font-size: 19px
+    &.medium
+        right: 0
 
 .daneh
     display: inline-block
     width: 20%
     margin-bottom: 10px
+    &.medium
+        width: 30%
+    &.small
+        width: 100%
+        margin-bottom: 2px
 
 .danev
     width: 40%
     display: inline-block
     color: #14426B
+    &.small
+        width: 100%
+        margin-bottom: 2px
 
 .s_line
     width: 100%
@@ -115,13 +138,23 @@
     font-family: 'Raleway-Regular'
     display: inline-block
     float: left
+    &.medium
+        width: 100%
+        margin-bottom: 30px
+    &.small
+        width: 100%
+        margin-bottom: 30px
 
 .s_right
     font-family: 'OpenSans-Regular'
-    text-align: left
+    text-align: justify
     float: left
     width: 70%
-    display: inline-block  
+    display: inline-block
+    &.medium
+        width: 100%
+    &.small
+        width: 100%
 
 .s_item
     letter-spacing: 1px
@@ -130,7 +163,7 @@
     margin-bottom: 100px
 
 #settings
-    background: #F6F6F6
+    background: $bg-color
     padding: 100px 0
     &.large
         margin: 50px 10%
