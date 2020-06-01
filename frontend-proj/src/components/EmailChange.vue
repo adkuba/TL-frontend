@@ -2,11 +2,11 @@
     <div>
         <div id="login" :class="$mq">
             <form action="javascript:void(0);" class="login_form" :class="$mq">
-                <h1>Change email</h1>
-                <input class="fin" type="text" id="email" placeholder="New email">
+                <h1 :class="$mq">Change email</h1>
+                <input class="fin" :class="$mq" type="text" id="email" placeholder="New email">
                 <br v-if="!errMessage">
-                <div class="fsignup error" v-if="errMessage">{{ errMessage }}</div>
-                <input type="submit" value="Submit" class="fsubmit" v-on:click="changeEmail()">
+                <div class="fsignup error" :class="$mq" v-if="errMessage">{{ errMessage }}</div>
+                <input type="submit" :class="$mq" value="Submit" class="fsubmit" v-on:click="changeEmail()">
             </form>
         </div>
     </div>

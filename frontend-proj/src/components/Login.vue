@@ -2,19 +2,19 @@
     <div>
         <div v-if="!$store.state.jwt" id="login" :class="$mq">
             <form action="javascript:void(0);" class="login_form" :class="$mq">
-                <h1>{{action}}</h1>
-                <input class="fin" type="text" id="username" placeholder="Username"><br>
+                <h1 :class="$mq">{{action}}</h1>
+                <input class="fin" :class="$mq" type="text" id="username" placeholder="Username"><br>
                 <div v-if="action=='Sign up'">
-                    <input class="fin" type="text" id="email" placeholder="Email"><br>
+                    <input class="fin" :class="$mq" type="text" id="email" placeholder="Email"><br>
                 </div>
-                <input class="fin" type="password" id="password" placeholder="Password"><br>
+                <input class="fin" :class="$mq" type="password" id="password" placeholder="Password"><br>
                 <div v-if="action=='Sign up'">
-                    <input class="fin" type="password" id="repeat-password" placeholder="Repeat password"><br>
+                    <input class="fin" :class="$mq" type="password" id="repeat-password" placeholder="Repeat password"><br>
                 </div>
                 <br v-if="!errMessage">
-                <div class="fsignup error" v-if="errMessage">{{ errMessage }}</div>
-                <input type="submit" value="Submit" class="fsubmit" v-on:click="signin()">
-                <div class="fsignup" v-on:click="signupShow()">{{signupText}}</div>
+                <div class="fsignup error" :class="$mq" v-if="errMessage">{{ errMessage }}</div>
+                <input type="submit" value="Submit" class="fsubmit" :class="$mq" v-on:click="signin()">
+                <div class="fsignup" :class="$mq" v-on:click="signupShow()">{{signupText}}</div>
             </form>
         </div>
     </div>
@@ -192,45 +192,51 @@
         margin: 0 auto
         margin-bottom: 40px
         text-align: left
-        width: 290px
+        width: calc(25% + 20px)
         font-size: 40px
+        &.medium
+            width: calc(50% + 20px)
 
 .fin
     margin-bottom: 15px
-    border-radius: 5px
+    border-radius: 2px
     border: 0px
     background: #e6e6e6
     height: 40px
-    width: 270px
+    width: 25%
     padding-left: 20px
     font-size: 15px
     font-family: 'OpenSans-Regular'
     &:focus
         background: #d9d9d9
         outline: none
+    &.medium
+        width: 50%
 
 .fsubmit
     border-radius: 3px
     text-align: center
-    width: 290px
+    width: calc(25% + 20px)
     padding: 10px 0px
     font-family: 'Raleway-Regular'
     letter-spacing: 1px
     font-weight: bold
     font-size: 15px
     border: 0
-    background: #B8352D
+    background: #a52f28
     color: white
     &:focus
         outline: none
         background: #a42e28
+    &.medium
+        width: calc(50% + 20px)
 
 .fsignup
     color: #14426B
     font-size: 14px
     text-align: left
-    margin: 15px auto
-    width: 290px
+    margin: 20px auto
+    width: calc(25% + 20px)
     letter-spacing: 0px
 
 </style>

@@ -2,12 +2,12 @@
     <div>
         <div id="login" :class="$mq">
             <form action="javascript:void(0);" class="login_form" :class="$mq">
-                <h1>Change name</h1>
-                <input class="fin" type="text" id="name" placeholder="New name">
+                <h1 :class="$mq">Change name</h1>
+                <input class="fin" :class="$mq" type="text" id="name" placeholder="New name">
                 <br v-if="!errMessage">
-                <div class="fsignup error" v-if="errMessage">{{ errMessage }}</div>
-                <input type="submit" value="Submit" class="fsubmit" v-on:click="changeName()">
-                <div class="description">Leave empty and submit to delete name.</div>
+                <div class="fsignup error" :class="$mq" v-if="errMessage">{{ errMessage }}</div>
+                <input type="submit" :class="$mq" value="Submit" class="fsubmit" v-on:click="changeName()">
+                <div class="description" :class="$mq">Leave empty and submit to delete name.</div>
             </form>
         </div>
     </div>
@@ -60,7 +60,8 @@
 <style scoped lang="sass">
 .description
     text-align: left  
-    width: 280px
+    width: calc(25% + 20px)
+    letter-spacing: 1px
     margin: 50px auto
 
 </style>

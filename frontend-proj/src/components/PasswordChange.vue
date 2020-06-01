@@ -2,13 +2,13 @@
     <div>
         <div id="login" :class="$mq">
             <form action="javascript:void(0);" class="login_form" :class="$mq">
-                <h1>Change password</h1>
-                <input class="fin" type="password" id="old-password" placeholder="Old password"><br>
-                <input class="fin" type="password" id="password" placeholder="New password"><br>
-                <input class="fin" type="password" id="repeat-password" placeholder="Repeat password"><br>
+                <h1 :class="$mq">Change password</h1>
+                <input class="fin" :class="$mq" type="password" id="old-password" placeholder="Old password"><br>
+                <input class="fin" :class="$mq" type="password" id="password" placeholder="New password"><br>
+                <input class="fin" :class="$mq" type="password" id="repeat-password" placeholder="Repeat password"><br>
                 <br v-if="!errMessage">
-                <div class="fsignup error" v-if="errMessage">{{ errMessage }}</div>
-                <input type="submit" value="Submit" class="fsubmit" v-on:click="changePassword()">
+                <div class="fsignup error" :class="$mq" v-if="errMessage">{{ errMessage }}</div>
+                <input type="submit" :class="$mq" value="Submit" class="fsubmit" v-on:click="changePassword()">
             </form>
         </div>
     </div>
