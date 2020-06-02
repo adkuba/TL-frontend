@@ -110,16 +110,20 @@ export default {
     name: 'Timeline',
     props: {
         mockEvents: Array,
+        mockTimeline: Object,
+        mockSubEvents: Array
     },
     created () {
         if (!this.mockEvents){
-            var timelineApi = this.baseApi + 'timelines/public?id=' + this.$route.params.id;
+            var timelineApi = this.baseApi + 'timelines/public?id=' + this.$route.params.id
             this.axios.get(timelineApi).then(response => {
                 if (response.data != null){
                     this.timeline = response.data;
                 } else {
                     this.$router.push( {path: "/"} );
                 } }).catch(err => console.log(err));
+        } else {
+            this.mocking = true
         }
     },
     data() {
@@ -143,12 +147,14 @@ export default {
         subTimeline: null,
         subTimelineEvents: null,
         subTimelineEventsParsed: null,
+
+        mocking: false
         }
     },
     watch: {
         mockEvents: function(){
-            this.events = this.mockEvents;
-            this.timeline = {descriptionTitle: 'pieski', description: 'lubie pieski'}
+            this.events = this.mockEvents
+            this.timeline = this.mockTimeline
         },
         timeline: function(){
             if (!this.mockEvents){
@@ -166,15 +172,25 @@ export default {
                     this.axios.get(subTimelineApi)
                     .then(response => {this.subTimeline = response.data})
                     .catch(err => console.log(err));
-                    //czasem moze nie byc subTimeline wtedy catch
-                } 
+
+                } else {
+                    this.subTimeline = '_' + Math.random().toString(36).substr(2, 9)
+                }
             }
         },
         subTimeline: function(){
             if (this.subTimeline != "" && this.subTimeline != null){
-                var subTimelineEventsApi = this.baseApi + 'events/public?timelineId=' + this.subTimeline.id;
-                this.axios.get(subTimelineEventsApi)
-                .then(response => {this.subTimelineEvents = response.data});
+                if (!this.mocking){
+                    var subTimelineEventsApi = this.baseApi + 'events/public?timelineId=' + this.subTimeline.id;
+                    this.axios.get(subTimelineEventsApi)
+                    .then(response => {this.subTimelineEvents = response.data});
+
+                } else {
+                    var dupera = this.mockSubEvents.find(x => x.id === this.eventsParsed[this.openedEvent].id).subEvents
+                    if (dupera.length > 0){
+                        this.subTimelineEvents = dupera
+                    } 
+                }
             }
         },
         subTimelineEvents: function(){
@@ -236,7 +252,7 @@ export default {
             }
         },
         subScroll(index){
-            var subT = document.getElementById("sub_timeline");
+            var subT = document.getElementById("sub_timeline")
             if (subT){
                 var searchedE = subT.children[index+3];
                 //subT.offsetLeft to margin sub timeline przy .large
@@ -515,15 +531,15 @@ div#sub_timeline::-webkit-scrollbar
     position: absolute
     width: 30px
     height: 60px
-    background: rgb(246,246,246)
+    background: $bg-color
 
 .sub_fade_left
-    background: linear-gradient(270deg, rgba(246,246,246,0) 0%, rgba(246,246,246,1) 91%)
+    background: linear-gradient(270deg, rgba($bg-color,0) 0%, rgba($bg-color,1) 91%)
     transform: translateX(-2px)
 
 .sub_fade_right
     right: 0
-    background: linear-gradient(90deg, rgba(246,246,246,0) 0%, rgba(246,246,246,1) 91%)
+    background: linear-gradient(90deg, rgba($bg-color,0) 0%, rgba($bg-color,1) 91%)
     transform: translateX(+2px)
     &.large
         right: 12%
@@ -766,7 +782,7 @@ div#sub_timeline::-webkit-scrollbar
         margin: 0 15%
 
 #f_line
-    background: rgb(48,48,48)
+    background: $bg-color
     background: linear-gradient(180deg, rgba(48,48,48,0) 0%, rgba(48,48,48,1) 100%)
 
 #l_line

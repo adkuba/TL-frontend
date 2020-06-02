@@ -220,10 +220,9 @@
     padding: 10px 0px
     font-family: 'Raleway-Regular'
     letter-spacing: 1px
-    font-weight: bold
-    font-size: 15px
+    font-size: 17px
     border: 0
-    background: #a52f28
+    background: #B8352D
     color: white
     &:focus
         outline: none

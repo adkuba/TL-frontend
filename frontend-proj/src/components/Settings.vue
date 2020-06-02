@@ -23,6 +23,10 @@
                 </div>
                 <div class="s_line"></div>
             </div>
+
+            <h1>Timelines</h1>
+            <p>Aenean sed justo dui. In tincidunt odio vitae dui dapibus ultricies. Integer pulvinar pharetra nulla, in vestibulum nisl semper ut. Praesent feugiat tortor et leo dapibus, ac consequat ipsum finibus. Cras eget rhoncus arcu. Morbi vulputate finibus lacus, nec bibendum felis fringilla vel. Nullam enim leo, ultrices eu elit a, cursus maximus nisi.</p>
+
             <div class="s_item" v-for="(timeline, index) in timelines" :key="index">
                 <div class="s_left" :class="$mq">
                     <router-link style="color: #303030; text-decoration: none" :to="{ path: 'timeline/' + timeline.id }"> {{ timeline.descriptionTitle }} </router-link><br>
@@ -73,6 +77,18 @@
 
 <style scoped lang="sass">
 @import '../assets/saas-vars.sass'
+
+p
+    font-family: OpenSans-Regular
+    text-align: justify
+    margin: 0 10%
+    margin-bottom: 100px
+
+h1
+    font-family: Raleway-Regular
+    font-size: 40px
+    text-align: left
+    margin-left: 10%
 
 .edit
     display: inline-block
@@ -160,7 +176,7 @@
     letter-spacing: 1px
     margin: 0 auto
     width: 80%
-    margin-bottom: 100px
+    margin-bottom: 120px
 
 #settings
     background: $bg-color

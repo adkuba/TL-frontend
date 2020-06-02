@@ -7,13 +7,18 @@
             <div class="right"> Create your own timeline! </div>
         </div>
     
-        <div class="element" v-for="(timeline, idx) in timelines" :key="idx">
+        <div class="element" :style="'border-bottom: 4px solid '+timeline.color" v-for="(timeline, idx) in timelines" :key="idx">
             <div class="s_line"></div>
             <router-link :to="{ path: 'timeline/' + timeline.id }" class="left">
                 {{ timeline.descriptionTitle }}
                 <div class="author">by {{ timeline.user.username }}</div>
             </router-link>
-            <router-link :to="{ path: 'timeline/' + timeline.id }" class="right"> {{ timeline.description.substring(0, 500) }}... </router-link>
+            <router-link :to="{ path: 'timeline/' + timeline.id }" class="right" v-bind:class="{rightSmall: timeline.pictures}">
+                {{ timeline.description.substring(0, 500) }}...
+            </router-link>
+            <router-link :to="{ path: 'timeline/' + timeline.id }" class="image_container" v-if="timeline.pictures">
+                <img class="image" :src="timeline.pictures[0]">
+            </router-link>
         </div>
     </div>
 </div>
@@ -29,7 +34,8 @@ export default {
     data() {
         return {
             baseApi: 'http://localhost:8081/api/',
-            timelines: []
+            timelines: [],
+            borderColors: ['#ffb6b6', '#fde2e2', '#aacfcf', '#679b9b']
         }
     },
     methods: {
@@ -48,6 +54,7 @@ export default {
             .then(response => {
                 var temp = response.data
                 for (var i=0, len=temp.length; i<len; i++){
+                    temp[i].color = this.borderColors[Math.floor(Math.random() * this.borderColors.length)]
                     this.timelines.push(temp[i])
                 }
             })
@@ -77,7 +84,18 @@ export default {
     height: 70px
     background: white
     display: inline-block
-    
+
+.image_container
+    display: inline-block
+    width: 16%
+    margin-left: 4%
+    vertical-align: top
+    margin-top: 50px       
+
+.image
+    border-radius: 3px
+    width: 100%
+    object-fit: contain
 
 .right
     text-decoration: none
@@ -85,8 +103,11 @@ export default {
     margin-top: 45px
     font-family: OpenSans-Regular
     display: inline-block
-    width: 80%
+    width: 85%
     text-align: justify
+
+.rightSmall
+    width: 65%
 
 .left
     text-decoration: none
@@ -95,7 +116,7 @@ export default {
     font-family: Raleway-Regular
     vertical-align: top
     display: inline-block
-    width: 20%
+    width: 15%
     text-align: left
     font-size: 30px
     font-weight: bold
@@ -105,11 +126,10 @@ export default {
 .element
     border-radius: 5px
     padding: 0 50px
-    padding-bottom: 100px
-    width: 76%
-    margin-left: calc(12% - 50px)
+    padding-bottom: 80px
+    width: 70%
+    margin-left: calc(15% - 50px)
     background: $bg-color
-    border-bottom: 4px solid #efefef
 
 #homepage
     padding-top: 1px
