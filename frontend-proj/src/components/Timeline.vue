@@ -306,9 +306,10 @@ export default {
                     output.push(linePrefab);
                 }
             }
-            output.push(yearsParsed[yearsParsed.length-1]);
-            output.push(linePrefab);
-            output.push(linePrefab);
+            output.push(linePrefab)
+            output.push(yearsParsed[yearsParsed.length-1])
+            output.push(linePrefab)
+            output.push(linePrefab)
 
             return output;
         },

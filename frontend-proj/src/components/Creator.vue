@@ -27,7 +27,7 @@
                                 <input class="ttitle" type="text" :id="'title'+index" placeholder="Title" :value="evt.title">
                                 <input class="ttitle tdate" type="date" :id="'date'+index" placeholder="mm/dd/yyyy" :value="evt.date">
                                 <input class="file" type="file" :id="'pictures'+index" multiple><br>
-                                <textarea class="ttitle tlong" :id="'long'+index" placeholder="Description" :value="evt.description"></textarea>
+                                <textarea class="ttitle tlong" :id="'long'+index" placeholder="Description" :value="evt.shortDescription ? evt.shortDescription + '\n' + evt.description : ''"></textarea>
                                 <div class="control_item add_sub" v-on:click="addSubEvent(index)">&#43;</div>
                             </div>
                             <div class="s_line"></div>
@@ -43,7 +43,7 @@
                                     <input class="ttitle" :id="'sub'+index+'title'+subindex" type="text" placeholder="Title" :value="subevt.title">
                                     <input class="ttitle tdate" type="date" :id="'sub'+index+'date'+subindex" placeholder="mm/dd/yyyy" :value="subevt.date">
                                     <input class="file" type="file" :id="'sub'+index+'pictures'+subindex" multiple><br>
-                                    <textarea class="ttitle tlong" :id="'sub'+index+'long'+subindex" placeholder="Description" :value="subevt.description"></textarea>
+                                    <textarea class="ttitle tlong" :id="'sub'+index+'long'+subindex" placeholder="Description" :value="subevt.shortDescription ? subevt.shortDescription + '\n' + subevt.description : ''"></textarea>
                                 </div>
                             </div>
                         </transition-group>
@@ -51,7 +51,7 @@
                 </transition-group>
             </div>
             <div class="masterC" v-on:click="preview()">Preview</div>
-            <div class="masterC">Submit</div>
+            <div class="masterC" v-on:click="submit()">Submit</div>
         </div>
         <div style="margin-top: 100px" v-else>Login!!</div>
 
@@ -70,16 +70,88 @@
     },
     data () {
       return {
-          events: [{id: 'first', type: 'normal', title: '', shortDescription: '', description: '', date: '', links: [], sub: []}],
+          events: [{id: 'first', type: 'normal', title: '', shortDescription: '', description: '', date: '', links: new Map(), sub: []}],
           eventsParsed: [],
           timeline: {},
           subEventsParsed: [],
+          mainTimelineId: '',
+          baseApi: 'http://localhost:8081/api/',
           lorem: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vitae auctor urna, sed volutpat orci. Etiam interdum finibus eros, a porta quam ultrices id. Sed eget ligula vel lorem eleifend tincidunt. Proin at lacinia elit. Cras rhoncus interdum libero vitae tristique. Donec facilisis quam quis diam consequat, ullamcorper malesuada nisi elementum. Cras vehicula orci consectetur est blandit volutpat. Suspendisse ultrices imperdiet neque, suscipit pretium nulla commodo quis.'
       }
     },
+    watch: {
+        mainTimelineId: function(){
+            var eventsApi = this.baseApi + 'events'
+            var timelinesApi = this.baseApi + 'timelines'
+            for (var i=0, len=this.eventsParsed.length; i<len; i++){
+                delete this.eventsParsed[i]['type']
+                var eventId = this.eventsParsed[i].id
+                delete this.eventsParsed[i]['id']
+
+                this.axios.post(eventsApi, this.eventsParsed[i], {
+                    headers: {
+                        'Authorization': 'Bearer ' + this.$store.state.jwt.token
+                    }
+                })
+                .then(response => {
+                    var subEvtsTemp = this.subEventsParsed.find(x => x.id === eventId).subEvents
+                    if (subEvtsTemp.length > 0){
+                        var subTimeline = {
+                            event: response.data
+                        }
+
+                        this.axios.post(timelinesApi, subTimeline, {
+                            headers: {
+                                'Authorization': 'Bearer ' + this.$store.state.jwt.token
+                            },
+                            params: {
+                                findUser: false
+                            }
+                        })
+                        .then(response => {
+                            subTimeline = response.data
+                        })
+                        .catch(error => {
+                            console.log(error)
+                        })
+
+                        for (var j=0, len2=subEvtsTemp.length; j<len2; j++){
+                            delete subEvtsTemp[j]['type']
+                            delete subEvtsTemp[j]['id']
+                            subEvtsTemp[j].timeline = subTimeline
+                            this.axios.post(eventsApi, subEvtsTemp[j], {
+                                headers: {
+                                    'Authorization': 'Bearer ' + this.$store.state.jwt.token
+                                }
+                            })
+                            .catch(error =>{
+                                console.log(error)
+                            })
+                        }
+                    }
+                })
+            }
+        }
+    },
     methods: {
+        submit(){
+            var timelinesApi = this.baseApi + 'timelines'
+            this.preview()
+
+            //main timeline
+            this.axios.post(timelinesApi, this.timeline, {
+                    headers: {
+                        'Authorization': 'Bearer ' + this.$store.state.jwt.token
+                    },
+                    params: {
+                        findUser: true
+                    }
+                })
+                .then(response => {this.mainTimelineId = response.data})
+                .catch(error => {console.log(error)})
+        },
         preview() {
-            this.saveData()
+            this.saveData(true)
             //mainEvents
             this.eventsParsed = JSON.parse(JSON.stringify(this.events))
             for (var i=0, len=this.eventsParsed.length; i<len; i++){
@@ -107,7 +179,7 @@
         addEvent(index){
             this.saveData()
             //DOPRACOWAC dziala dodawanie tylko jednego sub eventu
-            var event = {id: '', type: 'normal', title: '', shortDescription: '', description: '', date: '', links: [], sub: []}
+            var event = {id: '', type: 'normal', title: '', shortDescription: '', description: '', date: '', links: new Map(), sub: []}
             event.id = '_' + Math.random().toString(36).substr(2, 9)
             if (index == this.events.length){
                 this.events.push(event)
@@ -118,7 +190,7 @@
         },
         addSubEvent(index){
             this.saveData()
-            var subEvent = {id: '', title: '', shortDescription: '', description: '', date: '', links: []}
+            var subEvent = {id: '', title: '', shortDescription: '', description: '', date: '', links: new Map()}
             subEvent.id = '_' + Math.random().toString(36).substr(2, 9)
             this.events[index].sub.unshift(subEvent)
         },
@@ -142,12 +214,15 @@
                 this.events[index].sub.splice(newIndex, 0, this.events[index].sub.splice(oldIndex, 1)[0]);
             }
         },
-        saveData(){
+        saveData(sort=false){
             for (var i=0, len=this.events.length; i<len; i++){
                 this.events[i].title = document.getElementById("title"+i).value;
                 document.getElementById("title"+i).value = '';
 
-                this.events[i].description = document.getElementById("long"+i).value;
+                var long = document.getElementById("long"+i).value.split('\n')
+                this.events[i].shortDescription = long[0]
+                long.shift()
+                this.events[i].description = long.join('\n')
                 document.getElementById("long"+i).value = '';
 
                 this.events[i].date = document.getElementById("date"+i).value;
@@ -159,16 +234,30 @@
                             this.events[i].sub[j].title = document.getElementById("sub"+i+"title"+j).value;
                             document.getElementById("sub"+i+"title"+j).value = '';
 
-                            this.events[i].sub[j].description = document.getElementById("sub"+i+"long"+j).value;
-                            document.getElementById("sub"+i+"long"+j).value = '';
+                            long = document.getElementById("sub"+i+"long"+j).value.split('\n')
+                            this.events[i].sub[j].shortDescription = long[0]
+                            long.shift()
+                            this.events[i].sub[j].description = long.join('\n')
+                            document.getElementById("sub"+i+"long"+j).value = ''
 
                             this.events[i].sub[j].date = document.getElementById("sub"+i+"date"+j).value;
                             document.getElementById("sub"+i+"date"+j).value = '';
                         }
                     }
+                    if (sort){
+                        this.events[i].sub = this.sortByDate(this.events[i].sub)
+                    }
                 }
             }
-        }
+            if (sort){
+                this.events = this.sortByDate(this.events)
+            }
+        },
+        sortByDate(array){
+            return array.sort(function(a, b){
+                return new Date(a.date) - new Date(b.date)
+            })
+        },
     },
     computed: {
 
