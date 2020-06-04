@@ -31,7 +31,7 @@
                 <div class="s_left" :class="$mq">
                     <router-link style="color: #303030; text-decoration: none" :to="{ path: 'timeline/' + timeline.id }"> {{ timeline.descriptionTitle }} </router-link><br>
                     <div class="edit">Edit</div>
-                    <div class="edit">Delete</div>
+                    <div class="edit" v-on:click="deleteTimeline(timeline)">Delete</div>
                 </div>
                 <div class="s_right" :class="$mq">{{ timeline.description.substring(0, timeline.description.length/2) }}</div>
                 <div class="s_line"></div>
@@ -68,6 +68,23 @@
                     .then(() => {this.$store.commit('set', null)})
                     .catch(error => {console.log(error)})
             this.$router.push({ path: '/home' })
+        },
+        deleteTimeline(timeline){
+            var timelinesApi = this.baseApi + 'timelines/' + timeline.id
+            this.axios.delete(timelinesApi, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.$store.state.jwt.token
+                },
+            })
+            .then(() => {
+                var index = this.timelines.indexOf(timeline)
+                if (index > -1){
+                    this.timelines.splice(index, 1)
+                }
+            })
+            .catch(error =>{
+                console.log(error)
+            })
         }
     }
 }
@@ -97,6 +114,7 @@ h1
     font-weight: normal
     font-size: 15px
     color: #14426B
+    user-select: none
 
 .danea
     display: inline-block

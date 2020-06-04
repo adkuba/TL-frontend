@@ -3,6 +3,7 @@
         <div id="creator" v-if="$store.state.jwt">
             <div id="tform">
                 <h1>Creator</h1>
+                <input class="ttitle tlid" type="text" id="timelineId" placeholder="ID">
                 <div class="opis">{{ lorem }}</div>
 
                 <div id="mainData">
@@ -72,32 +73,71 @@
       return {
           events: [{id: 'first', type: 'normal', title: '', shortDescription: '', description: '', date: '', links: new Map(), sub: []}],
           eventsParsed: [],
+          eventsParsedSubmit: [],
           timeline: {},
           subEventsParsed: [],
-          mainTimelineId: '',
+
+          mainTimelineSubmit: {},
+          evtSubmited: null,
+          subTimelinesReady: null,
+          subTimelinesSubmitted: [],
+
           baseApi: 'http://localhost:8081/api/',
           lorem: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vitae auctor urna, sed volutpat orci. Etiam interdum finibus eros, a porta quam ultrices id. Sed eget ligula vel lorem eleifend tincidunt. Proin at lacinia elit. Cras rhoncus interdum libero vitae tristique. Donec facilisis quam quis diam consequat, ullamcorper malesuada nisi elementum. Cras vehicula orci consectetur est blandit volutpat. Suspendisse ultrices imperdiet neque, suscipit pretium nulla commodo quis.'
       }
     },
     watch: {
-        mainTimelineId: function(){
-            var eventsApi = this.baseApi + 'events'
-            var timelinesApi = this.baseApi + 'timelines'
-            for (var i=0, len=this.eventsParsed.length; i<len; i++){
-                delete this.eventsParsed[i]['type']
-                var eventId = this.eventsParsed[i].id
-                delete this.eventsParsed[i]['id']
+        mainTimelineSubmit: function(){
+            if (this.mainTimelineSubmit){
+                var eventsApi = this.baseApi + 'events'
+                var eventsParsedSubmitTemp = JSON.parse(JSON.stringify(this.eventsParsed))
 
-                this.axios.post(eventsApi, this.eventsParsed[i], {
-                    headers: {
-                        'Authorization': 'Bearer ' + this.$store.state.jwt.token
-                    }
-                })
-                .then(response => {
-                    var subEvtsTemp = this.subEventsParsed.find(x => x.id === eventId).subEvents
+                var counter1 = 0
+                for (var i=0, len=eventsParsedSubmitTemp.length; i<len; i++){
+                    eventsParsedSubmitTemp[i].timeline = this.mainTimelineSubmit
+                    delete eventsParsedSubmitTemp[i]['type']
+                    delete eventsParsedSubmitTemp[i]['id']
+
+                    this.axios.post(eventsApi, eventsParsedSubmitTemp[i], {
+                        headers: {
+                            'Authorization': 'Bearer ' + this.$store.state.jwt.token
+                        }
+                    })
+                    .then(response => {
+                        this.eventsParsedSubmit.push(response.data)
+                        //events submitted now subTimelines
+                        if (counter1 == len-1){
+                            this.evtSubmited = true
+                        }
+                        counter1 +=1
+                    })
+                    .catch(error => {
+                        console.log(error)
+                    })
+                }   
+            }
+        },
+        evtSubmited: function(){
+            if (this.evtSubmited){
+                var timelinesApi = this.baseApi + 'timelines'
+
+                var subTimelinesLen = 0
+                for (var i=0, len=this.eventsParsed.length; i<len; i++){
+                    var subEvtsTemp = JSON.parse(JSON.stringify(this.subEventsParsed.find(x => x.id === this.eventsParsed[i].id).subEvents))
                     if (subEvtsTemp.length > 0){
+                        //found subTimeline
+                        subTimelinesLen += 1
+                    }
+                }
+
+                var counter1 = 0
+                for (i=0, len=this.eventsParsed.length; i<len; i++){
+                    subEvtsTemp = JSON.parse(JSON.stringify(this.subEventsParsed.find(x => x.id === this.eventsParsed[i].id).subEvents))
+                    if (subEvtsTemp.length > 0){
+                        //found subTimeline
                         var subTimeline = {
-                            event: response.data
+                            id: this.mainTimelineSubmit.id + '-sub' + i,
+                            event: this.eventsParsedSubmit[i]
                         }
 
                         this.axios.post(timelinesApi, subTimeline, {
@@ -109,16 +149,33 @@
                             }
                         })
                         .then(response => {
-                            subTimeline = response.data
+                            this.subTimelinesSubmitted.push(response.data)
+                            counter1 += 1
+                            if (counter1 == subTimelinesLen){
+                                //subTimelines submitted now subEvents
+                                this.subTimelinesReady = true
+                            }
                         })
                         .catch(error => {
                             console.log(error)
                         })
+                    }
+                }
+            }
+        },
+        subTimelinesReady: function(){
+            if(this.subTimelinesReady){
+                var eventsApi = this.baseApi + 'events'
 
+                var counter = 0
+                for (var i=0, len=this.eventsParsed.length; i<len; i++){
+
+                    var subEvtsTemp = JSON.parse(JSON.stringify(this.subEventsParsed.find(x => x.id === this.eventsParsed[i].id).subEvents))
+                    if (subEvtsTemp.length > 0){
                         for (var j=0, len2=subEvtsTemp.length; j<len2; j++){
                             delete subEvtsTemp[j]['type']
                             delete subEvtsTemp[j]['id']
-                            subEvtsTemp[j].timeline = subTimeline
+                            subEvtsTemp[j].timeline = this.subTimelinesSubmitted[counter]
                             this.axios.post(eventsApi, subEvtsTemp[j], {
                                 headers: {
                                     'Authorization': 'Bearer ' + this.$store.state.jwt.token
@@ -128,8 +185,10 @@
                                 console.log(error)
                             })
                         }
+                        counter += 1
                     }
-                })
+                }
+                alert("Submitted!")
             }
         }
     },
@@ -147,8 +206,13 @@
                         findUser: true
                     }
                 })
-                .then(response => {this.mainTimelineId = response.data})
-                .catch(error => {console.log(error)})
+                .then(response => {
+                    //main timeline submitted now events
+                    this.mainTimelineSubmit = response.data
+                })
+                .catch(error => {
+                    console.log(error)
+                })
         },
         preview() {
             this.saveData(true)
@@ -159,6 +223,7 @@
             }
             //timeline
             this.timeline = {
+                id: document.getElementById("timelineId").value,
                 descriptionTitle: document.getElementById("mainTitle").value,
                 description: document.getElementById("mainLong").value
             }
@@ -380,6 +445,14 @@ h2
         outline: none
     .sub &
         border-left: 2px solid #89bcbc
+
+.tlid
+    font-size: 18px
+    height: 35px
+    position: absolute
+    top: 110px
+    width: 15%
+    right: 22%
 
 .tdate
     font-size: 12px
