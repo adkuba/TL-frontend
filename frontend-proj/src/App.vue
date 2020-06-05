@@ -50,6 +50,8 @@ export default {
 </script>
 
 <style lang="sass">
+html
+    scroll-padding-top: 60px
 
 @font-face
     font-family: 'Raleway-Regular'

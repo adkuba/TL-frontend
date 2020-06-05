@@ -30,7 +30,7 @@
             <div class="s_item" v-for="(timeline, index) in timelines" :key="index">
                 <div class="s_left" :class="$mq">
                     <router-link style="color: #303030; text-decoration: none" :to="{ path: 'timeline/' + timeline.id }"> {{ timeline.descriptionTitle }} </router-link><br>
-                    <div class="edit">Edit</div>
+                    <router-link style="text-decoration: none" :to="{ path: 'editorLoader/' + timeline.id }" class="edit">Edit</router-link>
                     <div class="edit" v-on:click="deleteTimeline(timeline)">Delete</div>
                 </div>
                 <div class="s_right" :class="$mq">{{ timeline.description.substring(0, timeline.description.length/2) }}</div>

@@ -1,15 +1,15 @@
 <template lang="html">
     <div>
         <div id="creator" v-if="$store.state.jwt">
-            <div id="tform">
+            <form action="javascript:void(0);" id="tform">
                 <h1>Creator</h1>
-                <input class="ttitle tlid" type="text" id="timelineId" placeholder="ID">
+                <input class="ttitle tlid" type="text" id="timelineId" placeholder="ID" maxlength="40" required pattern="[^/]*" title="Don't use /" :value="timeline.id">
                 <div class="opis">{{ lorem }}</div>
 
                 <div id="mainData">
-                    <input class="ttitle" type="text" id="mainTitle" placeholder="Title">
+                    <input class="ttitle" type="text" id="mainTitle" required maxlength="60" placeholder="Title" :value="timeline.descriptionTitle">
                     <input class="file" type="file" id="mainPictures" multiple><br>
-                    <textarea class="ttitle tlong" id="mainLong" placeholder="Description"></textarea>
+                    <textarea class="ttitle tlong" id="mainLong" required placeholder="Description" maxlength="3000" :value="timeline.description"></textarea>
                 </div>
 
                 <h2>Events</h2>
@@ -25,10 +25,10 @@
                                 <div class="control_item down" v-on:click="changeIndex(index, index+1)" v-if="index!=events.length-1">&lang;</div>
                             </div>
                             <div class="s_left">
-                                <input class="ttitle" type="text" :id="'title'+index" placeholder="Title" :value="evt.title">
-                                <input class="ttitle tdate" type="date" :id="'date'+index" placeholder="mm/dd/yyyy" :value="evt.date">
+                                <input class="ttitle" type="text" :id="'title'+index" required maxlength="40" placeholder="Title" :value="evt.title">
+                                <input class="ttitle tdate" type="date" required :id="'date'+index" placeholder="mm/dd/yyyy" :value="evt.date">
                                 <input class="file" type="file" :id="'pictures'+index" multiple><br>
-                                <textarea class="ttitle tlong" :id="'long'+index" placeholder="Description" :value="evt.shortDescription ? evt.shortDescription + '\n' + evt.description : ''"></textarea>
+                                <textarea class="ttitle tlong" :id="'long'+index" required maxlength="1500" placeholder="Description" :value="evt.shortDescription ? evt.shortDescription + '\n' + evt.description : ''"></textarea>
                                 <div class="control_item add_sub" v-on:click="addSubEvent(index)">&#43;</div>
                             </div>
                             <div class="s_line"></div>
@@ -41,18 +41,19 @@
                                     <div class="control_item down" v-on:click="changeSubIndex(index, subindex, subindex+1)" v-if="subindex!=evt.sub.length-1">&lang;</div>
                                 </div>
                                 <div class="s_left">
-                                    <input class="ttitle" :id="'sub'+index+'title'+subindex" type="text" placeholder="Title" :value="subevt.title">
-                                    <input class="ttitle tdate" type="date" :id="'sub'+index+'date'+subindex" placeholder="mm/dd/yyyy" :value="subevt.date">
+                                    <input class="ttitle" :id="'sub'+index+'title'+subindex" required maxlength="40" type="text" placeholder="Title" :value="subevt.title">
+                                    <input class="ttitle tdate" type="date" required :id="'sub'+index+'date'+subindex" placeholder="mm/dd/yyyy" :value="subevt.date">
                                     <input class="file" type="file" :id="'sub'+index+'pictures'+subindex" multiple><br>
-                                    <textarea class="ttitle tlong" :id="'sub'+index+'long'+subindex" placeholder="Description" :value="subevt.shortDescription ? subevt.shortDescription + '\n' + subevt.description : ''"></textarea>
+                                    <textarea class="ttitle tlong" :id="'sub'+index+'long'+subindex" required maxlength="1500" placeholder="Description" :value="subevt.shortDescription ? subevt.shortDescription + '\n' + subevt.description : ''"></textarea>
                                 </div>
                             </div>
                         </transition-group>
                     </div>
                 </transition-group>
-            </div>
-            <div class="masterC" v-on:click="preview()">Preview</div>
-            <div class="masterC" v-on:click="submit()">Submit</div>
+                <input type="submit" class="masterC" v-on:click="preview()" value="Preview">
+                <input type="submit" class="masterC" v-on:click="submit()" value="Submit">
+            </form>
+            
         </div>
         <div style="margin-top: 100px" v-else>Login!!</div>
 
@@ -66,6 +67,10 @@
 
   export default  {
     name: 'Creator',
+    props: {
+        editTimeline: Object,
+        editEvents: Array
+    },
     components: {
         Timeline
     },
@@ -87,6 +92,20 @@
       }
     },
     watch: {
+        editEvents: function(){
+            if (this.editEvents){
+                for (var i=0, len=this.editEvents.length; i<len; i++){
+                    this.editEvents[i].type = "normal"
+                    this.editEvents[i].sub = [] //temp only!!!
+                }
+                this.events = this.editEvents
+            }
+        },
+        editTimeline: function(){
+            if (this.editTimeline){
+                this.timeline = this.editTimeline
+            }
+        },
         mainTimelineSubmit: function(){
             if (this.mainTimelineSubmit){
                 var eventsApi = this.baseApi + 'events'
@@ -130,6 +149,11 @@
                     }
                 }
 
+                if (subTimelinesLen == 0){
+                    alert("Submitted")
+                    this.$router.push({ path: '/settings' })
+                }
+
                 var counter1 = 0
                 for (i=0, len=this.eventsParsed.length; i<len; i++){
                     subEvtsTemp = JSON.parse(JSON.stringify(this.subEventsParsed.find(x => x.id === this.eventsParsed[i].id).subEvents))
@@ -166,10 +190,11 @@
         subTimelinesReady: function(){
             if(this.subTimelinesReady){
                 var eventsApi = this.baseApi + 'events'
+                let self = this
 
                 var counter = 0
                 for (var i=0, len=this.eventsParsed.length; i<len; i++){
-
+                    
                     var subEvtsTemp = JSON.parse(JSON.stringify(this.subEventsParsed.find(x => x.id === this.eventsParsed[i].id).subEvents))
                     if (subEvtsTemp.length > 0){
                         for (var j=0, len2=subEvtsTemp.length; j<len2; j++){
@@ -181,6 +206,13 @@
                                     'Authorization': 'Bearer ' + this.$store.state.jwt.token
                                 }
                             })
+                            .then(() => {
+                                //axios is async i may be len or len-1 etc.
+                                if ((i==len || i==len-1) && (j==len2 || j==len2-1)){
+                                    alert("Submitted")
+                                    self.$router.push({ path: '/settings' })
+                                }
+                            })
                             .catch(error =>{
                                 console.log(error)
                             })
@@ -188,7 +220,6 @@
                         counter += 1
                     }
                 }
-                alert("Submitted!")
             }
         }
     },
@@ -379,6 +410,9 @@ h2
     background: #303030
 
 .masterC
+    outline: none
+    border: none
+    background: none
     font-family: Raleway-Regular
     padding: 7px 12px
     display: inline-block
@@ -451,7 +485,7 @@ h2
     height: 35px
     position: absolute
     top: 110px
-    width: 15%
+    width: 20%
     right: 22%
 
 .tdate
@@ -468,15 +502,16 @@ h2
     display: none
 
 .tlong
+    white-space: pre-wrap
     resize: none
     font-size: 15px
     font-family: OpenSans-Regular
     padding: 10px 20px
-    height: 120px
+    height: 160px
     width: 100%
-    margin-top: 5px
+    margin-top: 10px
     .sub &
-        height: 90px
+        height: 120px
 
 //kolejnosc klas ma znaczenie te nizej sa wazniejsze
 #creator

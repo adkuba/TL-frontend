@@ -1,8 +1,9 @@
 <template>
 <div>
     <div id="homepage" :class="$mq">
-        <div class="element" style="border-bottom: 4px solid #B8352D" v-if="!$store.state.jwt">
-            <div class="s_line"></div>
+        <div class="s_line" style="width: 100%"></div>
+        <div class="element" style="border: 1px solid #B8352D" v-if="!$store.state.jwt">
+            
             <div class="left">Timelines</div>
             <div class="right"> Create your own timeline! </div>
         </div>
@@ -35,7 +36,7 @@ export default {
         return {
             baseApi: 'http://localhost:8081/api/',
             timelines: [],
-            borderColors: ['#ffb6b6', '#fde2e2', '#aacfcf', '#679b9b']
+            borderColors: ['#fde2e2', '#fde2e2', '#e2f0fd', '#e2fde2', '#fae5e0', '#fde9d1', '#f8fadb', '#dbeae4', '#d2f1f0', '#faf5dd', '#fbeff6', '#e4f8e7']
         }
     },
     methods: {
@@ -103,11 +104,11 @@ export default {
     margin-top: 45px
     font-family: OpenSans-Regular
     display: inline-block
-    width: 85%
+    width: 80%
     text-align: justify
 
 .rightSmall
-    width: 65%
+    width: 60%
 
 .left
     text-decoration: none
@@ -116,7 +117,7 @@ export default {
     font-family: Raleway-Regular
     vertical-align: top
     display: inline-block
-    width: 15%
+    width: 20%
     text-align: left
     font-size: 30px
     font-weight: bold
@@ -127,8 +128,8 @@ export default {
     border-radius: 5px
     padding: 0 50px
     padding-bottom: 80px
-    width: 70%
-    margin-left: calc(15% - 50px)
+    width: 60%
+    margin-left: calc(20% - 50px)
     background: $bg-color
 
 #homepage

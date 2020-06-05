@@ -808,6 +808,7 @@ div#sub_timeline::-webkit-scrollbar
         padding-bottom: 520px
 
 #descr
+    white-space: pre-wrap
     height: 200px
     margin: 60px 30%
     font-family: 'Raleway-Regular'
