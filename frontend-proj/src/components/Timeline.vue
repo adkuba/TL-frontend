@@ -163,7 +163,7 @@ export default {
             }
         },
         events: function(){
-            this.eventsParsed = this.parseTimeline(this.events).reverse();
+            this.eventsParsed = this.parseTimeline(JSON.parse(JSON.stringify(this.events))).reverse();
         },
         openedEvent: function(){
             if (this.openedEvent != null){
@@ -195,7 +195,7 @@ export default {
         },
         subTimelineEvents: function(){
             if (this.subTimelineEvents != null){
-                this.subTimelineEventsParsed = this.parseTimeline(this.subTimelineEvents);
+                this.subTimelineEventsParsed = this.parseTimeline(JSON.parse(JSON.stringify(this.subTimelineEvents)));
             }
         }
     },
@@ -261,6 +261,7 @@ export default {
             }
         },
         parseTimeline(eventsList){
+            eventsList = this.sortByDate(eventsList)
             var yearsParsed = [];
             var output = [];
             var fullEvent;
@@ -375,7 +376,12 @@ export default {
             this.eventsSub = this.subTimelineEventsParsed;
             this.openedSub = index;
             window.scroll({top: this.newPos-100, left: 0, behavior: 'smooth'});
-        }
+        },
+        sortByDate(array){
+            return array.sort(function(a, b){
+                return new Date(a.date) - new Date(b.date)
+            })
+        },
     },
     updated() {
         if (this.openedSub == this.openedEvent){

@@ -33,7 +33,7 @@
                     <router-link style="text-decoration: none" :to="{ path: 'editorLoader/' + timeline.id }" class="edit">Edit</router-link>
                     <div class="edit" v-on:click="deleteTimeline(timeline)">Delete</div>
                 </div>
-                <div class="s_right" :class="$mq">{{ timeline.description.substring(0, timeline.description.length/2) }}</div>
+                <div class="s_right" :class="$mq">{{ timeline.description.substring(0, 400) }}</div>
                 <div class="s_line"></div>
             </div>
         </div>

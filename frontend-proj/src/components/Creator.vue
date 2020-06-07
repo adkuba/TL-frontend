@@ -3,6 +3,7 @@
         <div id="creator" v-if="$store.state.jwt">
             <form action="javascript:void(0);" id="tform">
                 <h1>Creator</h1>
+                <div class="errorID">{{ errorMessage }}</div>
                 <input class="ttitle tlid" type="text" id="timelineId" placeholder="ID" maxlength="40" required pattern="[^/]*" title="Don't use /" :value="timeline.id">
                 <div class="opis">{{ lorem }}</div>
 
@@ -81,10 +82,9 @@
           eventsParsedSubmit: [],
           timeline: {},
           subEventsParsed: [],
+          errorMessage: '',
 
           mainTimelineSubmit: {},
-          evtSubmited: null,
-          subTimelinesReady: null,
           subTimelinesSubmitted: [],
 
           baseApi: 'http://localhost:8081/api/',
@@ -96,7 +96,6 @@
             if (this.editEvents){
                 for (var i=0, len=this.editEvents.length; i<len; i++){
                     this.editEvents[i].type = "normal"
-                    this.editEvents[i].sub = [] //temp only!!!
                 }
                 this.events = this.editEvents
             }
@@ -104,59 +103,39 @@
         editTimeline: function(){
             if (this.editTimeline){
                 this.timeline = this.editTimeline
+                document.getElementById('timelineId').disabled = true
             }
         },
         mainTimelineSubmit: function(){
             if (this.mainTimelineSubmit){
-                var eventsApi = this.baseApi + 'events'
+                var eventsApi = this.baseApi + 'events/multiple'
                 var eventsParsedSubmitTemp = JSON.parse(JSON.stringify(this.eventsParsed))
 
-                var counter1 = 0
                 for (var i=0, len=eventsParsedSubmitTemp.length; i<len; i++){
                     eventsParsedSubmitTemp[i].timeline = this.mainTimelineSubmit
                     delete eventsParsedSubmitTemp[i]['type']
                     delete eventsParsedSubmitTemp[i]['id']
-
-                    this.axios.post(eventsApi, eventsParsedSubmitTemp[i], {
-                        headers: {
-                            'Authorization': 'Bearer ' + this.$store.state.jwt.token
-                        }
-                    })
-                    .then(response => {
-                        this.eventsParsedSubmit.push(response.data)
-                        //events submitted now subTimelines
-                        if (counter1 == len-1){
-                            this.evtSubmited = true
-                        }
-                        counter1 +=1
-                    })
-                    .catch(error => {
-                        console.log(error)
-                    })
-                }   
+                }
+                this.axios.post(eventsApi, eventsParsedSubmitTemp, {
+                    headers: {
+                        'Authorization': 'Bearer ' + this.$store.state.jwt.token
+                    }
+                })
+                .then(response => {
+                    this.eventsParsedSubmit = response.data
+                })
+                .catch(error => {
+                    console.log(error)
+                })
             }
         },
-        evtSubmited: function(){
-            if (this.evtSubmited){
-                var timelinesApi = this.baseApi + 'timelines'
+        eventsParsedSubmit: function(){
+            if (this.eventsParsedSubmit){
+                var timelinesApi = this.baseApi + 'timelines/multiple'
 
-                var subTimelinesLen = 0
+                var subTimelines = []
                 for (var i=0, len=this.eventsParsed.length; i<len; i++){
                     var subEvtsTemp = JSON.parse(JSON.stringify(this.subEventsParsed.find(x => x.id === this.eventsParsed[i].id).subEvents))
-                    if (subEvtsTemp.length > 0){
-                        //found subTimeline
-                        subTimelinesLen += 1
-                    }
-                }
-
-                if (subTimelinesLen == 0){
-                    alert("Submitted")
-                    this.$router.push({ path: '/settings' })
-                }
-
-                var counter1 = 0
-                for (i=0, len=this.eventsParsed.length; i<len; i++){
-                    subEvtsTemp = JSON.parse(JSON.stringify(this.subEventsParsed.find(x => x.id === this.eventsParsed[i].id).subEvents))
                     if (subEvtsTemp.length > 0){
                         //found subTimeline
                         var subTimeline = {
@@ -164,35 +143,33 @@
                             event: this.eventsParsedSubmit[i]
                         }
 
-                        this.axios.post(timelinesApi, subTimeline, {
-                            headers: {
-                                'Authorization': 'Bearer ' + this.$store.state.jwt.token
-                            },
-                            params: {
-                                findUser: false
-                            }
-                        })
-                        .then(response => {
-                            this.subTimelinesSubmitted.push(response.data)
-                            counter1 += 1
-                            if (counter1 == subTimelinesLen){
-                                //subTimelines submitted now subEvents
-                                this.subTimelinesReady = true
-                            }
-                        })
-                        .catch(error => {
-                            console.log(error)
-                        })
+                        subTimelines.push(subTimeline)
                     }
+                }
+                if (subTimelines.length == 0){
+                    alert("Submitted1")
+                    this.$router.push({ path: '/settings' })
+
+                } else {
+                    this.axios.post(timelinesApi, subTimelines, {
+                        headers: {
+                            'Authorization': 'Bearer ' + this.$store.state.jwt.token
+                        },
+                    })
+                    .then(response => {
+                        this.subTimelinesSubmitted = response.data
+                    })
+                    .catch(error => {
+                        console.log(error)
+                    })
                 }
             }
         },
-        subTimelinesReady: function(){
-            if(this.subTimelinesReady){
-                var eventsApi = this.baseApi + 'events'
-                let self = this
-
+        subTimelinesSubmitted: function(){
+            if(this.subTimelinesSubmitted){
+                var eventsApi = this.baseApi + 'events/multiple'
                 var counter = 0
+
                 for (var i=0, len=this.eventsParsed.length; i<len; i++){
                     
                     var subEvtsTemp = JSON.parse(JSON.stringify(this.subEventsParsed.find(x => x.id === this.eventsParsed[i].id).subEvents))
@@ -200,26 +177,21 @@
                         for (var j=0, len2=subEvtsTemp.length; j<len2; j++){
                             delete subEvtsTemp[j]['type']
                             delete subEvtsTemp[j]['id']
-                            subEvtsTemp[j].timeline = this.subTimelinesSubmitted[counter]
-                            this.axios.post(eventsApi, subEvtsTemp[j], {
+                            subEvtsTemp[j].timeline = JSON.parse(JSON.stringify(this.subTimelinesSubmitted[counter]))
+                        }
+                        counter += 1
+                        this.axios.post(eventsApi, subEvtsTemp, {
                                 headers: {
                                     'Authorization': 'Bearer ' + this.$store.state.jwt.token
-                                }
-                            })
-                            .then(() => {
-                                //axios is async i may be len or len-1 etc.
-                                if ((i==len || i==len-1) && (j==len2 || j==len2-1)){
-                                    alert("Submitted")
-                                    self.$router.push({ path: '/settings' })
                                 }
                             })
                             .catch(error =>{
                                 console.log(error)
                             })
-                        }
-                        counter += 1
                     }
                 }
+                alert("Submitted2")
+                this.$router.push({ path: '/settings' })
             }
         }
     },
@@ -229,13 +201,20 @@
             this.preview()
 
             //main timeline
+            var myParams = {
+                findUser: true,
+                withDelete: true,
+                add: true
+            }
+            if (this.editTimeline){
+                myParams.add = false
+            }
+
             this.axios.post(timelinesApi, this.timeline, {
                     headers: {
                         'Authorization': 'Bearer ' + this.$store.state.jwt.token
                     },
-                    params: {
-                        findUser: true
-                    }
+                    params: myParams
                 })
                 .then(response => {
                     //main timeline submitted now events
@@ -243,6 +222,10 @@
                 })
                 .catch(error => {
                     console.log(error)
+                    if (error.toString().includes("409")){
+                        this.errorMessage = 'This ID is taken!'
+                        document.getElementById("timelineId").scrollIntoView({behavior: "smooth", block: "end", inline: "nearest"})
+                    }
                 })
         },
         preview() {
@@ -365,6 +348,12 @@
 
 <style scoped lang="sass">
 @import '../assets/saas-vars.sass'
+.errorID
+    position: absolute
+    right: 44%
+    top: 117px
+    font-family: OpenSans-Regular
+    color: #B8352D
 
 .file
     margin-left: 40px
