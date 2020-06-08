@@ -37,6 +37,10 @@ import Creator from './Creator.vue'
         },
         events: function(){
             if (this.events){
+                if (!this.timeline.pictures){
+                    this.timeline.pictures = []
+                }
+                this.timeline.picturesRaw = []
                 this.readyTimeline = JSON.parse(JSON.stringify(this.timeline))
                 var subEventsApi = this.baseApi + 'events/allSubEventsByMainTimelineId?timelineId=' + this.timeline.id
                 this.axios.get(subEventsApi, {

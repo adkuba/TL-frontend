@@ -9,7 +9,14 @@
 
                 <div id="mainData">
                     <input class="ttitle" type="text" id="mainTitle" required maxlength="60" placeholder="Title" :value="timeline.descriptionTitle">
-                    <input class="file" type="file" id="mainPictures" multiple><br>
+                    <div v-if="timeline.pictures" class="file-container" v-on:click="open('mainPicturesContainer')">Files {{timeline.pictures.length}}</div>
+                    <div id="mainPicturesContainer" class="file-selector">
+                        <div class="exit" v-on:click="close('mainPicturesContainer')">x</div>
+                        <input class="file" @change="saveData()" type="file" id="mainPictures" multiple><br>
+                        <div class="image-container" v-for="(img, index) in timeline.pictures" :key="index">
+                            <img class="image" :class="$mq" :src="img" v-on:click="deleteImg(index)">
+                        </div>
+                    </div>
                     <textarea class="ttitle tlong" id="mainLong" required placeholder="Description" maxlength="3000" :value="timeline.description"></textarea>
                 </div>
 
@@ -80,7 +87,7 @@
           events: [{id: 'first', type: 'normal', title: '', shortDescription: '', description: '', date: '', links: new Map(), sub: []}],
           eventsParsed: [],
           eventsParsedSubmit: [],
-          timeline: {},
+          timeline: {pictures: [], picturesRaw: []},
           subEventsParsed: [],
           errorMessage: '',
 
@@ -90,6 +97,11 @@
           baseApi: 'http://localhost:8081/api/',
           lorem: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vitae auctor urna, sed volutpat orci. Etiam interdum finibus eros, a porta quam ultrices id. Sed eget ligula vel lorem eleifend tincidunt. Proin at lacinia elit. Cras rhoncus interdum libero vitae tristique. Donec facilisis quam quis diam consequat, ullamcorper malesuada nisi elementum. Cras vehicula orci consectetur est blandit volutpat. Suspendisse ultrices imperdiet neque, suscipit pretium nulla commodo quis.'
       }
+    },
+    updated() {
+        if (this.editTimeline){
+            document.getElementById('timelineId').disabled = true
+        }
     },
     watch: {
         editEvents: function(){
@@ -103,7 +115,7 @@
         editTimeline: function(){
             if (this.editTimeline){
                 this.timeline = this.editTimeline
-                document.getElementById('timelineId').disabled = true
+                
             }
         },
         mainTimelineSubmit: function(){
@@ -115,6 +127,9 @@
                     eventsParsedSubmitTemp[i].timeline = this.mainTimelineSubmit
                     delete eventsParsedSubmitTemp[i]['type']
                     delete eventsParsedSubmitTemp[i]['id']
+                    //var formData = new FormData()
+                    //formData.append("pictures", eventsParsedSubmitTemp[i].pictures)
+                    //eventsParsedSubmitTemp[i].pictures = formData
                 }
                 this.axios.post(eventsApi, eventsParsedSubmitTemp, {
                     headers: {
@@ -178,6 +193,9 @@
                             delete subEvtsTemp[j]['type']
                             delete subEvtsTemp[j]['id']
                             subEvtsTemp[j].timeline = JSON.parse(JSON.stringify(this.subTimelinesSubmitted[counter]))
+                            //var formData = new FormData()
+                            //formData.append("pictures", subEvtsTemp[j].pictures)
+                            //subEvtsTemp[j].pictures = formData
                         }
                         counter += 1
                         this.axios.post(eventsApi, subEvtsTemp, {
@@ -196,6 +214,19 @@
         }
     },
     methods: {
+        close(id){
+            document.getElementById(id).style.display = "none"
+        },
+        open(id){
+            document.getElementById(id).style.display = "block"
+        },
+        deleteImg(index){
+            var rawIndex = index - (this.timeline.pictures.length - this.timeline.picturesRaw.length)
+            this.timeline.pictures.splice(index, 1)
+            if (rawIndex >= 0){
+                this.timeline.picturesRaw.splice(rawIndex, 1)
+            }
+        },
         submit(){
             var timelinesApi = this.baseApi + 'timelines'
             this.preview()
@@ -210,13 +241,54 @@
                 myParams.add = false
             }
 
-            this.axios.post(timelinesApi, this.timeline, {
+            var timelineCopy = JSON.parse(JSON.stringify(this.timeline))
+            delete timelineCopy["pictures"]
+            delete timelineCopy["picturesRaw"]
+
+            this.axios.post(timelinesApi, timelineCopy, {
                     headers: {
                         'Authorization': 'Bearer ' + this.$store.state.jwt.token
                     },
                     params: myParams
                 })
                 .then(response => {
+                    //pictures
+                    var formData = new FormData()
+                    for (var i=0, len=this.timeline.picturesRaw.length; i<len; i++){
+                        formData.append("pictures", this.timeline.picturesRaw[i])
+                    }
+                    var urlList = new FormData()
+                    for (i=0, len=this.timeline.pictures.length; i<len; i++){
+                        if (this.timeline.pictures[i].substring(0,4) != 'data'){
+                            urlList.append("picturesURL", this.timeline.pictures[i])
+                        }
+                    }
+                    if (!urlList.has("picturesURL")){
+                        urlList.append("picturesURL", "")
+                    }
+
+                    
+                    this.axios.post(timelinesApi + "/" + response.data.id + "/pictures", formData, {
+                        headers: {
+                            'Authorization': 'Bearer ' + this.$store.state.jwt.token,
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    })
+                    .then(() => {
+                        //old pictures
+                        this.axios.post(timelinesApi + "/" + response.data.id + "/picturesURL", urlList, {
+                            headers: {
+                                'Authorization': 'Bearer ' + this.$store.state.jwt.token,
+                            }
+                        })
+                        .catch(error => {
+                            console.log(error)
+                        })
+                    })
+                    .catch(error => {
+                        console.log(error)
+                    })
+
                     //main timeline submitted now events
                     this.mainTimelineSubmit = response.data
                 })
@@ -234,12 +306,6 @@
             this.eventsParsed = JSON.parse(JSON.stringify(this.events))
             for (var i=0, len=this.eventsParsed.length; i<len; i++){
                 this.eventsParsed[i].type = "circle"
-            }
-            //timeline
-            this.timeline = {
-                id: document.getElementById("timelineId").value,
-                descriptionTitle: document.getElementById("mainTitle").value,
-                description: document.getElementById("mainLong").value
             }
             //subEvents
             this.subEventsParsed = []
@@ -293,8 +359,35 @@
                 this.events[index].sub.splice(newIndex, 0, this.events[index].sub.splice(oldIndex, 1)[0]);
             }
         },
+        toArray(fileList){
+            return Array.prototype.slice.call(fileList)
+        },
         saveData(sort=false){
-            for (var i=0, len=this.events.length; i<len; i++){
+            //timeline
+            var timelinePictures = []
+            var timelinePicturesRaw = []
+            var timelinePicturesList = document.getElementById("mainPictures").files
+            for (var i=0, len=timelinePicturesList.length; i<len; i++){
+                var reader = new FileReader()
+                reader.onload = function(e) {
+                    timelinePictures.push(e.target.result)
+                }
+                reader.readAsDataURL(timelinePicturesList[i])
+            }
+
+            timelinePictures = timelinePictures.concat(this.timeline.pictures)
+            timelinePicturesRaw = this.toArray(this.timeline.picturesRaw).concat(this.toArray(timelinePicturesList))
+
+            this.timeline = {
+                id: document.getElementById("timelineId").value,
+                descriptionTitle: document.getElementById("mainTitle").value,
+                description: document.getElementById("mainLong").value,
+                pictures: timelinePictures,
+                picturesRaw: timelinePicturesRaw
+            }
+            document.getElementById("mainPictures").value = ''
+
+            for (i=0, len=this.events.length; i<len; i++){
                 this.events[i].title = document.getElementById("title"+i).value;
                 document.getElementById("title"+i).value = '';
 
@@ -306,6 +399,8 @@
 
                 this.events[i].date = document.getElementById("date"+i).value;
                 document.getElementById("date"+i).value = '';
+
+                //this.events[i].pictures = document.getElementById("pictures"+i).files
 
                 if (this.events[i].sub){
                     for (var j=0, len2=this.events[i].sub.length; j<len2; j++){
@@ -321,6 +416,8 @@
 
                             this.events[i].sub[j].date = document.getElementById("sub"+i+"date"+j).value;
                             document.getElementById("sub"+i+"date"+j).value = '';
+
+                            //this.events[i].sub[j].pictures = document.getElementById("sub"+i+"pictures"+j).files
                         }
                     }
                     if (sort){
@@ -348,6 +445,40 @@
 
 <style scoped lang="sass">
 @import '../assets/saas-vars.sass'
+.exit
+    position: absolute
+    right: 10px
+    top: 5px
+
+.image
+    width: 50px
+    height: 50px
+    object-fit: cover  
+
+.image-container
+    display: inline-block
+    margin: 20px
+
+.file-selector
+    position: fixed
+    font-family: OpenSans-Regular
+    top: 40%
+    left: 50%
+    transform: translateX(-50%) translateY(-50%)
+    width: 40%
+    height: 150px
+    border: 2px solid black
+    background: #f3f3f3
+    z-index: 4
+    display: none
+
+.file-container
+    margin-left: 50px
+    font-family: OpenSans-Regular
+    display: inline-block
+    vertical-align: bottom
+    color: #14426B
+
 .errorID
     position: absolute
     right: 44%
@@ -356,9 +487,9 @@
     color: #B8352D
 
 .file
-    margin-left: 40px
-    font-family: OpenSans-Regular
-    vertical-align: bottom
+    margin-top: 20px
+    margin-left: 20px
+    color: transparent
 
 .file::-webkit-file-upload-button
     border: 0
@@ -459,7 +590,7 @@ h2
     font-size: 25px
     .normal &
         border-left: 2px solid #ff8484
-    background: #efefef
+    background: #f3f3f3
     color: #404040
     font-family: Raleway-Regular
     padding-left: 20px
