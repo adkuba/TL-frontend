@@ -57,6 +57,18 @@ import Creator from './Creator.vue'
         subEvents: function(){
             if (this.subEvents){
                 for (var i=0, len=this.events.length; i<len; i++){
+                    this.events[i].picturesRaw = []
+                    if (!this.events[i].pictures){
+                        this.events[i].pictures = []
+                    }
+
+                    for (var j=0, len2=this.subEvents[i].length; j<len2; j++){
+                        this.subEvents[i][j].picturesRaw = []
+                        if (!this.subEvents[i][j].pictures){
+                            this.subEvents[i][j].pictures = []
+                        }
+                    }
+
                     this.events[i].sub = this.subEvents[i]
                 }
                 this.readyEvents = JSON.parse(JSON.stringify(this.events))

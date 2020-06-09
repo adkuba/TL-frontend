@@ -1,5 +1,15 @@
 <template lang="html">
     <div>
+        <div id="mainPicturesContainer" class="file-selector">
+            <div class="exit" v-on:click="close()">x</div>
+            <input class="file" @change="saveData()" type="file" id="mainPictures" multiple><br>
+            <div class="image-master">
+                <div class="image-container" v-for="(img, index) in currentPictures" :key="index">
+                    <img class="image" :class="$mq" :src="img" v-on:click="deleteImg(index)">
+                </div>
+            </div>
+        </div>
+
         <div id="creator" v-if="$store.state.jwt">
             <form action="javascript:void(0);" id="tform">
                 <h1>Creator</h1>
@@ -9,14 +19,7 @@
 
                 <div id="mainData">
                     <input class="ttitle" type="text" id="mainTitle" required maxlength="60" placeholder="Title" :value="timeline.descriptionTitle">
-                    <div v-if="timeline.pictures" class="file-container" v-on:click="open('mainPicturesContainer')">Files {{timeline.pictures.length}}</div>
-                    <div id="mainPicturesContainer" class="file-selector">
-                        <div class="exit" v-on:click="close('mainPicturesContainer')">x</div>
-                        <input class="file" @change="saveData()" type="file" id="mainPictures" multiple><br>
-                        <div class="image-container" v-for="(img, index) in timeline.pictures" :key="index">
-                            <img class="image" :class="$mq" :src="img" v-on:click="deleteImg(index)">
-                        </div>
-                    </div>
+                    <div v-if="timeline.pictures" class="file-container" v-on:click="open(-1)">Files {{timeline.pictures.length}}</div>
                     <textarea class="ttitle tlong" id="mainLong" required placeholder="Description" maxlength="3000" :value="timeline.description"></textarea>
                 </div>
 
@@ -35,7 +38,7 @@
                             <div class="s_left">
                                 <input class="ttitle" type="text" :id="'title'+index" required maxlength="40" placeholder="Title" :value="evt.title">
                                 <input class="ttitle tdate" type="date" required :id="'date'+index" placeholder="mm/dd/yyyy" :value="evt.date">
-                                <input class="file" type="file" :id="'pictures'+index" multiple><br>
+                                <div v-if="timeline.pictures" class="file-container" v-on:click="open(index)">Files {{evt.pictures.length}}</div>
                                 <textarea class="ttitle tlong" :id="'long'+index" required maxlength="1500" placeholder="Description" :value="evt.shortDescription ? evt.shortDescription + '\n' + evt.description : ''"></textarea>
                                 <div class="control_item add_sub" v-on:click="addSubEvent(index)">&#43;</div>
                             </div>
@@ -51,7 +54,7 @@
                                 <div class="s_left">
                                     <input class="ttitle" :id="'sub'+index+'title'+subindex" required maxlength="40" type="text" placeholder="Title" :value="subevt.title">
                                     <input class="ttitle tdate" type="date" required :id="'sub'+index+'date'+subindex" placeholder="mm/dd/yyyy" :value="subevt.date">
-                                    <input class="file" type="file" :id="'sub'+index+'pictures'+subindex" multiple><br>
+                                    <div v-if="timeline.pictures" class="file-container" v-on:click="open(index, subindex)">Files {{subevt.pictures.length}}</div>
                                     <textarea class="ttitle tlong" :id="'sub'+index+'long'+subindex" required maxlength="1500" placeholder="Description" :value="subevt.shortDescription ? subevt.shortDescription + '\n' + subevt.description : ''"></textarea>
                                 </div>
                             </div>
@@ -84,7 +87,7 @@
     },
     data () {
       return {
-          events: [{id: 'first', type: 'normal', title: '', shortDescription: '', description: '', date: '', links: new Map(), sub: []}],
+          events: [{id: 'first', type: 'normal', title: '', pictures: [], picturesRaw: [], shortDescription: '', description: '', date: '', links: new Map(), sub: []}],
           eventsParsed: [],
           eventsParsedSubmit: [],
           timeline: {pictures: [], picturesRaw: []},
@@ -93,6 +96,11 @@
 
           mainTimelineSubmit: {},
           subTimelinesSubmitted: [],
+
+          openedPictures: -1,
+          openedSubPictures: -1,
+          currentPictures: [],
+          deletedPictures: [],
 
           baseApi: 'http://localhost:8081/api/',
           lorem: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vitae auctor urna, sed volutpat orci. Etiam interdum finibus eros, a porta quam ultrices id. Sed eget ligula vel lorem eleifend tincidunt. Proin at lacinia elit. Cras rhoncus interdum libero vitae tristique. Donec facilisis quam quis diam consequat, ullamcorper malesuada nisi elementum. Cras vehicula orci consectetur est blandit volutpat. Suspendisse ultrices imperdiet neque, suscipit pretium nulla commodo quis.'
@@ -127,9 +135,8 @@
                     eventsParsedSubmitTemp[i].timeline = this.mainTimelineSubmit
                     delete eventsParsedSubmitTemp[i]['type']
                     delete eventsParsedSubmitTemp[i]['id']
-                    //var formData = new FormData()
-                    //formData.append("pictures", eventsParsedSubmitTemp[i].pictures)
-                    //eventsParsedSubmitTemp[i].pictures = formData
+                    delete eventsParsedSubmitTemp[i]['pictures']
+                    delete eventsParsedSubmitTemp[i]['picturesRaw']
                 }
                 this.axios.post(eventsApi, eventsParsedSubmitTemp, {
                     headers: {
@@ -137,6 +144,9 @@
                     }
                 })
                 .then(response => {
+                    for (i=0, len=this.events.length; i<len; i++){
+                        this.sendPictures(this.baseApi + 'events/' + response.data[i].id, this.events[i].pictures, this.events[i].picturesRaw)
+                    }
                     this.eventsParsedSubmit = response.data
                 })
                 .catch(error => {
@@ -180,7 +190,7 @@
                 }
             }
         },
-        subTimelinesSubmitted: function(){
+        subTimelinesSubmitted: async function(){
             if(this.subTimelinesSubmitted){
                 var eventsApi = this.baseApi + 'events/multiple'
                 var counter = 0
@@ -192,15 +202,21 @@
                         for (var j=0, len2=subEvtsTemp.length; j<len2; j++){
                             delete subEvtsTemp[j]['type']
                             delete subEvtsTemp[j]['id']
+                            delete subEvtsTemp[j]['pictures']
+                            delete subEvtsTemp[j]['picturesRaw']
                             subEvtsTemp[j].timeline = JSON.parse(JSON.stringify(this.subTimelinesSubmitted[counter]))
-                            //var formData = new FormData()
-                            //formData.append("pictures", subEvtsTemp[j].pictures)
-                            //subEvtsTemp[j].pictures = formData
                         }
                         counter += 1
-                        this.axios.post(eventsApi, subEvtsTemp, {
+                        await this.axios.post(eventsApi, subEvtsTemp, {
                                 headers: {
                                     'Authorization': 'Bearer ' + this.$store.state.jwt.token
+                                }
+                            })
+                            .then(response => {
+                                //i sie nie zmienia bo jest await? O KURWA CHYBA DZIALA
+                                var subEvtsTemp = this.subEventsParsed.find(x => x.id === this.eventsParsed[i].id).subEvents.slice()
+                                for (var k=0, len3=subEvtsTemp.length; k<len3; k++){
+                                    this.sendPictures(this.baseApi + 'events/' + response.data[k].id, subEvtsTemp[k].pictures, subEvtsTemp[k].picturesRaw)
                                 }
                             })
                             .catch(error =>{
@@ -214,18 +230,71 @@
         }
     },
     methods: {
-        close(id){
-            document.getElementById(id).style.display = "none"
+        close(){
+            document.getElementById('mainPicturesContainer').style.display = "none"
+            this.openedSubPictures = -1
+            this.openedPictures = -1
         },
-        open(id){
-            document.getElementById(id).style.display = "block"
+        open(index, subindex=-1){
+            document.getElementById('mainPicturesContainer').style.display = "block"
+            this.openedPictures = index
+            if (subindex != -1){
+                this.openedSubPictures = subindex
+            }
+            this.saveData()
+            
+        },
+        setPicturesContext(){
+            //timeline
+            if (this.openedPictures == -1){
+                this.currentPictures = this.timeline.pictures
+
+            } else {
+                if (this.openedSubPictures != -1){
+                    //subevt
+                    this.currentPictures = this.events[this.openedPictures].sub[this.openedSubPictures].pictures
+
+                } else {
+                    //evt
+                    this.currentPictures = this.events[this.openedPictures].pictures
+                }
+            }
         },
         deleteImg(index){
-            var rawIndex = index - (this.timeline.pictures.length - this.timeline.picturesRaw.length)
-            this.timeline.pictures.splice(index, 1)
-            if (rawIndex >= 0){
-                this.timeline.picturesRaw.splice(rawIndex, 1)
-            }
+            //timeline picture delete
+            if (this.openedPictures == -1){
+                var rawIndex = index - (this.timeline.pictures.length - this.timeline.picturesRaw.length)
+                if (this.timeline.pictures[index].substring(0, 4) != "data"){
+                    this.deletedPictures.push(this.timeline.pictures[index])
+                }
+                this.timeline.pictures.splice(index, 1)
+                if (rawIndex >= 0){
+                    this.timeline.picturesRaw.splice(rawIndex, 1)
+                }
+            } else {
+                if (this.openedSubPictures != -1){
+                    //subevt picture delete
+                    rawIndex = index - (this.events[this.openedPictures].sub[this.openedSubPictures].pictures.length - this.events[this.openedPictures].sub[this.openedSubPictures].picturesRaw.length)
+                    if (this.events[this.openedPictures].sub[this.openedSubPictures].pictures[index].substring(0,4) != "data"){
+                        this.deletedPictures.push(this.events[this.openedPictures].sub[this.openedSubPictures].pictures[index])
+                    }
+                    this.events[this.openedPictures].sub[this.openedSubPictures].pictures.splice(index, 1)
+                    if (rawIndex >= 0){
+                        this.events[this.openedPictures].sub[this.openedSubPictures].picturesRaw.splice(rawIndex, 1)
+                    }
+
+                } else {
+                    //evt picture delete
+                    rawIndex = index - (this.events[this.openedPictures].pictures.length - this.events[this.openedPictures].picturesRaw.length)
+                    if (this.events[this.openedPictures].pictures[index].substring(0,4) != "data"){
+                        this.deletedPictures.push(this.events[this.openedPictures].pictures[index])
+                    }
+                    this.events[this.openedPictures].pictures.splice(index, 1)
+                    if (rawIndex >= 0){
+                        this.events[this.openedPictures].picturesRaw.splice(rawIndex, 1)
+                    }
+                }
+            }            
         },
         submit(){
             var timelinesApi = this.baseApi + 'timelines'
@@ -252,43 +321,7 @@
                     params: myParams
                 })
                 .then(response => {
-                    //pictures
-                    var formData = new FormData()
-                    for (var i=0, len=this.timeline.picturesRaw.length; i<len; i++){
-                        formData.append("pictures", this.timeline.picturesRaw[i])
-                    }
-                    var urlList = new FormData()
-                    for (i=0, len=this.timeline.pictures.length; i<len; i++){
-                        if (this.timeline.pictures[i].substring(0,4) != 'data'){
-                            urlList.append("picturesURL", this.timeline.pictures[i])
-                        }
-                    }
-                    if (!urlList.has("picturesURL")){
-                        urlList.append("picturesURL", "")
-                    }
-
-                    
-                    this.axios.post(timelinesApi + "/" + response.data.id + "/pictures", formData, {
-                        headers: {
-                            'Authorization': 'Bearer ' + this.$store.state.jwt.token,
-                            'Content-Type': 'multipart/form-data'
-                        }
-                    })
-                    .then(() => {
-                        //old pictures
-                        this.axios.post(timelinesApi + "/" + response.data.id + "/picturesURL", urlList, {
-                            headers: {
-                                'Authorization': 'Bearer ' + this.$store.state.jwt.token,
-                            }
-                        })
-                        .catch(error => {
-                            console.log(error)
-                        })
-                    })
-                    .catch(error => {
-                        console.log(error)
-                    })
-
+                    this.sendPictures(timelinesApi + "/" + response.data.id, this.timeline.pictures, this.timeline.picturesRaw)
                     //main timeline submitted now events
                     this.mainTimelineSubmit = response.data
                 })
@@ -299,11 +332,60 @@
                         document.getElementById("timelineId").scrollIntoView({behavior: "smooth", block: "end", inline: "nearest"})
                     }
                 })
+            if (this.deletedPictures.length > 0){
+                var formData = new FormData()
+                for (var i=0, len=this.deletedPictures.length; i<len; i++){
+                    formData.append("urls", this.deletedPictures[i])
+                }
+                this.axios.delete(this.baseApi + 'files', {
+                    headers: {
+                        'Authorization': 'Bearer ' + this.$store.state.jwt.token
+                    },
+                    data: formData
+                })
+            }
+        },
+        sendPictures(url, array, arrayRaw){
+            //pictures
+            var formData = new FormData()
+            for (var i=0, len=arrayRaw.length; i<len; i++){
+                formData.append("pictures", arrayRaw[i])
+            }
+            var urlList = new FormData()
+            for (i=0, len=array.length; i<len; i++){
+                if (array[i].substring(0,4) != 'data'){
+                    urlList.append("picturesURL", array[i])
+                }
+            }
+            if (!urlList.has("picturesURL")){
+                urlList.append("picturesURL", "")
+            }
+            
+            this.axios.post(url + "/pictures", formData, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.$store.state.jwt.token,
+                    'Content-Type': 'multipart/form-data'
+                }
+            })
+            .then(() => {
+                //old pictures
+                this.axios.post(url + "/picturesURL", urlList, {
+                    headers: {
+                        'Authorization': 'Bearer ' + this.$store.state.jwt.token,
+                    }
+                })
+                .catch(error => {
+                    console.log(error)
+                })
+            })
+            .catch(error => {
+                console.log(error)
+            })
         },
         preview() {
             this.saveData(true)
             //mainEvents
-            this.eventsParsed = JSON.parse(JSON.stringify(this.events))
+            this.eventsParsed = this.events.slice()
             for (var i=0, len=this.eventsParsed.length; i<len; i++){
                 this.eventsParsed[i].type = "circle"
             }
@@ -317,14 +399,14 @@
                     id: this.eventsParsed[i].id,
                     subEvents: this.eventsParsed[i].sub
                 }
-                delete this.eventsParsed[i]["sub"]
+                //delete this.eventsParsed[i]["sub"]
                 this.subEventsParsed.push(object)
             }
         },
         addEvent(index){
             this.saveData()
             //DOPRACOWAC dziala dodawanie tylko jednego sub eventu
-            var event = {id: '', type: 'normal', title: '', shortDescription: '', description: '', date: '', links: new Map(), sub: []}
+            var event = {id: '', type: 'normal', title: '', shortDescription: '', pictures: [], picturesRaw: [], description: '', date: '', links: new Map(), sub: []}
             event.id = '_' + Math.random().toString(36).substr(2, 9)
             if (index == this.events.length){
                 this.events.push(event)
@@ -335,12 +417,22 @@
         },
         addSubEvent(index){
             this.saveData()
-            var subEvent = {id: '', title: '', shortDescription: '', description: '', date: '', links: new Map()}
+            var subEvent = {id: '', title: '', shortDescription: '', pictures: [], picturesRaw: [], description: '', date: '', links: new Map()}
             subEvent.id = '_' + Math.random().toString(36).substr(2, 9)
             this.events[index].sub.unshift(subEvent)
         },
         deleteEvent(index){
             if (this.events.length != 1){
+                if (this.events[index].pictures){
+                    for (var i=0, len=this.events[index].pictures.length; i<len; i++){
+                        if (this.events[index].pictures[i].substring(0,4) != "data"){
+                             this.deletedPictures.push(this.events[index].pictures[i])
+                        }
+                    }
+                }
+                for (i=0, len=this.events[index].sub.length; i<len; i++){
+                    this.deleteSubEvent(index, i)
+                }
                 this.events.splice(index, 1)   
             }
         },
@@ -351,6 +443,13 @@
             }
         },
         deleteSubEvent(index, subindex){
+            if (this.events[index].sub[subindex].pictures){
+                for (var i=0, len=this.events[index].sub[subindex].pictures.length; i<len; i++){
+                    if (this.events[index].sub[subindex].pictures[i].substring(0,4) != "data"){
+                        this.deletedPictures.push(this.events[index].sub[subindex].pictures[i])
+                    } 
+                }
+            }
             this.events[index].sub.splice(subindex, 1)
         },
         changeSubIndex(index, oldIndex, newIndex){
@@ -363,29 +462,49 @@
             return Array.prototype.slice.call(fileList)
         },
         saveData(sort=false){
-            //timeline
-            var timelinePictures = []
-            var timelinePicturesRaw = []
-            var timelinePicturesList = document.getElementById("mainPictures").files
-            for (var i=0, len=timelinePicturesList.length; i<len; i++){
+            //files saving
+            var tempPictures = []
+            var tempPicturesRaw = []
+            var tempPicturesList = document.getElementById("mainPictures").files
+            for (var i=0, len=tempPicturesList.length; i<len; i++){
                 var reader = new FileReader()
                 reader.onload = function(e) {
-                    timelinePictures.push(e.target.result)
+                    tempPictures.push(e.target.result)
                 }
-                reader.readAsDataURL(timelinePicturesList[i])
+                reader.readAsDataURL(tempPicturesList[i])
             }
 
-            timelinePictures = timelinePictures.concat(this.timeline.pictures)
-            timelinePicturesRaw = this.toArray(this.timeline.picturesRaw).concat(this.toArray(timelinePicturesList))
+            //timeline files
+            if (this.openedPictures == -1){
+                tempPictures = tempPictures.concat(this.timeline.pictures)
+                tempPicturesRaw = this.toArray(this.timeline.picturesRaw).concat(this.toArray(tempPicturesList))
+                this.timeline.pictures = tempPictures
+                this.timeline.picturesRaw = tempPicturesRaw
 
-            this.timeline = {
-                id: document.getElementById("timelineId").value,
-                descriptionTitle: document.getElementById("mainTitle").value,
-                description: document.getElementById("mainLong").value,
-                pictures: timelinePictures,
-                picturesRaw: timelinePicturesRaw
+            } else {
+                if (this.openedSubPictures != -1){
+                    //subevent files
+                    tempPictures = tempPictures.concat(this.events[this.openedPictures].sub[this.openedSubPictures].pictures)
+                    tempPicturesRaw = this.toArray(this.events[this.openedPictures].sub[this.openedSubPictures].picturesRaw).concat(this.toArray(tempPicturesList))
+                    this.events[this.openedPictures].sub[this.openedSubPictures].pictures = tempPictures
+                    this.events[this.openedPictures].sub[this.openedSubPictures].picturesRaw = tempPicturesRaw
+
+                } else {
+                    //event files
+                    tempPictures = tempPictures.concat(this.events[this.openedPictures].pictures)
+                    tempPicturesRaw = this.toArray(this.events[this.openedPictures].picturesRaw).concat(this.toArray(tempPicturesList))
+                    this.events[this.openedPictures].pictures = tempPictures
+                    this.events[this.openedPictures].picturesRaw = tempPicturesRaw
+                }
             }
             document.getElementById("mainPictures").value = ''
+            this.setPicturesContext()
+
+
+            //text saving
+            this.timeline.id = document.getElementById("timelineId").value
+            this.timeline.descriptionTitle = document.getElementById("mainTitle").value
+            this.timeline.description = document.getElementById("mainLong").value
 
             for (i=0, len=this.events.length; i<len; i++){
                 this.events[i].title = document.getElementById("title"+i).value;
@@ -399,8 +518,6 @@
 
                 this.events[i].date = document.getElementById("date"+i).value;
                 document.getElementById("date"+i).value = '';
-
-                //this.events[i].pictures = document.getElementById("pictures"+i).files
 
                 if (this.events[i].sub){
                     for (var j=0, len2=this.events[i].sub.length; j<len2; j++){
@@ -416,8 +533,6 @@
 
                             this.events[i].sub[j].date = document.getElementById("sub"+i+"date"+j).value;
                             document.getElementById("sub"+i+"date"+j).value = '';
-
-                            //this.events[i].sub[j].pictures = document.getElementById("sub"+i+"pictures"+j).files
                         }
                     }
                     if (sort){
@@ -445,6 +560,10 @@
 
 <style scoped lang="sass">
 @import '../assets/saas-vars.sass'
+.image-master
+    position: absolute
+    margin-top: 20px
+
 .exit
     position: absolute
     right: 10px
@@ -456,6 +575,7 @@
     object-fit: cover  
 
 .image-container
+    margin-top: 20px
     display: inline-block
     margin: 20px
 
@@ -487,8 +607,9 @@
     color: #B8352D
 
 .file
-    margin-top: 20px
-    margin-left: 20px
+    position: absolute
+    margin-top: 15px
+    left: 20px
     color: transparent
 
 .file::-webkit-file-upload-button
