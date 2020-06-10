@@ -159,7 +159,12 @@ export default {
         timeline: function(){
             if (!this.mockEvents){
                 var eventsApi = this.baseApi + 'events/public?timelineId=' + this.timeline.id;
-                this.axios.get(eventsApi).then(response => {this.events = response.data});
+                this.axios.get(eventsApi, {
+                    params: {
+                        view: true
+                    }
+                })
+                .then(response => {this.events = response.data});
             }
         },
         events: function(){

@@ -19,7 +19,6 @@ export default {
     created(){
         this.refreshToken()
         this.tokenRefresh = setInterval(() => this.refreshTry(), 840000)
-
     },
     data(){
         return {

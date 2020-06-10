@@ -21,11 +21,17 @@ Vue.use(VueMq, {
 
 const store = new Vuex.Store({
   state: {
-    jwt: ''
+    jwt: '',
+    timelines: []
   },
   mutations: {
     set (state, newJwt) {
       state.jwt = newJwt;
+    },
+    addTimelines(state, newTimelines){
+      for (var i=0, len=newTimelines.length; i<len; i++){
+        state.timelines.push(newTimelines[i])
+      }
     }
   }
 })
