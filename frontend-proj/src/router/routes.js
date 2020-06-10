@@ -7,6 +7,7 @@ import EmailChange from '../components/EmailChange.vue';
 import NameChange from '../components/NameChange.vue';
 import PasswordChange from '../components/PasswordChange.vue';
 import EditorLoader from '../components/EditorLoader.vue'
+import Admin from '../components/Admin.vue'
 
 // the routes are simply an array of objects
 const routes = [
@@ -74,6 +75,14 @@ const routes = [
         path: '/editorLoader/:id',
         name: 'editorLoader',
         component: EditorLoader,
+        meta: {
+            requiresAuth: true
+          }
+    },
+    {
+        path: '/admin',
+        name: 'admin',
+        component: Admin,
         meta: {
             requiresAuth: true
           }

@@ -1,9 +1,9 @@
 <template>
 <div>
-    <div class="search">
-        <input type="search" onfocus="window.scrollTo({ top: 0, behavior: 'smooth' })">
-        <div v-on:click="search()" class="search-b">Search</div>
-    </div>
+    <form action="javascript:void(0);" class="search">
+        <input type="search" onfocus="window.scrollTo({ top: 0, behavior: 'smooth' })" id="search-input">
+        <input type="submit" v-on:click="search()" class="search-b" value="Search">
+    </form>
     <div id="homepage" :class="$mq">
         <div v-if="searchResults.length == 0">
             <div class="element" v-for="(timeline, idx) in $store.state.timelines" :key="idx">
@@ -67,7 +67,7 @@ export default {
             };
         },
         getTimelines(){
-            var timelinesApi = this.baseApi + 'timelines/public/random'
+            var timelinesApi = this.baseApi + 'timelines/public/homepage'
             this.axios.get(timelinesApi)
             .then(response => {
                 this.$store.commit('addTimelines', response.data)
@@ -77,7 +77,7 @@ export default {
             })
         },
         search(){
-            var timelinesApi = this.baseApi + 'timelines/public/random'
+            var timelinesApi = this.baseApi + 'timelines/public/homepage'
             this.axios.get(timelinesApi)
             .then(response => {
                 this.searchResults = response.data
@@ -87,6 +87,7 @@ export default {
             })
         },
         quit(){
+            document.getElementById("search-input").value = ''
             this.searchResults = []
         }
     },
@@ -101,7 +102,7 @@ export default {
 @import '../assets/saas-vars.sass'
 .quit
     position: absolute
-    right: 21%
+    right: 20%
     top: 100px
     font-family: OpenSans-Regular
     font-size: 30px
