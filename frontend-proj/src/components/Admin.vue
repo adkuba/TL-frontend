@@ -9,7 +9,7 @@
             </div>
             <div class="timelines">
                 <div v-for="(timeline, idx) in allTimelines" :key="idx">
-                    Title: {{ timeline.id }} Views: {{ timeline.views }} Trending: {{ timeline.trendingViews }} User: {{ timeline.user.email }} <div v-on:click="deleteTimeline(timeline)" class="del">DELETE</div>
+                    Title: {{ timeline.id }} Views: {{ timeline.views }} Likes: {{ timeline.likes }} Trending: {{ timeline.trendingViews }} User: {{ timeline.user.email }} <div v-on:click="deleteTimeline(timeline)" class="del">DELETE</div>
                 </div>
             </div>
         </div>

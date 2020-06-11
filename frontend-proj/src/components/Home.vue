@@ -16,7 +16,7 @@
                 <router-link :to="{ path: 'timeline/' + timeline.id }" class="desc">
                     {{ timeline.description.substring(0, 250) }}...
                 </router-link>
-                <div class="author">by {{ timeline.user.username }}, <div class="views">{{ timeline.views }} views</div></div>
+                <div class="author">by {{ timeline.user.username }}, <div class="views">{{ timeline.views }} views, {{ timeline.likes }} likes</div></div>
             </div>
         </div>
         <div v-else>
@@ -32,7 +32,7 @@
                 <router-link :to="{ path: 'timeline/' + timeline.id }" class="desc">
                     {{ timeline.description.substring(0, 250) }}...
                 </router-link>
-                <div class="author">by {{ timeline.user.username }}, <div class="views">{{ timeline.views }} views</div></div>
+                <div class="author">by {{ timeline.user.username }}, <div class="views">{{ timeline.views }} views, {{ timeline.likes }} likes</div></div>
             </div>
         </div>
     </div>
@@ -127,8 +127,7 @@ h1
     color: white
 
 .views
-    display: inline-block
-    margin-left: 15px
+    margin-top: 5px
 
 .category
     font-family: OpenSans-Regular

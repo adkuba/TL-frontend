@@ -12,6 +12,14 @@
             </div>
         </div>
 
+        <div class="like">
+            <div v-if="$store.state.jwt">
+                <div v-if="$store.state.jwt.likes.includes(timeline.id)" v-on:click="dislikeTimeline()">LIKED {{ timeline.likes }}</div>
+                <div v-else v-on:click="likeTimeline()">LIKE {{ timeline.likes }}</div>
+            </div>
+            <router-link :to="{ name: 'login', params: {path: {path: '/timeline/' + timeline.id}}}" v-else >LOGIN {{ timeline.likes }}</router-link>
+        </div>
+
         <div id="timeline" :class="$mq">
             <div id="text_fade_top" class="text_fade trans"></div>
 
@@ -205,6 +213,38 @@ export default {
         }
     },
     methods: {
+        likeTimeline(){
+            this.axios.post(this.baseApi + 'timelines/' + this.timeline.id + '/like', null, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.$store.state.jwt.token
+                }
+            })
+            .then(response => {
+                var jwt = this.$store.state.jwt
+                jwt.likes = response.data
+                this.timeline.likes += 1
+                this.$store.commit('set', jwt)
+            })
+            .catch(error => {
+                console.log(error)
+            })
+        },
+        dislikeTimeline(){
+            this.axios.post(this.baseApi + 'timelines/' + this.timeline.id + '/dislike', null, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.$store.state.jwt.token
+                }
+            })
+            .then(response => {
+                var jwt = this.$store.state.jwt
+                jwt.likes = response.data
+                this.timeline.likes -= 1
+                this.$store.commit('set', jwt)
+            })
+            .catch(error => {
+                console.log(error)
+            })
+        },
         imageViewerScroll(newIndex){
             if (this.mainImages){
                 if (newIndex >= this.mainImages.length){
@@ -404,6 +444,10 @@ export default {
 
 <style scoped lang="sass">
 @import '../assets/saas-vars.sass'
+.like
+    position: fixed
+    top: 200px
+    left: 50px
 
 .right-arrow
     right: 0

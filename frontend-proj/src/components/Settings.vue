@@ -36,6 +36,15 @@
                 <div class="s_right" :class="$mq">{{ timeline.description.substring(0, 400) }}</div>
                 <div class="s_line"></div>
             </div>
+
+            <h1>Likes</h1>
+            <div>
+                <div class="s_item" v-for="(timeline, index) in $store.state.jwt.likes" :key="index">
+                    <div class="s_left">
+                        <router-link style="color: #303030; text-decoration: none" :to="{ path: 'timeline/' + timeline }"> {{ timeline }} </router-link>
+                    </div>
+                </div>
+            </div>
         </div>
 
     </div>
