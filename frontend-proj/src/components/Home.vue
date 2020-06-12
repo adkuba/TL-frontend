@@ -6,7 +6,7 @@
     </form>
     <div id="homepage" :class="$mq">
         <div v-if="searchResults.length == 0">
-            <div class="element" v-for="(timeline, idx) in $store.state.timelines" :key="idx">
+            <div class="element" v-for="(timeline, idx) in $store.state.timelines" :key="idx"> 
                 <div class="s_line"></div>
                 <div class="category">{{ timeline.category }}</div>
                 <router-link :to="{ path: 'timeline/' + timeline.id }" class="image_container" v-if="timeline.pictures.length > 0">
@@ -23,16 +23,19 @@
             <h1>Search results:</h1>
             <div v-on:click="quit()" class="quit">x</div>
             <div class="element" v-for="(timeline, idx) in searchResults" :key="idx">
-                <div class="s_line"></div>
-                <div class="category"></div>
-                <router-link :to="{ path: 'timeline/' + timeline.id }" class="image_container" v-if="timeline.pictures.length > 0">
-                    <img class="image" :src="timeline.pictures[0]">
-                </router-link>
-                <router-link :to="{ path: 'timeline/' + timeline.id }" class="title">{{ timeline.descriptionTitle }}</router-link>
-                <router-link :to="{ path: 'timeline/' + timeline.id }" class="desc">
-                    {{ timeline.description.substring(0, 250) }}...
-                </router-link>
-                <div class="author">by {{ timeline.user.username }}, <div class="views">{{ timeline.views }} views, {{ timeline.likes }} likes</div></div>
+                <div v-if="!timeline.none">
+                    <div class="s_line"></div>
+                    <div class="category"></div>
+                    <router-link :to="{ path: 'timeline/' + timeline.id }" class="image_container" v-if="timeline.pictures.length > 0">
+                        <img class="image" :src="timeline.pictures[0]">
+                    </router-link>
+                    <router-link :to="{ path: 'timeline/' + timeline.id }" class="title">{{ timeline.descriptionTitle }}</router-link>
+                    <router-link :to="{ path: 'timeline/' + timeline.id }" class="desc">
+                        {{ timeline.description.substring(0, 250) }}...
+                    </router-link>
+                    <div class="author">by {{ timeline.user.username }}, <div class="views">{{ timeline.views }} views, {{ timeline.likes }} likes</div></div>
+                </div>
+                <div v-else class="empty">Can't find.</div>
             </div>
         </div>
     </div>
@@ -77,10 +80,17 @@ export default {
             })
         },
         search(){
-            var timelinesApi = this.baseApi + 'timelines/public/homepage'
-            this.axios.get(timelinesApi)
+            var timelinesApi = this.baseApi + 'timelines/public/search'
+            this.axios.get(timelinesApi, {
+                params: {
+                    text: document.getElementById("search-input").value
+                }
+            })
             .then(response => {
                 this.searchResults = response.data
+                if (response.data.length == 0){
+                    this.searchResults = [{none: true}]
+                }
             })
             .catch(error => {
                 console.log(error)
@@ -100,6 +110,12 @@ export default {
 
 <style scoped lang="sass">
 @import '../assets/saas-vars.sass'
+.empty
+    font-family: OpenSans-Regular
+    padding-top: 50px
+    text-align: left
+    font-size: 20px
+
 .quit
     position: absolute
     right: 20%
