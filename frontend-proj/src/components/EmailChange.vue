@@ -8,6 +8,11 @@
                 <div class="fsignup error" :class="$mq" v-if="errMessage">{{ errMessage }}</div>
                 <input type="submit" :class="$mq" value="Submit" class="fsubmit" v-on:click="changeEmail()">
             </form>
+            <div class="login-desc" :class="$mq">
+                <h1>About</h1>
+                <p>Email displays under your timelines so that users can contact with you. </p>
+                <p>It's also used to reset your password. You don't have to confirm it but make sure to enter valid email.</p>
+            </div>
         </div>
     </div>
 </template>

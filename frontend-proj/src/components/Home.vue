@@ -115,6 +115,7 @@ export default {
 .empty
     font-family: OpenSans-Regular
     padding-top: 50px
+    padding-bottom: 50px
     text-align: left
     font-size: 20px
     margin-left: 5%

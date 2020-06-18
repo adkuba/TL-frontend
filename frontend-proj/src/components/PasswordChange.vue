@@ -10,6 +10,10 @@
                 <div class="fsignup error" :class="$mq" v-if="errMessage">{{ errMessage }}</div>
                 <input type="submit" :class="$mq" value="Submit" class="fsubmit" v-on:click="changePassword()">
             </form>
+            <div class="login-desc" :class="$mq">
+                <h1>About</h1>
+                <p>Enter strong password, you can always reset it via email.</p>
+            </div>
         </div>
     </div>
 </template>

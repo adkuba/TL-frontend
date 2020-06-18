@@ -7,8 +7,11 @@
                 <br v-if="!errMessage">
                 <div class="fsignup error" :class="$mq" v-if="errMessage">{{ errMessage }}</div>
                 <input type="submit" :class="$mq" value="Submit" class="fsubmit" v-on:click="changeName()">
-                <div class="description" :class="$mq">Leave empty and submit to delete name.</div>
             </form>
+            <div class="login-desc" :class="$mq">
+                <h1>About</h1>
+                <p>Name displays above your timeline. Leve empty and submit to delete.</p>
+            </div>
         </div>
     </div>
 </template>
@@ -58,10 +61,5 @@
 </script>
 
 <style scoped lang="sass">
-.description
-    text-align: left  
-    width: calc(25% + 20px)
-    letter-spacing: 1px
-    margin: 50px auto
 
 </style>

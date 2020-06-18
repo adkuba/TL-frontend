@@ -1,7 +1,15 @@
 <template lang="html">
     <div>
         <div id="settings" :class="$mq">
-            <div class="logout" :class="$mq" v-on:click="logout()">Logout</div>
+            <div class="s_item" :class="$mq">
+                <div class="s_left" :class="$mq">Main</div>
+                <div class="s_right" :class="$mq">
+                <div class="daneh" :class="$mq">Action:</div>
+                <router-link :to="{ name: 'creator' }" class="danev" :class="$mq">Create timeline</router-link>
+                <div class="danea" :class="$mq" v-on:click="logout()">Logout</div>
+                </div>
+                <div class="s_line"></div>
+            </div>
             <div class="s_item">
                 <div class="s_left" :class="$mq">Details</div>
                 <div class="s_right" :class="$mq">
@@ -25,25 +33,31 @@
             </div>
 
             <h1>Timelines</h1>
-            <p>Aenean sed justo dui. In tincidunt odio vitae dui dapibus ultricies. Integer pulvinar pharetra nulla, in vestibulum nisl semper ut. Praesent feugiat tortor et leo dapibus, ac consequat ipsum finibus. Cras eget rhoncus arcu. Morbi vulputate finibus lacus, nec bibendum felis fringilla vel. Nullam enim leo, ultrices eu elit a, cursus maximus nisi.</p>
+            <p>Your timelines. You can edit them or delete. Try to keep things orginized.</p>
 
             <div class="s_item" v-for="(timeline, index) in timelines" :key="index">
                 <div class="s_left" :class="$mq">
                     <router-link style="color: #303030; text-decoration: none" :to="{ path: 'timeline/' + timeline.id }"> {{ timeline.descriptionTitle }} </router-link><br>
                     <router-link style="text-decoration: none" :to="{ path: 'editorLoader/' + timeline.id }" class="edit">Edit</router-link>
                     <div class="edit" v-on:click="deleteTimeline(timeline)">Delete</div>
+                    <div class="likes">{{ timeline.views }} views &middot; {{ timeline.likes }} likes</div>
                 </div>
-                <div class="s_right" :class="$mq">{{ timeline.description.substring(0, 400) }}</div>
+                <div class="s_right" :class="$mq">{{ timeline.description.substring(0, 250) }}</div>
                 <div class="s_line"></div>
             </div>
 
             <h1>Likes</h1>
+            <p>Your likes. List of all likes. You can click on timeline and check it out.</p>
             <div>
-                <div class="s_item" v-for="(timeline, index) in $store.state.jwt.likes" :key="index">
-                    <div class="s_left">
-                        <router-link style="color: #303030; text-decoration: none" :to="{ path: 'timeline/' + timeline }"> {{ timeline }} </router-link>
-                    </div>
+                <div class="s_item" v-for="(timeline, index) in likes" :key="index">
+                <div class="s_left" :class="$mq">
+                    <router-link style="color: #303030; text-decoration: none" :to="{ path: 'timeline/' + timeline.id }"> {{ timeline.descriptionTitle }} </router-link><br>
+                    <div class="author">By {{timeline.user.username}}</div>
+                    <div class="likes">{{ timeline.views }} views &middot; {{ timeline.likes }} likes</div>
                 </div>
+                <div class="s_right" :class="$mq">{{ timeline.description.substring(0, 250) }}</div>
+                <div class="s_line"></div>
+            </div>
             </div>
         </div>
 
@@ -63,11 +77,22 @@
         .catch(error => {
             console.log(error)
         })
+
+        for (var i=0, len=this.$store.state.jwt.likes.length; i<len; i++){
+            this.axios.get(this.baseApi + 'timelines/public?id=' + this.$store.state.jwt.likes[i])
+            .then(response => {
+                this.likes.push(response.data)
+            })
+            .catch(error => {
+                console.log(error)
+            })
+        }
     },
     data () {
       return {
           baseApi: 'http://localhost:8081/api/',
-          timelines: null
+          timelines: null,
+          likes: []
       }
     },
     methods: {
@@ -103,6 +128,11 @@
 
 <style scoped lang="sass">
 @import '../assets/saas-vars.sass'
+.likes
+    font-weight: normal
+    font-size: 15px
+    margin-top: 10px
+    color: #7e7e7e
 
 p
     font-family: OpenSans-Regular
@@ -115,6 +145,11 @@ h1
     font-size: 40px
     text-align: left
     margin-left: 10%
+
+.author
+    font-weight: normal
+    font-size: 15px
+    margin-top: 15px
 
 .edit
     display: inline-block
@@ -133,20 +168,13 @@ h1
         width: 100%
         margin-bottom: 40px
 
-.logout
-    position: absolute
-    right: 10%
-    margin-right: 30px
-    top: 70px
+.top-item
+    font-weight: bold
+    float: left
+    width: 30%
+    text-align: left
     font-family: Raleway-Regular
     font-size: 20px
-    &.small
-        right: 0
-        margin-right: 15px
-        top: 65px
-        font-size: 19px
-    &.medium
-        right: 0
 
 .daneh
     display: inline-block

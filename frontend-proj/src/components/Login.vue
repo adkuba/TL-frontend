@@ -183,7 +183,7 @@
     color: #B8352D !important
 
 #login
-    padding-bottom: 30px
+    padding-bottom: 100vh
     background: $bg-color
     font-family: 'Raleway-Regular'
     height: calc( 100% - 50px )
