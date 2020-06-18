@@ -12,7 +12,7 @@
                 <router-link :to="{ path: 'timeline/' + timeline.id }" class="title" :class="$mq">{{ timeline.descriptionTitle }}</router-link>
                 <router-link :to="{ path: 'timeline/' + timeline.id }" class="desc" :class="$mq">
                     {{ timeline.description.substring(0, 100) }}...
-                    <div class="author">by {{ timeline.user.username }} <div class="views">&#x2687; {{ timeline.views }} &#9825; {{ timeline.likes }} </div></div>
+                    <div class="author">By {{ timeline.user.username }} <div class="views">{{ timeline.views }} views &middot; {{ timeline.likes }} likes</div></div>
                 </router-link>
                  <router-link :to="{ path: 'timeline/' + timeline.id }" class="image_container" :class="$mq" v-if="timeline.pictures.length > 0">
                     <img :class="$mq" class="image" :src="timeline.pictures[0]">
@@ -28,8 +28,8 @@
                     <div class="category" :class="$mq"></div>
                     <router-link :to="{ path: 'timeline/' + timeline.id }" class="title" :class="$mq">{{ timeline.descriptionTitle }}</router-link>
                     <router-link :to="{ path: 'timeline/' + timeline.id }" class="desc" :class="$mq">
-                        {{ timeline.description.substring(0, 250) }}...
-                        <div class="author">by {{ timeline.user.username }} <div class="views">{{ timeline.views }} views, {{ timeline.likes }} &#9825;</div></div>
+                        {{ timeline.description.substring(0, 100) }}...
+                        <div class="author">By {{ timeline.user.username }} <div class="views">{{ timeline.views }} views &middot; {{ timeline.likes }} likes</div></div>
                     </router-link>
                     <router-link :to="{ path: 'timeline/' + timeline.id }" class="image_container" :class="$mq" v-if="timeline.pictures.length > 0">
                         <img :class="$mq" class="image" :src="timeline.pictures[0]">
@@ -148,14 +148,14 @@ h1
     outline: none
     border: none
     color: white
-    width: 85%
+    width: 80%
     height: 30px
-    border-radius: 5px
+    border-radius: 10px
     font-size: 17px
 
 .search-b
     display: inline-block
-    margin-left: 5%
+    margin-left: 10%
     background: none
     border: none
     outline: none
@@ -164,23 +164,22 @@ h1
     font-size: 25px
     transform: translateY(+4px) translateX(-10px)rotate(-45deg)
     &.small
-        transform: translateY(+8px) translateX(-10px)rotate(-45deg)
+        transform: translateY(+6px) translateX(-10px)rotate(-45deg)
 
 input::-webkit-search-cancel-button
   -webkit-appearance: none
 
 .search
-    width: 25%
+    width: 30%
     font-family: OpenSans-Regular
     position: fixed
     z-index: 4
-    transform: translateY(-38px) translateX(-50%)
+    transform: translateY(-41px) translateX(-50%)
     left: 50%
     &.medium
-        width: 35%
-    &.small
         width: 40%
-        transform: translateY(-38px) translateX(-91%)
+    &.small
+        width: 60%
 
 .views
     margin-top: 5px
@@ -203,23 +202,24 @@ input::-webkit-search-cancel-button
 
 .s_line
     width: 100%
-    height: 70px
+    height: 100px
     background: white
     display: inline-block
     &.small
-        height: 40px
+        height: 50px
 
 .image_container
     display: inline-block
     width: 21%
     margin-left: 6%
     margin-right: 3%
+    margin-top: 10px
     transform: translateY(-40px)
     &.medium
         width: 29%
     &.small
-        width: 90%
-        margin: 30px 0
+        width: 80%
+        margin: 50px 0
         margin-left: 5%
         transform: translateY(0)
         display: block
@@ -228,9 +228,12 @@ input::-webkit-search-cancel-button
     border-radius: 1px
     height: 170px
     width: 100%
-    object-fit: cover
+    object-fit: contain
+    object-position: 0 50%
     &.medium
         height: 150px
+    &.small
+        object-position: 0 0
 
 .desc
     text-decoration: none
@@ -263,7 +266,7 @@ input::-webkit-search-cancel-button
 
 .element
     border-radius: 5px
-    padding-bottom: 60px
+    padding-bottom: 10px
     width: 60%
     margin-left: 20%
     background: $bg-color
@@ -273,8 +276,6 @@ input::-webkit-search-cancel-button
     &.small
         width: 100%
         margin-left: 0
-        
-        padding-bottom: 60px
 
 #homepage
     padding-top: 1px

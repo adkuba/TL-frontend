@@ -2,10 +2,7 @@
   <div id="app">
     <div class="menu" :class="$mq">
       <router-link :to="{ name: 'home' }" class="home_b" :class="$mq">&#9903;</router-link>
-      <router-link :to="{ name: 'settings' }" class="login_b" :class="$mq">
-        <div class="get-started" :class="$mq" v-if="!$store.state.jwt">Get started</div>
-        <div v-else style="margin-top: 3px"> &#9868; </div>
-      </router-link>
+      <router-link :to="{ name: 'settings' }" class="login_b" :class="$mq">&#9868;</router-link>
     </div>
     <router-view></router-view>
   </div>
@@ -49,7 +46,7 @@ export default {
 
 <style lang="sass">
 html
-    scroll-padding-top: 85px
+    scroll-padding-top: 75px
 
 @font-face
     font-family: 'Raleway-Regular'
@@ -58,14 +55,6 @@ html
 @font-face 
     font-family: 'OpenSans-Regular'
     src: url('./assets/fonts/OpenSans/OpenSans-Regular.ttf')
-
-.get-started
-    background: #B8352D
-    padding: 3px 20px
-    border-radius: 5px
-    font-size: 16px
-    &.small
-        font-size: 14px
 
 #app 
     -webkit-font-smoothing: antialiased
@@ -79,7 +68,7 @@ html
     z-index: 4
     color: white
     float: right
-    margin: 18px 30px
+    margin: 10px 30px
     font-size: 23px
     &.small
         margin-right: 5%
@@ -91,19 +80,17 @@ html
     text-decoration: none
     float: left
     margin: 9px 30px
-    font-size: 35px
-    letter-spacing: 3px
+    font-size: 32px
     font-family: Raleway-Regular
     &.small
-        margin-left: 1px
-        transform: rotate(90deg)
+        margin-left: 5%
 
 .menu
     z-index: 3
     position: fixed
     top: 0
     background: #303030
-    height: 60px
+    height: 55px
     width: 100%
 
 body
