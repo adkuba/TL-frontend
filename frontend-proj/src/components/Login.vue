@@ -16,6 +16,12 @@
                 <input type="submit" value="Submit" class="fsubmit" :class="$mq" v-on:click="signin()">
                 <div class="fsignup" :class="$mq" v-on:click="signupShow()">{{signupText}}</div>
             </form>
+            <div class="login-desc" :class="$mq">
+                <h1>About</h1>
+                <p>Start creating your own timelines.</p>
+                <p>The best way to showcase your projects, ideas, thinking process. Social features boosts views.</p>
+                <p style="color: #B8352D">One month free without card details!</p>
+            </div>
         </div>
     </div>
 </template>
@@ -28,6 +34,7 @@
         path: Object
     },
     created(){
+        window.scrollTo({ top: 0, behavior: 'smooth' })
         if(!this.path){
             this.routerPath = '/settings'
 
@@ -161,13 +168,22 @@
 
 <style lang="sass">
 @import '../assets/saas-vars.sass'
+.login-desc
+    margin: 100px auto
+    text-align: justify
+    width: calc(25% + 20px)
+    &.medium
+        width: calc(40% + 20px)
+    &.small
+        width: calc(70% + 20px)
+        margin: 80px auto
 
 .error
     padding-left: 5px
     color: #B8352D !important
 
 #login
-    position: fixed
+    padding-bottom: 30px
     background: $bg-color
     font-family: 'Raleway-Regular'
     height: calc( 100% - 50px )
@@ -184,9 +200,7 @@
         width: 100%
 
 .login_form
-    padding-top: 150px
-    &.small
-        padding-top: 100px
+    padding-top: 90px
     letter-spacing: 2px
     h1
         margin: 0 auto
@@ -195,7 +209,11 @@
         width: calc(25% + 20px)
         font-size: 40px
         &.medium
-            width: calc(50% + 20px)
+            width: calc(40% + 20px)
+        &.small
+            width: calc(70% + 20px)
+    &.small
+        padding-top: 60px
 
 .fin
     margin-bottom: 15px
@@ -211,7 +229,9 @@
         background: #d9d9d9
         outline: none
     &.medium
-        width: 50%
+        width: 40%
+    &.small
+        width: 70%
 
 .fsubmit
     border-radius: 3px
@@ -228,7 +248,9 @@
         outline: none
         background: #a42e28
     &.medium
-        width: calc(50% + 20px)
+        width: calc(40% + 20px)
+    &.small
+        width: calc(70% + 20px)
 
 .fsignup
     color: #14426B
@@ -237,5 +259,9 @@
     margin: 20px auto
     width: calc(25% + 20px)
     letter-spacing: 0px
+    &.medium
+        width: calc(40% + 20px)
+    &.small
+        width: calc(70% + 20px)
 
 </style>
