@@ -69,6 +69,7 @@
   export default  {
     name: 'Settings',
     created() {
+        window.scrollTo({ top: 0, behavior: 'smooth' })
         var timelinesApi = this.baseApi + 'timelines/public/' + this.$store.state.jwt.username
         this.axios.get(timelinesApi)
         .then(response => {

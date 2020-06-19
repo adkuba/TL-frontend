@@ -1,6 +1,6 @@
 <template>
     <div v-if="eventsParsed">
-        <div class="user_d" :class="$mq" v-if="!mockEvents"> {{ timeline.user.fullName }} </div>
+        <div class="user_d" :class="$mq" v-if="!mockEvents" v-on:click="scrollDown()"> {{ timeline.user.fullName }} </div>
 
         <div id="image-viewer">
             <div class="viewer viewer-prev" :class="$mq" v-on:click="imageViewerScroll(mainImageIndex-1)">
@@ -10,14 +10,6 @@
             <div class="viewer" :class="$mq" v-on:click="imageViewerScroll(mainImageIndex+1)">
                 <div class="arrow right-arrow"> &#8250; </div>
             </div>
-        </div>
-
-        <div class="like">
-            <div v-if="$store.state.jwt">
-                <div v-if="$store.state.jwt.likes.includes(timeline.id)" v-on:click="dislikeTimeline()">LIKED {{ timeline.likes }}</div>
-                <div v-else v-on:click="likeTimeline()">LIKE {{ timeline.likes }}</div>
-            </div>
-            <router-link :to="{ name: 'login', params: {path: {path: '/timeline/' + timeline.id}}}" v-else >LOGIN {{ timeline.likes }}</router-link>
         </div>
 
         <div id="timeline" :class="$mq">
@@ -59,13 +51,9 @@
 
                     <div class="gallery-container" :class="$mq" v-if="openedSub">
                         <div id="sub_gallery" class="gallery" :class="$mq" v-if="eventsSub[openedSub].pictures">
-                            <div class="gallery_fade gallery_fade_left" :class="$mq" @mousedown="galleryScroll(0, 'sub')" @mouseleave="galleryScrollStop()" @mouseup="galleryScrollStop()" @touchstart="galleryScroll(0, 'sub')" @touchend="galleryScrollStop()" @touchcancel="galleryScrollStop()" >&#8249;</div>
-                            <div class="gallery_fade gallery_fade_right" :class="$mq" @mousedown="galleryScroll(1, 'sub')" @mouseleave="galleryScrollStop()" @mouseup="galleryScrollStop()" @touchstart="galleryScroll(1, 'sub')" @touchend="galleryScrollStop()" @touchcancel="galleryScrollStop()" >&#8250;</div>
-                            <div class="gallery-padding"></div>
                             <div class="image-container" v-for="(img, index) in eventsSub[openedSub].pictures" :key="index">
                                 <img class="image" :class="$mq" :src="img" v-on:click="openImage(eventsSub[openedSub].pictures, index)">
                             </div>
-                            <div class="gallery-padding"></div>
                         </div>
                     </div>
                 </div>
@@ -99,13 +87,25 @@
         </div>
         <div class="gallery-container" :class="$mq" v-if="timeline.pictures" >
             <div id="tl_gallery" class="gallery" :class="$mq">
-                <div class="gallery_fade gallery_fade_left" :class="$mq" @mousedown="galleryScroll(0, 'main')" @mouseleave="galleryScrollStop()" @mouseup="galleryScrollStop()" @touchstart="galleryScroll(0, 'main')" @touchend="galleryScrollStop()" @touchcancel="galleryScrollStop()" >&#8249;</div>
-                <div class="gallery_fade gallery_fade_right" :class="$mq" @mousedown="galleryScroll(1, 'main')" @mouseleave="galleryScrollStop()" @mouseup="galleryScrollStop()" @touchstart="galleryScroll(1, 'main')" @touchend="galleryScrollStop()" @touchcancel="galleryScrollStop()" >&#8250;</div>
-                <div class="gallery-padding"></div>
                 <div class="image-container" v-for="(img, index) in timeline.pictures" :key="index">
                     <img class="image" :class="$mq" :src="img" v-on:click="openImage(timeline.pictures, index)" >
                 </div>
-                <div class="gallery-padding"></div>
+            </div>
+        </div>
+        <div class="like">
+            <div v-if="$store.state.jwt">
+                <div v-if="$store.state.jwt.likes.includes(timeline.id)">
+                    <div style="display: inline-block" v-on:click="dislikeTimeline()">Dislike &middot; {{ timeline.likes }} &middot; views {{ timeline.views }}</div>
+                    <div class="email" :class="$mq">{{ timeline.user.email }}</div>
+                </div>
+                <div v-else>
+                    <div style="display: inline-block" v-on:click="likeTimeline()">Like &middot; {{ timeline.likes }} &middot; views {{ timeline.views }}</div> 
+                    <div class="email" :class="$mq">{{ timeline.user.email }}</div>
+                </div>
+            </div>
+            <div v-else>
+                <router-link style="display: inline-block" class="login-like" :to="{ name: 'login', params: {path: {path: '/timeline/' + timeline.id}}}">Login to like &middot; {{ timeline.likes }} &middot; views {{ timeline.views }}</router-link>
+                <div class="email" :class="$mq">{{ timeline.user.email }}</div>
             </div>
         </div>
     </div>
@@ -160,6 +160,11 @@ export default {
         }
     },
     watch: {
+        $mq: function(){
+            while (this.openedEvent != null){
+                this.moveRight()
+            }
+        },
         mockEvents: function(){
             this.events = this.mockEvents
             this.timeline = this.mockTimeline
@@ -213,6 +218,9 @@ export default {
         }
     },
     methods: {
+        scrollDown(){
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })
+        },
         likeTimeline(){
             this.axios.post(this.baseApi + 'timelines/' + this.timeline.id + '/like', null, {
                 headers: {
@@ -265,36 +273,6 @@ export default {
             this.mainImages = images
             this.mainImageIndex = index
             document.getElementById("image-viewer").style.display = "block"
-        },
-        galleryScroll(direction, type){
-            if (!this.galleryScrolling){
-                this.galleryScrolling = setInterval(() => this.galleryScrollAction(direction, type), 5)
-            }
-        },
-        galleryScrollStop(){
-            clearInterval(this.galleryScrolling)
-            this.galleryScrolling = false
-
-        },
-        galleryScrollAction(direction, type){
-            if (type == 'sub'){
-                var gallery = document.getElementById("sub_gallery");
-                if (direction == 0){
-                    gallery.scroll(gallery.scrollLeft-2, 0)
-
-                } else {
-                    gallery.scroll(gallery.scrollLeft+2, 0)
-                }
-
-            } else {
-                gallery = document.getElementById("tl_gallery");
-                if (direction == 0){
-                    gallery.scroll(gallery.scrollLeft-2, 0)
-
-                } else {
-                    gallery.scroll(gallery.scrollLeft+2, 0)
-                }
-            }
         },
         subScroll(index){
             var subT = document.getElementById("sub_timeline")
@@ -444,10 +422,27 @@ export default {
 
 <style scoped lang="sass">
 @import '../assets/saas-vars.sass'
+.email
+    display: inline-block
+    color: #303030
+    margin-left: 120px
+    user-select: text
+    &:hover
+        cursor: default
+    &.small
+        display: block
+        margin: 10px 0
+
+.login-like
+    text-decoration: none
+    color: #14426B
+    
 .like
-    position: fixed
-    top: 200px
-    left: 50px
+    color: #14426B
+    font-family: RaleWay-Regular
+    user-select: none
+    &:hover
+        cursor: pointer
 
 .right-arrow
     right: 0
@@ -508,75 +503,33 @@ export default {
     left: 0
     display: none
 
-.gallery-padding
-    display: inline-block
-    width: 50px
-
-.gallery_fade
-    transition: all 0.5s
-    z-index: 2
-    position: absolute
-    width: 80px
-    height: 160px
-    line-height: 150px
-    background: rgb(255,255,255)
-    font-size: 35px
-    font-family: none
-    text-align: center
-    color: #808080
-    &:active
-        color: #303030
-    &.small
-        width: 40px
-    &.medium
-        width: 60px
-    #evt_container &
-        background: rgb(246,246,246)
-
-.gallery_fade_left
-    background: linear-gradient(90deg, rgba(255,255,255,1) 50%, rgba(255,255,255,0) 100%)
-    transform: translateX(-2px) translateY(-2px)
-    #evt_container &
-        background: linear-gradient(270deg, rgba(246,246,246,0) 0%, rgba(246,246,246,1) 60%)
-
-.gallery_fade_right
-    right: 0
-    background: linear-gradient(-90deg, rgba(255,255,255,1) 50%, rgba(255,255,255,0) 100%)
-    transform: translateX(+2px) translateY(-2px)
-    #evt_container &
-        background: linear-gradient(-270deg, rgba(246,246,246,0) 0%, rgba(246,246,246,1) 60%)
-
-
 .image-container
     display: inline-block
-    margin: 0 20px
+    margin-right: 7px
+    margin-bottom: 5px
 
 .image
-    height: 150px
-    border-radius: 10px
+    height: 100px
+    width: 120px
+    object-fit: cover
+    border-radius: 2px
 
 .gallery
     user-select: none
     display: inline-block
-    overflow-x: auto
-    overflow-y: hidden
-    white-space: nowrap
     width: 100%
-    &::-webkit-scrollbar
-        display: none
 
 .gallery-container
     z-index: 2
     position: relative
-    margin: 250px 20%
+    margin: 180px 30%
     &.medium
-        margin: 250px 10%
+        margin: 170px 15%
     &.small
-        margin: 100px 0
+        margin: 50px 10%
     #evt_container &
-        width: 110%
-        transform: translateX(-5%)
-        margin: 150px 0
+        width: 100%
+        margin: 100px 0
 
 
 div#sub_timeline::-webkit-scrollbar
@@ -723,7 +676,7 @@ div#sub_timeline::-webkit-scrollbar
     letter-spacing: 2px
     font-family: Raleway-Regular
     font-size: 16px
-    top: 16px
+    top: 19px
     left: 50%
     transform: translateX(-50%) scale(1.005)
 
