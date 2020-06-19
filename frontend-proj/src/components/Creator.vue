@@ -561,17 +561,18 @@
 @import '../assets/saas-vars.sass'
 
 .image-master
-    position: absolute
     margin-top: 47px
     margin-left: 15px
 
 .exit
     position: absolute
+    user-select: none
+    cursor: pointer
     right: 10px
     top: 5px
 
 .image
-    width: 50px
+    width: 60px
     height: 50px
     object-fit: cover 
     border-radius: 2px
@@ -579,6 +580,7 @@
 .image-container
     display: inline-block
     margin-left: 7px
+    margin-bottom: 3px
     float: left
 
 .file-selector
@@ -586,21 +588,22 @@
     font-family: OpenSans-Regular
     top: 40%
     left: 50%
-    transform: translateX(-50%) translateY(-50%)
+    transform: translateX(-50%) translateY(-50%) scale(1.005)
     width: 30%
-    height: 150px
-    border: 2px solid #575757
+    padding-bottom: 20px
     border-radius: 10px
     background: $bg-color
+    box-shadow: 0 0 0 1600px rgba(0,0,0,0.65)
     z-index: 4
     display: none
     &.medium
         width: 50%
     &.small
         width: 90%
-        height: 200px
 
 .file-container
+    user-select: none
+    cursor: pointer
     margin-left: 50px
     font-family: OpenSans-Regular
     display: inline-block
@@ -631,16 +634,16 @@
         outline: none
 
 .file::-webkit-file-upload-button
+    user-select: none
+    cursor: pointer
     border: 0
     font-family: OpenSans-Regular
     height: 27px
     padding: 0 17px
-    background: #e57676
+    background: #B8352D
     color: white
     letter-spacing: 1px
     border-radius: 3px
-    .sub &
-        background: #7ba9a9
     &:focus
         outline: none
 
@@ -671,6 +674,8 @@ h2
     background: #303030
 
 .masterC
+    user-select: none
+    cursor: pointer
     outline: none
     border: none
     background: none
@@ -709,6 +714,8 @@ h2
     margin-bottom: 10px
 
 .control_item
+    user-select: none
+    cursor: pointer
     color: #666666
     font-weight: bold
     font-size: 18px

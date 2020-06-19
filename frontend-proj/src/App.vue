@@ -1,7 +1,9 @@
 <template>
   <div id="app">
     <div class="menu" :class="$mq">
-      <router-link :to="{ name: 'home' }" class="home_b" :class="$mq">&#9903;</router-link>
+      <router-link :to="{ name: 'home' }" class="home_b" :class="$mq">
+          <img src="./assets/images/Logo.png" width="27" height="22">
+      </router-link>
       <router-link :to="{ name: 'settings' }" class="login_b" :class="$mq">&#9868;</router-link>
     </div>
     <router-view></router-view>
@@ -76,12 +78,8 @@ html
 
 .home_b
     z-index: 4
-    color: white
-    text-decoration: none
     float: left
-    margin: 9px 30px
-    font-size: 32px
-    font-family: Raleway-Regular
+    margin: 16px 30px
     &.small
         margin-left: 5%
 

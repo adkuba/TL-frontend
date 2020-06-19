@@ -184,6 +184,7 @@ input::-webkit-search-cancel-button
 
 .views
     margin-top: 5px
+    color: #7e7e7e
 
 .category
     font-family: OpenSans-Regular
@@ -199,7 +200,7 @@ input::-webkit-search-cancel-button
     text-align: left
     font-size: 15px
     margin-top: 30px
-    color: #7e7e7e
+    color: #14426B
 
 .s_line
     width: 100%

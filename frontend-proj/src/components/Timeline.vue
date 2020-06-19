@@ -95,16 +95,16 @@
         <div class="like">
             <div v-if="$store.state.jwt">
                 <div v-if="$store.state.jwt.likes.includes(timeline.id)">
-                    <div v-if="timeline.likes" style="display: inline-block" v-on:click="dislikeTimeline()">Dislike &middot; {{ timeline.likes }} &middot; views {{ timeline.views }}</div>
+                    <div v-if="timeline.likes != null" style="display: inline-block" v-on:click="dislikeTimeline()">Dislike &middot; {{ timeline.likes }} &middot; views {{ timeline.views }}</div>
                     <div v-if="timeline.user" class="email" :class="$mq">{{ timeline.user.email }}</div>
                 </div>
                 <div v-else>
-                    <div v-if="timeline.likes" style="display: inline-block" v-on:click="likeTimeline()">Like &middot; {{ timeline.likes }} &middot; views {{ timeline.views }}</div> 
+                    <div v-if="timeline.likes != null" style="display: inline-block" v-on:click="likeTimeline()">Like &middot; {{ timeline.likes }} &middot; views {{ timeline.views }}</div> 
                     <div v-if="timeline.user" class="email" :class="$mq">{{ timeline.user.email }}</div>
                 </div>
             </div>
             <div v-else>
-                <router-link v-if="timeline.likes" style="display: inline-block" class="login-like" :to="{ name: 'login', params: {path: {path: '/timeline/' + timeline.id}}}">Login to like &middot; {{ timeline.likes }} &middot; views {{ timeline.views }}</router-link>
+                <router-link v-if="timeline.likes != null" style="display: inline-block" class="login-like" :to="{ name: 'login', params: {path: {path: '/timeline/' + timeline.id}}}">Login to like &middot; {{ timeline.likes }} &middot; views {{ timeline.views }}</router-link>
                 <div v-if="timeline.user" class="email" :class="$mq">{{ timeline.user.email }}</div>
             </div>
         </div>
