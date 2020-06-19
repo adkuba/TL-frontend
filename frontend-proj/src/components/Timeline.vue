@@ -95,17 +95,17 @@
         <div class="like">
             <div v-if="$store.state.jwt">
                 <div v-if="$store.state.jwt.likes.includes(timeline.id)">
-                    <div style="display: inline-block" v-on:click="dislikeTimeline()">Dislike &middot; {{ timeline.likes }} &middot; views {{ timeline.views }}</div>
-                    <div class="email" :class="$mq">{{ timeline.user.email }}</div>
+                    <div v-if="timeline.likes" style="display: inline-block" v-on:click="dislikeTimeline()">Dislike &middot; {{ timeline.likes }} &middot; views {{ timeline.views }}</div>
+                    <div v-if="timeline.user" class="email" :class="$mq">{{ timeline.user.email }}</div>
                 </div>
                 <div v-else>
-                    <div style="display: inline-block" v-on:click="likeTimeline()">Like &middot; {{ timeline.likes }} &middot; views {{ timeline.views }}</div> 
-                    <div class="email" :class="$mq">{{ timeline.user.email }}</div>
+                    <div v-if="timeline.likes" style="display: inline-block" v-on:click="likeTimeline()">Like &middot; {{ timeline.likes }} &middot; views {{ timeline.views }}</div> 
+                    <div v-if="timeline.user" class="email" :class="$mq">{{ timeline.user.email }}</div>
                 </div>
             </div>
             <div v-else>
-                <router-link style="display: inline-block" class="login-like" :to="{ name: 'login', params: {path: {path: '/timeline/' + timeline.id}}}">Login to like &middot; {{ timeline.likes }} &middot; views {{ timeline.views }}</router-link>
-                <div class="email" :class="$mq">{{ timeline.user.email }}</div>
+                <router-link v-if="timeline.likes" style="display: inline-block" class="login-like" :to="{ name: 'login', params: {path: {path: '/timeline/' + timeline.id}}}">Login to like &middot; {{ timeline.likes }} &middot; views {{ timeline.views }}</router-link>
+                <div v-if="timeline.user" class="email" :class="$mq">{{ timeline.user.email }}</div>
             </div>
         </div>
     </div>
@@ -480,8 +480,8 @@ export default {
         width: 80px
         transform: translateX(-80px)
     &.small
-        width: 50px
-        transform: translateX(-50px)
+        width: 40px
+        transform: translateX(-40px)
 
 #main-image
     border-radius: 5px
@@ -800,7 +800,6 @@ div#sub_timeline::-webkit-scrollbar
 
 #timeline
     background: $bg-color
-    margin-top: 50px
     //wyskokosc evt desc to ok 866 desktop, 1149 mobile
     //pojawia sie 100px nad circle, po circle musza byc dwie linie czyli 160px
     //czyli 866-260px = 606 padding bottom

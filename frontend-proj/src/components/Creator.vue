@@ -1,30 +1,30 @@
 <template lang="html">
     <div>
-        <div id="mainPicturesContainer" class="file-selector">
+        <div id="mainPicturesContainer" class="file-selector" :class="$mq">
             <div class="exit" v-on:click="close()">x</div>
             <input class="file" @change="saveData()" type="file" id="mainPictures" multiple><br>
             <div class="image-master">
-                <div class="image-container" v-for="(img, index) in currentPictures" :key="index">
+                <div class="image-container" :class="$mq" v-for="(img, index) in currentPictures" :key="index">
                     <img class="image" :class="$mq" :src="img" v-on:click="deleteImg(index)">
                 </div>
             </div>
         </div>
 
-        <div id="creator" v-if="$store.state.jwt">
-            <form action="javascript:void(0);" id="tform">
+        <div id="creator" :class="$mq" v-if="$store.state.jwt">
+            <form action="javascript:void(0);" id="tform" :class="$mq">
                 <h1>Creator</h1>
                 <div class="errorID">{{ errorMessage }}</div>
-                <input class="ttitle tlid" type="text" id="timelineId" placeholder="ID" maxlength="40" required pattern="[^/]*" title="Don't use /" :value="timeline.id">
-                <div class="opis">{{ lorem }}</div>
+                <input class="ttitle tlid" :class="$mq" type="text" id="timelineId" placeholder="ID" maxlength="40" required pattern="[^/]*" title="Don't use /" :value="timeline.id">
+                <div class="opis">Create your timeline.</div>
 
                 <div id="mainData">
-                    <input class="ttitle" type="text" id="mainTitle" required maxlength="60" placeholder="Title" :value="timeline.descriptionTitle">
-                    <div v-if="timeline.pictures" class="file-container" v-on:click="open(-1)">Files {{timeline.pictures.length}}</div>
+                    <input class="ttitle" :class="$mq" type="text" id="mainTitle" required maxlength="60" placeholder="Title" :value="timeline.descriptionTitle">
+                    <div v-if="timeline.pictures" class="file-container" :class="$mq" v-on:click="open(-1)">Files {{timeline.pictures.length}}</div>
                     <textarea class="ttitle tlong" id="mainLong" required placeholder="Description" maxlength="3000" :value="timeline.description"></textarea>
                 </div>
 
                 <h2>Events</h2>
-                <div class="opis">{{ lorem }}</div>
+                <div class="opis">Add events to your timeline.</div>
 
                 <transition-group name="fade">
                     <div v-for="(evt, index) in events" v-bind:key="evt.id">
@@ -36,9 +36,9 @@
                                 <div class="control_item down" v-on:click="changeIndex(index, index+1)" v-if="index!=events.length-1">&lang;</div>
                             </div>
                             <div class="s_left">
-                                <input class="ttitle" type="text" :id="'title'+index" required maxlength="40" placeholder="Title" :value="evt.title">
-                                <input class="ttitle tdate" type="date" required :id="'date'+index" placeholder="mm/dd/yyyy" :value="evt.date">
-                                <div v-if="timeline.pictures" class="file-container" v-on:click="open(index)">Files {{evt.pictures.length}}</div>
+                                <input class="ttitle" :class="$mq" type="text" :id="'title'+index" required maxlength="40" placeholder="Title" :value="evt.title">
+                                <input class="ttitle tdate" :class="$mq" type="date" required :id="'date'+index" placeholder="mm/dd/yyyy" :value="evt.date">
+                                <div v-if="timeline.pictures" :class="$mq" class="file-container" v-on:click="open(index)">Files {{evt.pictures.length}}</div>
                                 <textarea class="ttitle tlong" :id="'long'+index" required maxlength="1500" placeholder="Description" :value="evt.shortDescription ? evt.shortDescription + '\n' + evt.description : ''"></textarea>
                                 <div class="control_item add_sub" v-on:click="addSubEvent(index)">&#43;</div>
                             </div>
@@ -52,17 +52,17 @@
                                     <div class="control_item down" v-on:click="changeSubIndex(index, subindex, subindex+1)" v-if="subindex!=evt.sub.length-1">&lang;</div>
                                 </div>
                                 <div class="s_left">
-                                    <input class="ttitle" :id="'sub'+index+'title'+subindex" required maxlength="40" type="text" placeholder="Title" :value="subevt.title">
-                                    <input class="ttitle tdate" type="date" required :id="'sub'+index+'date'+subindex" placeholder="mm/dd/yyyy" :value="subevt.date">
-                                    <div v-if="timeline.pictures" class="file-container" v-on:click="open(index, subindex)">Files {{subevt.pictures.length}}</div>
+                                    <input class="ttitle" :class="$mq" :id="'sub'+index+'title'+subindex" required maxlength="40" type="text" placeholder="Title" :value="subevt.title">
+                                    <input class="ttitle tdate" :class="$mq" type="date" required :id="'sub'+index+'date'+subindex" placeholder="mm/dd/yyyy" :value="subevt.date">
+                                    <div v-if="timeline.pictures" :class="$mq" class="file-container" v-on:click="open(index, subindex)">Files {{subevt.pictures.length}}</div>
                                     <textarea class="ttitle tlong" :id="'sub'+index+'long'+subindex" required maxlength="1500" placeholder="Description" :value="subevt.shortDescription ? subevt.shortDescription + '\n' + subevt.description : ''"></textarea>
                                 </div>
                             </div>
                         </transition-group>
                     </div>
                 </transition-group>
-                <input type="submit" class="masterC" v-on:click="preview()" value="Preview">
-                <input type="submit" class="masterC" v-on:click="submit()" value="Submit">
+                <input type="submit" :class="$mq" class="masterC" v-on:click="preview()" value="Preview">
+                <input type="submit" :class="$mq" class="masterC" v-on:click="submit()" value="Submit">
             </form>
             
         </div>
@@ -103,8 +103,7 @@
           deletedPictures: [],
 
           baseApi: 'http://localhost:8081/api/',
-          lorem: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vitae auctor urna, sed volutpat orci. Etiam interdum finibus eros, a porta quam ultrices id. Sed eget ligula vel lorem eleifend tincidunt. Proin at lacinia elit. Cras rhoncus interdum libero vitae tristique. Donec facilisis quam quis diam consequat, ullamcorper malesuada nisi elementum. Cras vehicula orci consectetur est blandit volutpat. Suspendisse ultrices imperdiet neque, suscipit pretium nulla commodo quis.'
-      }
+          }
     },
     updated() {
         if (this.editTimeline){
@@ -560,9 +559,11 @@
 
 <style scoped lang="sass">
 @import '../assets/saas-vars.sass'
+
 .image-master
     position: absolute
-    margin-top: 20px
+    margin-top: 47px
+    margin-left: 15px
 
 .exit
     position: absolute
@@ -572,12 +573,13 @@
 .image
     width: 50px
     height: 50px
-    object-fit: cover  
+    object-fit: cover 
+    border-radius: 2px
 
 .image-container
-    margin-top: 20px
     display: inline-block
-    margin: 20px
+    margin-left: 7px
+    float: left
 
 .file-selector
     position: fixed
@@ -585,12 +587,18 @@
     top: 40%
     left: 50%
     transform: translateX(-50%) translateY(-50%)
-    width: 40%
+    width: 30%
     height: 150px
-    border: 2px solid black
-    background: #f3f3f3
+    border: 2px solid #575757
+    border-radius: 10px
+    background: $bg-color
     z-index: 4
     display: none
+    &.medium
+        width: 50%
+    &.small
+        width: 90%
+        height: 200px
 
 .file-container
     margin-left: 50px
@@ -598,6 +606,14 @@
     display: inline-block
     vertical-align: bottom
     color: #14426B
+    &.small
+        position: absolute
+        right: 5%
+        transform: translateY(-30px)
+        .normal &
+            transform: translateY(-80px)
+        .sub &
+            transform: translateY(-80px)
 
 .errorID
     position: absolute
@@ -608,9 +624,11 @@
 
 .file
     position: absolute
-    margin-top: 15px
+    margin-top: 22px
     left: 20px
     color: transparent
+    &:focus
+        outline: none
 
 .file::-webkit-file-upload-button
     border: 0
@@ -623,6 +641,8 @@
     border-radius: 3px
     .sub &
         background: #7ba9a9
+    &:focus
+        outline: none
 
 h1
     margin-top: 100px
@@ -661,6 +681,8 @@ h2
     margin-bottom: 0
     font-weight: bold
     font-size: 30px
+    &.small
+        margin: 120px 5px
 
 .fade-leave-active
     transition: all 1ms
@@ -720,6 +742,8 @@ h2
         outline: none
     .sub &
         border-left: 2px solid #89bcbc
+    &.small
+        width: 100%
 
 .tlid
     font-size: 18px
@@ -728,6 +752,13 @@ h2
     top: 110px
     width: 20%
     right: 22%
+    &.medium
+        right: 5%
+        width: 35%
+    &.small
+        left: 5%
+        top: 90px
+        width: 90%
 
 .tdate
     font-size: 12px
@@ -738,6 +769,9 @@ h2
     height: 30px
     vertical-align: bottom
     color: #535353
+    &.small
+        margin-left: 0
+        margin-top: 0
 
 ::-webkit-inner-spin-button
     display: none
@@ -756,13 +790,22 @@ h2
 
 //kolejnosc klas ma znaczenie te nizej sa wazniejsze
 #creator
-    padding: 1px 0
+    padding: 30px 0
     margin: 0 10%
     background: $bg-color
+    &.medium
+        margin: 0
+    &.small
+        margin: 0
+        padding-top: 55px
 
 #tform
     margin: 0 auto
     width: 70%
+    &.medium
+        width: 90%
+    &.small
+        width: 90%
 
 .s_line
     width: 100%

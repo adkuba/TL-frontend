@@ -185,7 +185,7 @@ h1
         width: 30%
     &.small
         width: 100%
-        margin-bottom: 2px
+        margin-bottom: 5px
 
 .danev
     width: 40%
@@ -193,7 +193,7 @@ h1
     color: #14426B
     &.small
         width: 100%
-        margin-bottom: 2px
+        margin-bottom: 5px
 
 .s_line
     width: 100%
