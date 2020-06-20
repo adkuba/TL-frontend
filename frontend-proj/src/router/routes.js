@@ -8,6 +8,7 @@ import NameChange from '../components/NameChange.vue';
 import PasswordChange from '../components/PasswordChange.vue';
 import EditorLoader from '../components/EditorLoader.vue'
 import Admin from '../components/Admin.vue'
+import Subscription from '../components/Subscription.vue'
 
 // the routes are simply an array of objects
 const routes = [
@@ -83,6 +84,14 @@ const routes = [
         path: '/admin',
         name: 'admin',
         component: Admin,
+        meta: {
+            requiresAuth: true
+          }
+    },
+    {
+        path: '/subscription',
+        name: 'subscription',
+        component: Subscription,
         meta: {
             requiresAuth: true
           }

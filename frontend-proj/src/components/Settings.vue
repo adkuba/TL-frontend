@@ -5,7 +5,7 @@
                 <div class="s_left" :class="$mq">Main</div>
                 <div class="s_right" :class="$mq">
                 <div class="daneh" :class="$mq">Action:</div>
-                <router-link :to="{ name: 'creator' }" class="danev" :class="$mq">Create timeline</router-link>
+                <router-link :to="{ name: 'creator' }" class="danev" v-bind:class="[{ shadow: subscription.status != 'active'}, $mq]">Create timeline</router-link>
                 <div class="danea" :class="$mq" v-on:click="logout()">Logout</div>
                 </div>
                 <div class="s_line"></div>
@@ -31,11 +31,22 @@
                 </div>
                 <div class="s_line"></div>
             </div>
+            <div class="s_item" :class="$mq">
+                <div class="s_left" :class="$mq">Subscription</div>
+                <div class="s_right" :class="$mq">
+                <div class="daneh" :class="$mq">Status:</div>
+                <div class="danev" :class="$mq" v-if="subscription.status == 'active'">{{ subscription.status }}</div>
+                <div class="danev" :class="$mq" v-else>disabled</div>
+                <div class="danea" style="text-decoration: underline; cursor: pointer" :class="$mq" v-if="subscription.status == 'active'" v-on:click="cancel()">Cancel</div>
+                <router-link :to="{ name: 'subscription'}" class="danea" :class="$mq" v-else>Activate</router-link>
+                </div>
+                <div class="s_line"></div>
+            </div>
 
             <h1>Timelines</h1>
             <p>Your timelines. You can edit them or delete. Try to keep things orginized.</p>
 
-            <div class="s_item" v-for="(timeline, index) in timelines" :key="index">
+            <div class="s_item" v-bind:class="{ shadow: subscription.status != 'active' }" v-for="(timeline, index) in timelines" :key="index">
                 <div class="s_left" :class="$mq">
                     <router-link style="color: #303030; text-decoration: none" :to="{ path: 'timeline/' + timeline.id }"> {{ timeline.descriptionTitle }} </router-link><br>
                     <router-link style="text-decoration: none" :to="{ path: 'editorLoader/' + timeline.id }" class="edit">Edit</router-link>
@@ -88,12 +99,25 @@
                 console.log(error)
             })
         }
+
+        this.axios.get(this.baseApi + "users/get-subscription", {
+            headers: {
+                'Authorization': 'Bearer ' + this.$store.state.jwt.token
+            },
+        })
+        .then(response => {
+            this.subscription = response.data
+        })
+        .catch(error => {
+            console.log(error)
+        })
     },
     data () {
       return {
           baseApi: 'http://localhost:8081/api/',
           timelines: null,
-          likes: []
+          likes: [],
+          subscription: {status: 'disabled'},
       }
     },
     methods: {
@@ -120,6 +144,19 @@
             .catch(error =>{
                 console.log(error)
             })
+        },
+        cancel(){
+            this.axios.post(this.baseApi + 'users/cancel-subscription', null, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.$store.state.jwt.token
+                },
+            })
+            .then(() => {
+                this.subscription.status = 'disabled'
+            })
+            .catch(error => {
+                console.log(error)
+            })
         }
     }
 }
@@ -129,6 +166,10 @@
 
 <style scoped lang="sass">
 @import '../assets/saas-vars.sass'
+.shadow
+    opacity: 0.3
+    pointer-events: none
+
 .likes
     font-weight: normal
     font-size: 15px
