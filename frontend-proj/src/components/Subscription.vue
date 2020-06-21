@@ -20,22 +20,27 @@
     name: 'Subscription',
     mounted() {
         var style = {
-        base: {
-            color: "#32325d",
-            fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
-            fontSmoothing: "antialiased",
-            fontSize: "16px",
-            "::placeholder": {
-            color: "#aab7c4"
+            base: {
+                color: "#32325d",
+                fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+                fontSmoothing: "antialiased",
+                fontSize: "16px",
+                "::placeholder": {
+                color: "#aab7c4"
+                }
+            },
+            invalid: {
+                color: "#fa755a",
+                iconColor: "#fa755a"
             }
-        },
-        invalid: {
-            color: "#fa755a",
-            iconColor: "#fa755a"
-        }
         };
 
-        this.cardElement = elements.create("card", { style: style })
+        try {
+            this.cardElement = elements.create("card", { style: style })
+        } catch (error){
+            //czasem jest error ze nie mozna stworzyc dwoch card element - to zalatwia sprawe
+            window.location.reload()
+        }
         this.cardElement.mount("#card-element")
         this.cardElement.on('change', this.showCardError)
     },
@@ -62,7 +67,7 @@
                 })
                 .then((result) => {
                     if (result.error) {
-                        displayError(error);
+                        alert(error.message);
                     } else {
                         this.createSubscription({
                         paymentMethodId: result.paymentMethod.id,
@@ -82,13 +87,65 @@
                 },
             })
             .then(response => {
-                alert(response.data)
-                this.$router.push({ path: "/settings" })
+                console.log(response.data)
+                var data = {
+                    subscription: response.data,
+                    priceId: priceId,
+                    paymentMethodId: paymentMethodId,
+                }
+                if (this.handleCustomerActionRequired(data) != 'rejected'){
+                    this.$router.push({ path: "/settings" })
+                }
             })
             .catch(error =>{
-                console.log(error)
+                alert(error)
             })
-        }
+        },
+        handleCustomerActionRequired({ subscription, priceId, paymentMethodId, isRetry}){
+            if (subscription && subscription.status === 'active') {
+                alert("Succces!")
+                return { subscription, priceId, paymentMethodId };
+            }
+
+            //mialem jeszcze invoice ale wypierdolilem - przydaje sie przy odrzuceniu karty
+            //tak samo odrzut isRetry, robie tylko refresh strony
+            //tam w poradniku na stripe jest ze probuje jeszcze raz a ja tylko powiadamiam usera i moze sobie jeszcze raz sprobowac
+            let paymentIntent = subscription.latest_invoice.payment_intent;
+
+            if ( paymentIntent.status === 'requires_action') {
+                return stripe.confirmCardPayment(paymentIntent.client_secret, {
+                    payment_method: paymentMethodId,
+                })
+                .then((result) => {
+                    if (result.error) {
+                        //alert mam w catch
+                        throw result;
+                    } else {
+                        if (result.paymentIntent.status === 'succeeded') {
+                            //succes
+                            alert("Succes! Reload page")
+                            return {
+                                priceId: priceId,
+                                subscription: subscription,
+                                paymentMethodId: paymentMethodId,
+                            };
+                        }
+                    }
+                })
+                .catch((error) => {
+                    alert(error.error.message);
+                });
+            }
+            else if (paymentIntent.status === 'requires_payment_method'){
+                alert("Your card was rejected! Try again.")
+                window.location.reload()
+                return "rejected"
+            }
+            else {
+                // No customer action needed.
+                return { subscription, priceId, paymentMethodId }
+            }
+        },
     }
 }
 

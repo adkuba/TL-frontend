@@ -588,7 +588,7 @@
     font-family: OpenSans-Regular
     top: 40%
     left: 50%
-    transform: translateX(-50%) translateY(-50%) scale(1.005)
+    transform: translateX(-50%) translateY(-50%) scale(0.99)
     width: 30%
     padding-bottom: 20px
     border-radius: 10px

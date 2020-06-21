@@ -12,11 +12,11 @@
                 <router-link :to="{ path: 'timeline/' + timeline.id }" class="title" :class="$mq">{{ timeline.descriptionTitle }}</router-link>
                 <router-link :to="{ path: 'timeline/' + timeline.id }" class="desc" :class="$mq">
                     {{ timeline.description.substring(0, 100) }}...
-                    <div class="author">By {{ timeline.user.username }} <div class="views">{{ timeline.views }} views &middot; {{ timeline.likes }} likes</div></div>
                 </router-link>
                  <router-link :to="{ path: 'timeline/' + timeline.id }" class="image_container" :class="$mq" v-if="timeline.pictures.length > 0">
                     <img :class="$mq" class="image" :src="timeline.pictures[0]">
                 </router-link>
+                <div class="author" :class="$mq">By {{ timeline.user.username }} <div class="views">{{ timeline.views }} views &middot; {{ timeline.likes }} likes</div></div>
             </div>
         </div>
         <div v-else>
@@ -29,11 +29,11 @@
                     <router-link :to="{ path: 'timeline/' + timeline.id }" class="title" :class="$mq">{{ timeline.descriptionTitle }}</router-link>
                     <router-link :to="{ path: 'timeline/' + timeline.id }" class="desc" :class="$mq">
                         {{ timeline.description.substring(0, 100) }}...
-                        <div class="author">By {{ timeline.user.username }} <div class="views">{{ timeline.views }} views &middot; {{ timeline.likes }} likes</div></div>
                     </router-link>
                     <router-link :to="{ path: 'timeline/' + timeline.id }" class="image_container" :class="$mq" v-if="timeline.pictures.length > 0">
                         <img :class="$mq" class="image" :src="timeline.pictures[0]">
                     </router-link>
+                    <div class="author" :class="$mq">By {{ timeline.user.username }} <div class="views">{{ timeline.views }} views &middot; {{ timeline.likes }} likes</div></div>
                 </div>
                 <div v-else class="empty">Can't find.</div>
             </div>
@@ -175,7 +175,7 @@ input::-webkit-search-cancel-button
     font-family: OpenSans-Regular
     position: fixed
     z-index: 4
-    transform: translateY(-41px) translateX(-50%)
+    transform: translateY(-41px) translateX(calc(-50% + 5px))
     left: 50%
     &.medium
         width: 40%
@@ -192,15 +192,22 @@ input::-webkit-search-cancel-button
     text-align: left
     font-size: 16px
     color: #7e7e7e
-    margin-left: 5%
+    margin-left: 10%
+    &.small
+        margin-left: 5%
+        width: 90%
 
 .author
     font-weight: normal
     font-family: OpenSans-Regular
     text-align: left
     font-size: 15px
-    margin-top: 30px
+    margin-top: 20px
+    margin-left: 10%
     color: #14426B
+    &.small
+        margin-left: 5%
+        width: 90%
 
 .s_line
     width: 100%
@@ -211,47 +218,33 @@ input::-webkit-search-cancel-button
         height: 50px
 
 .image_container
-    display: inline-block
-    width: 21%
-    margin-left: 6%
-    margin-right: 3%
-    margin-top: 10px
-    transform: translateY(-40px)
-    &.medium
-        width: 29%
+    display: block
+    width: 80%
+    margin-left: 10%
+    margin-top: 30px
     &.small
-        width: 80%
-        margin: 50px 0
         margin-left: 5%
-        transform: translateY(0)
-        display: block
+        width: 90%
 
 .image
     border-radius: 1px
-    height: 170px
     width: 100%
-    object-fit: contain
-    object-position: 0 50%
-    &.medium
-        height: 150px
-    &.small
-        object-position: 0 0
+    max-height: 300px
+    object-fit: cover
 
 .desc
     text-decoration: none
     color: #303030
     margin-top: 20px
     font-family: OpenSans-Regular
-    display: inline-block
+    display: block
     vertical-align: top
-    width: 65%
+    width: 80%
     text-align: justify 
-    margin-left: 5%
-    &.medium
-        width: 57%
+    margin-left: 10%
     &.small
+        margin-left: 5%
         width: 90%
-        display: block
 
 .title
     text-decoration: none
@@ -263,17 +256,20 @@ input::-webkit-search-cancel-button
     font-size: 40px
     font-weight: bold
     letter-spacing: 1px
-    margin-left: 5%
+    margin-left: 10%
+    &.small
+        margin-left: 5%
+        width: 90%
 
 
 .element
     border-radius: 5px
-    padding-bottom: 10px
-    width: 60%
+    padding-bottom: 40px
+    width: 40%
     margin-left: 20%
     background: $bg-color
     &.medium
-        width: 80%
+        width: 50%
         margin-left: 10%
     &.small
         width: 100%

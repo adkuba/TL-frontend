@@ -2,7 +2,7 @@
   <div id="app">
     <div class="menu" :class="$mq">
       <router-link :to="{ name: 'home' }" class="home_b" :class="$mq">
-          <img src="./assets/images/Logo.png" width="27" height="22">
+          <img src="./assets/images/Logo.png" width="27" height="27">
       </router-link>
       <router-link :to="{ name: 'settings' }" class="login_b" :class="$mq">&#9868;</router-link>
     </div>
@@ -73,15 +73,15 @@ html
     margin: 10px 30px
     font-size: 23px
     &.small
-        margin-right: 5%
+        margin-right: 4%
 
 
 .home_b
     z-index: 4
     float: left
-    margin: 16px 30px
+    margin: 15px 30px
     &.small
-        margin-left: 5%
+        margin-left: 4%
 
 .menu
     z-index: 3

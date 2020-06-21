@@ -5,7 +5,7 @@
                 <div class="s_left" :class="$mq">Main</div>
                 <div class="s_right" :class="$mq">
                 <div class="daneh" :class="$mq">Action:</div>
-                <router-link :to="{ name: 'creator' }" class="danev" v-bind:class="[{ shadow: subscription.status != 'active'}, $mq]">Create timeline</router-link>
+                <router-link :to="{ name: 'creator' }" class="danev" v-bind:class="[{ shadow: subscription.status != 'active' && subscription.status != 'trial'}, $mq]">Create timeline</router-link>
                 <div class="danea" :class="$mq" v-on:click="logout()">Logout</div>
                 </div>
                 <div class="s_line"></div>
@@ -35,9 +35,8 @@
                 <div class="s_left" :class="$mq">Subscription</div>
                 <div class="s_right" :class="$mq">
                 <div class="daneh" :class="$mq">Status:</div>
-                <div class="danev" :class="$mq" v-if="subscription.status == 'active'">{{ subscription.status }}</div>
-                <div class="danev" :class="$mq" v-else>disabled</div>
-                <div class="danea" style="text-decoration: underline; cursor: pointer" :class="$mq" v-if="subscription.status == 'active'" v-on:click="cancel()">Cancel</div>
+                <div class="danev" :class="$mq">{{ subscription.status }}</div>
+                <div class="danea" style="text-decoration: underline; cursor: pointer" :class="$mq" v-if="subscription.status == 'active' || subscription.status == 'incomplete'" v-on:click="cancel()">Cancel</div>
                 <router-link :to="{ name: 'subscription'}" class="danea" :class="$mq" v-else>Activate</router-link>
                 </div>
                 <div class="s_line"></div>
@@ -46,7 +45,7 @@
             <h1>Timelines</h1>
             <p>Your timelines. You can edit them or delete. Try to keep things orginized.</p>
 
-            <div class="s_item" v-bind:class="{ shadow: subscription.status != 'active' }" v-for="(timeline, index) in timelines" :key="index">
+            <div class="s_item" v-bind:class="{ shadow: subscription.status != 'active' && subscription.status != 'trial'}" v-for="(timeline, index) in timelines" :key="index">
                 <div class="s_left" :class="$mq">
                     <router-link style="color: #303030; text-decoration: none" :to="{ path: 'timeline/' + timeline.id }"> {{ timeline.descriptionTitle }} </router-link><br>
                     <router-link style="text-decoration: none" :to="{ path: 'editorLoader/' + timeline.id }" class="edit">Edit</router-link>
@@ -110,6 +109,10 @@
         })
         .catch(error => {
             console.log(error)
+            const diffTime = Math.abs(new Date() - new Date(this.$store.state.jwt.userDate))
+            if (Math.ceil(diffTime / (1000 * 60 * 60 * 24)) <= 30){
+                this.subscription.status = "trial"
+            }
         })
     },
     data () {
