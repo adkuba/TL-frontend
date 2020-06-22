@@ -9,6 +9,7 @@ import PasswordChange from '../components/PasswordChange.vue';
 import EditorLoader from '../components/EditorLoader.vue'
 import Admin from '../components/Admin.vue'
 import Subscription from '../components/Subscription.vue'
+import Profile from '../components/Profile.vue'
 
 // the routes are simply an array of objects
 const routes = [
@@ -95,6 +96,11 @@ const routes = [
         meta: {
             requiresAuth: true
           }
+    },
+    {
+        path: '/profile/:id',
+        name: 'profile',
+        component: Profile,
     }
 ];
 

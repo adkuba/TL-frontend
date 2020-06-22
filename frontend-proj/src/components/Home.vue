@@ -229,7 +229,7 @@ input::-webkit-search-cancel-button
 .image
     border-radius: 1px
     width: 100%
-    max-height: 300px
+    max-height: 350px
     object-fit: cover
 
 .desc
