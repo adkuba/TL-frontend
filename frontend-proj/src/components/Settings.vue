@@ -50,7 +50,7 @@
                     <router-link style="color: #303030; text-decoration: none" :to="{ path: 'timeline/' + timeline.id }"> {{ timeline.descriptionTitle }} </router-link><br>
                     <router-link style="text-decoration: none" :to="{ path: 'editorLoader/' + timeline.id }" class="edit">Edit</router-link>
                     <div class="edit" v-on:click="deleteTimeline(timeline)">Delete</div>
-                    <div class="likes">{{ timeline.views }} views &middot; {{ timeline.likes }} likes</div>
+                    <div class="likes">{{ timeline.views }} views &middot; {{ timeline.likes.length }} likes</div>
                 </div>
                 <div class="s_right" :class="$mq">{{ timeline.description.substring(0, 250) }}</div>
                 <div class="s_line"></div>
@@ -63,7 +63,7 @@
                 <div class="s_left" :class="$mq">
                     <router-link style="color: #303030; text-decoration: none" :to="{ path: 'timeline/' + timeline.id }"> {{ timeline.descriptionTitle }} </router-link><br>
                     <div class="author">By {{timeline.user.username}}</div>
-                    <div class="likes">{{ timeline.views }} views &middot; {{ timeline.likes }} likes</div>
+                    <div class="likes">{{ timeline.views }} views &middot; {{ timeline.likes.length }} likes</div>
                 </div>
                 <div class="s_right" :class="$mq">{{ timeline.description.substring(0, 250) }}</div>
                 <div class="s_line"></div>

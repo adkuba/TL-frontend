@@ -16,7 +16,7 @@
                  <router-link :to="{ path: 'timeline/' + timeline.id }" class="image_container" :class="$mq" v-if="timeline.pictures.length > 0">
                     <img :class="$mq" class="image" :src="timeline.pictures[0]">
                 </router-link>
-                <div class="author" :class="$mq">By {{ timeline.user.username }} <div class="views">{{ timeline.views }} views &middot; {{ timeline.likes }} likes</div></div>
+                <div class="author" :class="$mq">By {{ timeline.user.username }} <div class="views" v-on:click="openDetails(timeline.likes)">{{ timeline.views }} views &middot; {{ timeline.likes.length }} likes</div></div>
             </div>
         </div>
         <div v-else>
@@ -33,10 +33,17 @@
                     <router-link :to="{ path: 'timeline/' + timeline.id }" class="image_container" :class="$mq" v-if="timeline.pictures.length > 0">
                         <img :class="$mq" class="image" :src="timeline.pictures[0]">
                     </router-link>
-                    <div class="author" :class="$mq">By {{ timeline.user.username }} <div class="views">{{ timeline.views }} views &middot; {{ timeline.likes }} likes</div></div>
+                    <div class="author" :class="$mq">By {{ timeline.user.username }} <div class="views" v-on:click="openDetails(timeline.likes)">{{ timeline.views }} views &middot; {{ timeline.likes.length }} likes</div></div>
                 </div>
                 <div v-else class="empty">Can't find.</div>
             </div>
+        </div>
+    </div>
+    <div id="details">
+        Users:
+        <div class="exit" v-on:click="closeDetails()">x</div>
+        <div v-for="(detail, index) in details" :key="index">
+            {{ detail.userId }}
         </div>
     </div>
 </div>
@@ -56,10 +63,19 @@ export default {
     data() {
         return {
             baseApi: 'http://localhost:8081/api/',
-            searchResults: [ ]
+            searchResults: [ ],
+            details: null
         }
     },
     methods: {
+        openDetails(likes){
+            this.details = likes
+            document.getElementById('details').style.display = 'block'
+        },
+        closeDetails(){
+            this.details = null
+            document.getElementById('details').style.display = 'none'
+        },
         scroll() {
             window.onscroll = () => {
                 let bottomOfWindow = document.documentElement.scrollTop + window.innerHeight === document.documentElement.offsetHeight;
@@ -112,6 +128,21 @@ export default {
 
 <style scoped lang="sass">
 @import '../assets/saas-vars.sass'
+.exit
+    position: absolute
+    top: 10px
+    right: 20px
+
+#details
+    position: fixed
+    top: 40%
+    left: 50%
+    transform: translateX(-50%) translateY(-50%)
+    width: 20%
+    background: white
+    display: none
+    box-shadow: 0 0 0 1600px rgba(0,0,0,0.65)
+
 .empty
     font-family: OpenSans-Regular
     padding-top: 50px
@@ -183,6 +214,7 @@ input::-webkit-search-cancel-button
         width: 60%
 
 .views
+    cursor: pointer
     margin-top: 5px
     color: #7e7e7e
 

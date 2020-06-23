@@ -1,6 +1,6 @@
 <template lang="html">
     <div class="admin">
-        <div v-if="$store.state.jwt.roles.includes('ROLE_ADMIN')">
+        <div v-if="$store.state.jwt.user.roles.includes('ROLE_ADMIN')">
             JESTES ADMINEM
             <div class="stats">
                 <div v-for="(stat, idx) in allStats" :key="idx">
@@ -9,7 +9,7 @@
             </div>
             <div class="timelines">
                 <div v-for="(timeline, idx) in allTimelines" :key="idx">
-                    Title: {{ timeline.id }} Views: {{ timeline.views }} Likes: {{ timeline.likes }} Trending: {{ timeline.trendingViews }} User: {{ timeline.user.email }} <div v-on:click="deleteTimeline(timeline)" class="del">DELETE</div>
+                    Title: {{ timeline.id }} Views: {{ timeline.views }} Likes: {{ timeline.likes.length }} Trending: {{ timeline.trendingViews }} User: {{ timeline.user.email }} <div v-on:click="deleteTimeline(timeline)" class="del">DELETE</div>
                 </div>
             </div>
         </div>

@@ -1,6 +1,6 @@
 <template>
     <div v-if="eventsParsed">
-        <div class="user_d" :class="$mq" v-if="!mockEvents" v-on:click="scrollDown()"> {{ timeline.user.fullName }} </div>
+        <router-link :to="{ path: '/profile/' + timeline.user.username }" class="user_d" :class="$mq" v-if="!mockEvents"> {{ timeline.user.fullName }} </router-link>
 
         <div id="image-viewer">
             <div class="viewer viewer-prev" :class="$mq" v-on:click="imageViewerScroll(mainImageIndex-1)">
@@ -95,16 +95,16 @@
         <div class="like">
             <div v-if="$store.state.jwt">
                 <div v-if="$store.state.jwt.user.likes.includes(timeline.id)">
-                    <div v-if="timeline.likes != null" style="display: inline-block" v-on:click="dislikeTimeline()">Dislike &middot; {{ timeline.likes }} &middot; views {{ timeline.views }}</div>
+                    <div v-if="timeline.likes != null" style="display: inline-block" v-on:click="dislikeTimeline()">Dislike &middot; {{ timeline.likes.length }} &middot; views {{ timeline.views }}</div>
                     <div v-if="timeline.user" class="email" :class="$mq">{{ timeline.user.email }}</div>
                 </div>
                 <div v-else>
-                    <div v-if="timeline.likes != null" style="display: inline-block" v-on:click="likeTimeline()">Like &middot; {{ timeline.likes }} &middot; views {{ timeline.views }}</div> 
+                    <div v-if="timeline.likes != null" style="display: inline-block" v-on:click="likeTimeline()">Like &middot; {{ timeline.likes.length }} &middot; views {{ timeline.views }}</div> 
                     <div v-if="timeline.user" class="email" :class="$mq">{{ timeline.user.email }}</div>
                 </div>
             </div>
             <div v-else>
-                <router-link v-if="timeline.likes != null" style="display: inline-block" class="login-like" :to="{ name: 'login', params: {path: {path: '/timeline/' + timeline.id}}}">Login to like &middot; {{ timeline.likes }} &middot; views {{ timeline.views }}</router-link>
+                <router-link v-if="timeline.likes != null" style="display: inline-block" class="login-like" :to="{ name: 'login', params: {path: {path: '/timeline/' + timeline.id}}}">Login to like &middot; {{ timeline.likes.length }} &middot; views {{ timeline.views }}</router-link>
                 <div v-if="timeline.user" class="email" :class="$mq">{{ timeline.user.email }}</div>
             </div>
         </div>
@@ -218,9 +218,6 @@ export default {
         }
     },
     methods: {
-        scrollDown(){
-            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })
-        },
         likeTimeline(){
             this.axios.post(this.baseApi + 'timelines/' + this.timeline.id + '/like', null, {
                 headers: {
@@ -230,7 +227,7 @@ export default {
             .then(response => {
                 var jwt = this.$store.state.jwt
                 jwt.user.likes = response.data
-                this.timeline.likes += 1
+                this.timeline.likes.push({date: new Date(), userId: this.$store.state.jwt.user.username})
                 this.$store.commit('set', jwt)
             })
             .catch(error => {
@@ -246,7 +243,8 @@ export default {
             .then(response => {
                 var jwt = this.$store.state.jwt
                 jwt.user.likes = response.data
-                this.timeline.likes -= 1
+                var index = this.timeline.likes.indexOf(this.timeline.likes.find(x => x.userId === this.$store.state.jwt.user.username))
+                this.timeline.likes.splice(index, 1)
                 this.$store.commit('set', jwt)
             })
             .catch(error => {
@@ -670,6 +668,7 @@ div#sub_timeline::-webkit-scrollbar
 
 
 .user_d
+    text-decoration: none
     z-index: 4
     position: fixed
     color: white

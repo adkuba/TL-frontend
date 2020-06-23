@@ -5,7 +5,7 @@
             <p class="username">@{{ user.username }} {{ user.creationTime }}</p>
             <p class="email">{{ user.email }}</p>
             <div class="follow" v-if="$store.state.jwt">
-                <div v-on:click="follow()" v-if="$store.state.jwt.followers.filter(e => e.follow === user.username).length == 0">Follow</div>
+                <div v-on:click="follow()" v-if="$store.state.jwt.user.followers.filter(e => e.follow === user.username).length == 0">Follow</div>
                 <div v-on:click="follow()" v-else>Unfollow</div>
                 <div class="number-followers" v-on:click="openDetails(user.followers.filter(e => e.userId != null))">{{ user.followers.filter(e => e.userId != null).length }}</div>
             </div>
@@ -65,6 +65,9 @@
                 })
         },
         follow(){
+            if (this.$route.params.id == this.$store.state.jwt.user.username){
+                return
+            }
             this.axios.post(this.baseApi + 'users/follow/' + this.$route.params.id, null, {
                 headers: {
                     'Authorization': 'Bearer ' + this.$store.state.jwt.token
@@ -72,7 +75,7 @@
             }).then(response => {
                     if (response.data){
                         var jwt = this.$store.state.jwt
-                        jwt.followers = response.data
+                        jwt.user.followers = response.data
                         this.$store.commit('set', jwt)
 
                     } else {
