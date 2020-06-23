@@ -94,7 +94,7 @@
         </div>
         <div class="like">
             <div v-if="$store.state.jwt">
-                <div v-if="$store.state.jwt.likes.includes(timeline.id)">
+                <div v-if="$store.state.jwt.user.likes.includes(timeline.id)">
                     <div v-if="timeline.likes != null" style="display: inline-block" v-on:click="dislikeTimeline()">Dislike &middot; {{ timeline.likes }} &middot; views {{ timeline.views }}</div>
                     <div v-if="timeline.user" class="email" :class="$mq">{{ timeline.user.email }}</div>
                 </div>
@@ -229,7 +229,7 @@ export default {
             })
             .then(response => {
                 var jwt = this.$store.state.jwt
-                jwt.likes = response.data
+                jwt.user.likes = response.data
                 this.timeline.likes += 1
                 this.$store.commit('set', jwt)
             })
@@ -245,7 +245,7 @@ export default {
             })
             .then(response => {
                 var jwt = this.$store.state.jwt
-                jwt.likes = response.data
+                jwt.user.likes = response.data
                 this.timeline.likes -= 1
                 this.$store.commit('set', jwt)
             })

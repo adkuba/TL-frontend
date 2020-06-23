@@ -131,7 +131,7 @@
                 var eventsParsedSubmitTemp = JSON.parse(JSON.stringify(this.eventsParsed))
 
                 for (var i=0, len=eventsParsedSubmitTemp.length; i<len; i++){
-                    eventsParsedSubmitTemp[i].timeline = this.mainTimelineSubmit
+                    eventsParsedSubmitTemp[i].timelineId = this.mainTimelineSubmit.id
                     delete eventsParsedSubmitTemp[i]['type']
                     delete eventsParsedSubmitTemp[i]['id']
                     delete eventsParsedSubmitTemp[i]['pictures']
@@ -164,7 +164,7 @@
                         //found subTimeline
                         var subTimeline = {
                             id: this.mainTimelineSubmit.id + '-sub' + i,
-                            event: this.eventsParsedSubmit[i]
+                            eventId: this.eventsParsedSubmit[i].id
                         }
 
                         subTimelines.push(subTimeline)
@@ -203,7 +203,7 @@
                             delete subEvtsTemp[j]['id']
                             delete subEvtsTemp[j]['pictures']
                             delete subEvtsTemp[j]['picturesRaw']
-                            subEvtsTemp[j].timeline = JSON.parse(JSON.stringify(this.subTimelinesSubmitted[counter]))
+                            subEvtsTemp[j].timelineId = this.subTimelinesSubmitted[counter].id
                         }
                         counter += 1
                         await this.axios.post(eventsApi, subEvtsTemp, {
@@ -312,6 +312,7 @@
             var timelineCopy = JSON.parse(JSON.stringify(this.timeline))
             delete timelineCopy["pictures"]
             delete timelineCopy["picturesRaw"]
+            delete timelineCopy["user"]
 
             this.axios.post(timelinesApi, timelineCopy, {
                     headers: {

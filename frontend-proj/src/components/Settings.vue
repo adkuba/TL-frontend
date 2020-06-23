@@ -14,11 +14,11 @@
                 <div class="s_left" :class="$mq">Details</div>
                 <div class="s_right" :class="$mq">
                     <div class="daneh" :class="$mq">Username:</div>
-                    <div class="danev" :class="$mq">{{ $store.state.jwt.username }}</div>
+                    <div class="danev" :class="$mq">{{ $store.state.jwt.user.username }}</div>
                     <div class="danea"></div><br>
 
                     <div class="daneh" :class="$mq">Email:</div>
-                    <div class="danev" :class="$mq">{{ $store.state.jwt.email }}</div>
+                    <div class="danev" :class="$mq">{{ $store.state.jwt.user.email }}</div>
                     <router-link :to="{ name: 'emailChange' }" class="danea" :class="$mq">Change email</router-link><br>
 
                     <div class="daneh" :class="$mq">Password:</div>
@@ -26,7 +26,7 @@
                     <router-link :to="{ name: 'passwordChange' }" class="danea" :class="$mq">Change password</router-link><br>
 
                     <div class="daneh" :class="$mq">Name:</div>
-                    <div class="danev" :class="$mq">{{ $store.state.jwt.fullName }}</div>
+                    <div class="danev" :class="$mq">{{ $store.state.jwt.user.fullName }}</div>
                     <router-link :to="{ name: 'nameChange' }" class="danea" :class="$mq">Change name</router-link>
                 </div>
                 <div class="s_line"></div>
@@ -80,7 +80,7 @@
     name: 'Settings',
     created() {
         window.scrollTo({ top: 0, behavior: 'smooth' })
-        var timelinesApi = this.baseApi + 'timelines/public/' + this.$store.state.jwt.username
+        var timelinesApi = this.baseApi + 'timelines/public/' + this.$store.state.jwt.user.username
         this.axios.get(timelinesApi)
         .then(response => {
             this.timelines = response.data
@@ -89,8 +89,8 @@
             console.log(error)
         })
 
-        for (var i=0, len=this.$store.state.jwt.likes.length; i<len; i++){
-            this.axios.get(this.baseApi + 'timelines/public?id=' + this.$store.state.jwt.likes[i])
+        for (var i=0, len=this.$store.state.jwt.user.likes.length; i<len; i++){
+            this.axios.get(this.baseApi + 'timelines/public?id=' + this.$store.state.jwt.user.likes[i])
             .then(response => {
                 this.likes.push(response.data)
             })
@@ -109,7 +109,7 @@
         })
         .catch(error => {
             console.log(error)
-            const diffTime = Math.abs(new Date() - new Date(this.$store.state.jwt.userDate))
+            const diffTime = Math.abs(new Date() - new Date(this.$store.state.jwt.user.creationTime))
             if (Math.ceil(diffTime / (1000 * 60 * 60 * 24)) <= 30){
                 this.subscription.status = "trial"
             }
