@@ -34,6 +34,7 @@
   export default  {
     name: 'Profile',
     created () {
+        window.scrollTo({ top: 0, behavior: 'smooth' })
         this.axios.get(this.baseApi + 'users/public/' + this.$route.params.id)
             .then(response => {
                 if (response.data){

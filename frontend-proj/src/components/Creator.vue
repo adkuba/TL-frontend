@@ -39,7 +39,7 @@
                                 <input class="ttitle" :class="$mq" type="text" :id="'title'+index" required maxlength="40" placeholder="Title" :value="evt.title">
                                 <input class="ttitle tdate" :class="$mq" type="date" required :id="'date'+index" placeholder="mm/dd/yyyy" :value="evt.date">
                                 <div v-if="timeline.pictures" :class="$mq" class="file-container" v-on:click="open(index)">Files {{evt.pictures.length}}</div>
-                                <textarea class="ttitle tlong" :id="'long'+index" required maxlength="1500" placeholder="Description" :value="evt.shortDescription ? evt.shortDescription + '\n' + evt.description : ''"></textarea>
+                                <textarea class="ttitle tlong" :id="'long'+index" required maxlength="1500" placeholder="Description" :value="evt.description"></textarea>
                                 <div class="control_item add_sub" v-on:click="addSubEvent(index)">&#43;</div>
                             </div>
                             <div class="s_line"></div>
@@ -55,7 +55,7 @@
                                     <input class="ttitle" :class="$mq" :id="'sub'+index+'title'+subindex" required maxlength="40" type="text" placeholder="Title" :value="subevt.title">
                                     <input class="ttitle tdate" :class="$mq" type="date" required :id="'sub'+index+'date'+subindex" placeholder="mm/dd/yyyy" :value="subevt.date">
                                     <div v-if="timeline.pictures" :class="$mq" class="file-container" v-on:click="open(index, subindex)">Files {{subevt.pictures.length}}</div>
-                                    <textarea class="ttitle tlong" :id="'sub'+index+'long'+subindex" required maxlength="1500" placeholder="Description" :value="subevt.shortDescription ? subevt.shortDescription + '\n' + subevt.description : ''"></textarea>
+                                    <textarea class="ttitle tlong" :id="'sub'+index+'long'+subindex" required maxlength="1500" placeholder="Description" :value="subevt.description"></textarea>
                                 </div>
                             </div>
                         </transition-group>
@@ -87,7 +87,7 @@
     },
     data () {
       return {
-          events: [{id: 'first', type: 'normal', title: '', pictures: [], picturesRaw: [], shortDescription: '', description: '', date: '', links: new Map(), sub: []}],
+          events: [{id: 'first', type: 'normal', title: '', pictures: [], picturesRaw: [], description: '', date: '', links: new Map(), sub: []}],
           eventsParsed: [],
           eventsParsedSubmit: [],
           timeline: {pictures: [], picturesRaw: []},
@@ -406,7 +406,7 @@
         addEvent(index){
             this.saveData()
             //DOPRACOWAC dziala dodawanie tylko jednego sub eventu
-            var event = {id: '', type: 'normal', title: '', shortDescription: '', pictures: [], picturesRaw: [], description: '', date: '', links: new Map(), sub: []}
+            var event = {id: '', type: 'normal', title: '', pictures: [], picturesRaw: [], description: '', date: '', links: new Map(), sub: []}
             event.id = '_' + Math.random().toString(36).substr(2, 9)
             if (index == this.events.length){
                 this.events.push(event)
@@ -417,7 +417,7 @@
         },
         addSubEvent(index){
             this.saveData()
-            var subEvent = {id: '', title: '', shortDescription: '', pictures: [], picturesRaw: [], description: '', date: '', links: new Map()}
+            var subEvent = {id: '', title: '', pictures: [], picturesRaw: [], description: '', date: '', links: new Map()}
             subEvent.id = '_' + Math.random().toString(36).substr(2, 9)
             this.events[index].sub.unshift(subEvent)
         },
@@ -510,10 +510,7 @@
                 this.events[i].title = document.getElementById("title"+i).value;
                 document.getElementById("title"+i).value = '';
 
-                var long = document.getElementById("long"+i).value.split('\n')
-                this.events[i].shortDescription = long[0]
-                long.shift()
-                this.events[i].description = long.join('\n')
+                this.events[i].description = document.getElementById("long"+i).value
                 document.getElementById("long"+i).value = '';
 
                 this.events[i].date = document.getElementById("date"+i).value;
@@ -525,10 +522,7 @@
                             this.events[i].sub[j].title = document.getElementById("sub"+i+"title"+j).value;
                             document.getElementById("sub"+i+"title"+j).value = '';
 
-                            long = document.getElementById("sub"+i+"long"+j).value.split('\n')
-                            this.events[i].sub[j].shortDescription = long[0]
-                            long.shift()
-                            this.events[i].sub[j].description = long.join('\n')
+                            this.events[i].sub[j].description = document.getElementById("sub"+i+"long"+j).value
                             document.getElementById("sub"+i+"long"+j).value = ''
 
                             this.events[i].sub[j].date = document.getElementById("sub"+i+"date"+j).value;

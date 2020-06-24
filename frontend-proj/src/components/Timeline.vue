@@ -20,7 +20,6 @@
                     <div id="evt_desc_text" v-if="openedSub">
                         <div class="evt_button" v-on:click="moveRight()">Back</div>
                         <h1 class="evt_h"> {{ eventsSub[openedSub].title }} </h1>
-                        <p class="evt_p"> {{ eventsSub[openedSub].shortDescription }} </p>
                         <p class="evt_desc_p"> {{ eventsSub[openedSub].description }} </p>
                         <p class="evt_desc_p2" v-for="(value, name) in eventsSub[openedSub].links" :key="name"> {{ name }} </p>
                     </div>
@@ -41,7 +40,7 @@
                         <div class="sub" v-for="(evt, index) in subTimelineEventsParsed" :key="index">
                             <div class="sub_line" v-if="evt.type == 'line'"></div>
                             <div v-else-if="evt.type == 'circle'">
-                                <p class="sub_evt_p" v-on:click="subevent(index)"> {{ evt.shortDescription }} </p>
+                                <p class="sub_evt_p" v-on:click="subevent(index)"> {{ evt.description.substring(0, 20) }}... </p>
                                 <div class="sub_evt_date" v-on:click="subevent(index)"> {{ evt.date.slice(0,7) }} </div>
                             </div>
                             <div class="sub_year" v-else> {{ evt.message }} </div>
@@ -68,7 +67,7 @@
                     <div class="circle trans" :class="$mq" v-on:click="move(index)"></div>
                     <div class="evt_text trans" :class="$mq" v-on:click="moveLeft(index)">
                         <h1 class="evt_h"> {{ evt.title }} </h1>
-                        <p class="evt_p"> {{ evt.shortDescription }} </p>
+                        <p class="evt_p"> {{ evt.description.substring(0, 35) }}... </p>
                         <p class="evt_p" v-if="$mq == 'small'"> {{ evt.date.slice(0,7) }} </p>
                     </div>
                 </div>
@@ -142,6 +141,7 @@ export default {
         events: null,
         newPos: null,
         galleryScrolling: false,
+        sub: false,
 
         mainImages: null,
         mainImageIndex: null,
@@ -372,10 +372,11 @@ export default {
         },
         moveRight(){
             //jesli jestesmy w sub evencie
-            if (this.openedSub != this.openedEvent){
-                this.eventsSub = this.eventsParsed;
-                this.openedSub = this.openedEvent;
-                window.scroll({top: this.newPos-100, left: 0, behavior: 'smooth'});
+            if (this.sub){
+                this.sub = false
+                this.eventsSub = this.eventsParsed
+                this.openedSub = this.openedEvent
+                window.scroll({top: this.newPos-100, left: 0, behavior: 'smooth'})
 
             } else {
                 document.getElementsByClassName("line").forEach(function centerLines(line) {line.classList.remove('line_open');});
@@ -394,9 +395,10 @@ export default {
             }
         },
         subevent(index){
-            this.eventsSub = this.subTimelineEventsParsed;
-            this.openedSub = index;
-            window.scroll({top: this.newPos-100, left: 0, behavior: 'smooth'});
+            this.sub = true
+            this.eventsSub = this.subTimelineEventsParsed
+            this.openedSub = index
+            window.scroll({top: this.newPos-100, left: 0, behavior: 'smooth'})
         },
         sortByDate(array){
             return array.sort(function(a, b){

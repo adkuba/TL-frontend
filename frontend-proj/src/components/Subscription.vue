@@ -87,7 +87,7 @@
                 },
             })
             .then(response => {
-                console.log(response.data)
+                //console.log(response.data)
                 var data = {
                     subscription: response.data,
                     priceId: priceId,
@@ -118,11 +118,10 @@
                 })
                 .then((result) => {
                     if (result.error) {
-                        //alert mam w catch
+                        this.cancelSubscription()
                         throw result;
                     } else {
                         if (result.paymentIntent.status === 'succeeded') {
-                            //succes
                             alert("Succes! Reload page")
                             return {
                                 priceId: priceId,
@@ -138,6 +137,7 @@
             }
             else if (paymentIntent.status === 'requires_payment_method'){
                 alert("Your card was rejected! Try again.")
+                this.cancelSubscription()
                 window.location.reload()
                 return "rejected"
             }
@@ -146,6 +146,16 @@
                 return { subscription, priceId, paymentMethodId }
             }
         },
+        cancelSubscription(){
+            this.axios.post(this.baseApi + 'users/cancel-subscription', null, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.$store.state.jwt.token
+                },
+            })
+            .catch(error => {
+                console.log(error)
+            })
+        }
     }
 }
 

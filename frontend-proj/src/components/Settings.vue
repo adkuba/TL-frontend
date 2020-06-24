@@ -69,6 +69,12 @@
                 <div class="s_line"></div>
             </div>
             </div>
+
+            <div class="review">
+                <input type="text" id="review-input">
+                <div class="review-submit" v-on:click="submitReview()">Submit</div>
+            </div>
+
         </div>
 
     </div>
@@ -160,6 +166,23 @@
             .catch(error => {
                 console.log(error)
             })
+        },
+        submitReview(){
+            var review = {
+                username: this.$store.state.jwt.user.username,
+                opinion: document.getElementById("review-input").value
+            }
+            this.axios.post(this.baseApi + 'statistics/public/review', review, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.$store.state.jwt.token
+                },
+            })
+            .then(() => {
+                document.getElementById("review-input").value = ''
+            })
+            .catch(error => {
+                console.log(error)
+            })
         }
     }
 }
@@ -169,6 +192,11 @@
 
 <style scoped lang="sass">
 @import '../assets/saas-vars.sass'
+.review
+    position: fixed
+    bottom: 50px
+    left: 20px
+
 .shadow
     opacity: 0.3
     pointer-events: none
