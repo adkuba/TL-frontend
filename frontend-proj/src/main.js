@@ -32,6 +32,12 @@ const store = new Vuex.Store({
       for (var i=0, len=newTimelines.length; i<len; i++){
         state.timelines.push(newTimelines[i])
       }
+    },
+    addSpecial(state, special){
+      //state.timelines = state.timelines.filter(function(obj){
+        //return obj.data == null
+      //})
+      state.timelines.push(special)
     }
   }
 })

@@ -6,17 +6,37 @@
     </form>
     <div id="homepage" :class="$mq">
         <div v-if="searchResults.length == 0">
-            <div class="element" v-for="(timeline, idx) in $store.state.timelines" :key="idx" :class="$mq"> 
-                <div class="s_line" :class="$mq"></div>
-                <div class="category" :class="$mq">{{ timeline.category }}</div>
-                <router-link :to="{ path: 'timeline/' + timeline.id }" class="title" :class="$mq">{{ timeline.descriptionTitle }}</router-link>
-                <router-link :to="{ path: 'timeline/' + timeline.id }" class="desc" :class="$mq">
-                    {{ timeline.description.substring(0, 100) }}...
-                </router-link>
-                 <router-link :to="{ path: 'timeline/' + timeline.id }" class="image_container" :class="$mq" v-if="timeline.pictures.length > 0">
-                    <img :class="$mq" class="image" :src="timeline.pictures[0]">
-                </router-link>
-                <div class="author" :class="$mq">By {{ timeline.user.username }} <div class="views" v-on:click="openDetails(timeline.likes)">{{ timeline.views }} views &middot; {{ timeline.likes.length }} likes</div></div>
+            <div v-if="$mq != 'small' && special" class="special-pc">
+                <div v-if="special.data[0].username != null" class="special-pc-users">
+                    Users: randomowi i new
+                    <div v-for="(user, idx) in special.data" :key="idx">
+                        {{ user.fullName }} <br> @{{user.username}} Followers: {{user.followers.filter(e => e.userId != null).length}}
+                    </div>
+                </div>
+                <div v-else class="special-pc-timelines">
+                    Popular timelines:
+                    <div v-for="(timeline, idx) in special.data" :key="idx">
+                        Title: {{timeline.descriptionTitle}}
+                    </div>
+                </div>
+                <div class="special-about">About, help</div>
+            </div>
+            <div v-for="(timeline, idx) in $store.state.timelines" :key="idx" :class="$mq"> 
+                <div v-if="timeline.data == null" class="element">
+                    <div class="s_line" :class="$mq"></div>
+                    <div class="category" :class="$mq">{{ timeline.category }}</div>
+                    <router-link :to="{ path: 'timeline/' + timeline.id }" class="title" :class="$mq">{{ timeline.descriptionTitle }}</router-link>
+                    <router-link :to="{ path: 'timeline/' + timeline.id }" class="desc" :class="$mq">
+                        {{ timeline.description.substring(0, 100) }}...
+                    </router-link>
+                    <router-link :to="{ path: 'timeline/' + timeline.id }" class="image_container" :class="$mq" v-if="timeline.pictures.length > 0">
+                        <img :class="$mq" class="image" :src="timeline.pictures[0]">
+                    </router-link>
+                    <div class="author" :class="$mq">By {{ timeline.user.username }} <div class="views" v-on:click="openDetails(timeline.likes)">{{ timeline.views }} views &middot; {{ timeline.likes.length }} likes</div></div>
+                </div>
+                <div v-else>
+                    <div v-if="$mq == 'small'"> specjalny elem na mobile</div>
+                </div>
             </div>
         </div>
         <div v-else>
@@ -55,6 +75,7 @@ export default {
     name: 'Home',
     created(){
         this.getTimelines()
+        this.getSpecial()
         this.axios.post(this.baseApi + 'statistics/public', null)
         .catch(error => {
             console.log(error)
@@ -64,7 +85,9 @@ export default {
         return {
             baseApi: 'http://localhost:8081/api/',
             searchResults: [ ],
-            details: null
+            details: null,
+            counter: 0,
+            special: null
         }
     },
     methods: {
@@ -82,6 +105,11 @@ export default {
 
                 if (bottomOfWindow) {
                     this.getTimelines()
+                    if (this.counter == 2){
+                        this.counter = 0
+                        this.getSpecial()
+                    }
+                    this.counter += 1
                 }
             };
         },
@@ -117,6 +145,19 @@ export default {
         quit(){
             document.getElementById("search-input").value = ''
             this.searchResults = []
+        },
+        getSpecial(){
+            this.axios.get(this.baseApi + 'timelines/public/homepage/special')
+                .then(response => {
+                    var specialElement = {
+                        data: response.data
+                    }
+                    this.special = specialElement
+                    this.$store.commit('addSpecial', specialElement)
+                })
+                .catch(error => {
+                    console.log(error)
+                })
         }
     },
     mounted() {
@@ -128,6 +169,23 @@ export default {
 
 <style scoped lang="sass">
 @import '../assets/saas-vars.sass'
+.special-about
+    background: $bg-color
+    padding: 20px
+
+.special-pc-users
+    background: $bg-color
+    padding: 20px
+
+.special-pc-timelines
+    background: $bg-color
+    padding: 20px
+
+.special-pc
+    position: fixed
+    top: 150px
+    right: 20%
+
 .exit
     position: absolute
     top: 10px
