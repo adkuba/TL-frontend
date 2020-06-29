@@ -1,52 +1,55 @@
 <template lang="html">
     <div>
         <div id="settings" :class="$mq">
-            <div class="s_item" :class="$mq">
-                <div class="s_left" :class="$mq">Main</div>
-                <div class="s_right" :class="$mq">
-                <div class="daneh" :class="$mq">Action:</div>
-                <router-link :to="{ name: 'creator' }" class="danev" v-bind:class="[{ shadow: subscription.status != 'active' && subscription.status != 'trial'}, $mq]">Create timeline</router-link>
-                <div class="danea" :class="$mq" v-on:click="logout()">Logout</div>
+            <div class="controler" :class="$mq">
+                <router-link :to="{ path: '/profile/' + $store.state.jwt.user.username}" class="menu-element" :class="$mq">Profile</router-link>
+                <router-link :to="{ name: 'creator' }" class="menu-element" v-bind:class="[{ shadow: subscription.status != 'active' && subscription.status != 'trial'}, $mq]">Create</router-link>
+                <div class="menu-element" :class="$mq" v-on:click="logout()">Logout</div>
+            </div>
+            <div class="data-settings">
+                <div class="s_item">
+                    <div class="s_left" :class="$mq">Details</div>
+                    <div class="s_right" :class="$mq">
+                        <div class="daneh" :class="$mq">Username:</div>
+                        <div class="danev" :class="$mq">{{ $store.state.jwt.user.username }}</div>
+                        <div class="danea"></div><br>
+
+                        <div class="daneh" :class="$mq">Email:</div>
+                        <div class="danev" :class="$mq">{{ $store.state.jwt.user.email }}</div>
+                        <router-link :to="{ name: 'emailChange' }" class="danea" :class="$mq">Change email</router-link><br>
+
+                        <div class="daneh" :class="$mq">Password:</div>
+                        <div class="danev" :class="$mq">*****</div>
+                        <router-link :to="{ name: 'passwordChange' }" class="danea" :class="$mq">Change password</router-link><br>
+
+                        <div class="daneh" :class="$mq">Name:</div>
+                        <div class="danev" :class="$mq">{{ $store.state.jwt.user.fullName }}</div>
+                        <router-link :to="{ name: 'nameChange' }" class="danea" :class="$mq">Change name</router-link>
+                    </div>
+                    <div class="s_line"></div>
                 </div>
-                <div class="s_line"></div>
-            </div>
-            <div class="s_item">
-                <div class="s_left" :class="$mq">Details</div>
-                <div class="s_right" :class="$mq">
-                    <div class="daneh" :class="$mq">Username:</div>
-                    <div class="danev" :class="$mq">{{ $store.state.jwt.user.username }}</div>
-                    <div class="danea"></div><br>
 
-                    <div class="daneh" :class="$mq">Email:</div>
-                    <div class="danev" :class="$mq">{{ $store.state.jwt.user.email }}</div>
-                    <router-link :to="{ name: 'emailChange' }" class="danea" :class="$mq">Change email</router-link><br>
-
-                    <div class="daneh" :class="$mq">Password:</div>
-                    <div class="danev" :class="$mq">*****</div>
-                    <router-link :to="{ name: 'passwordChange' }" class="danea" :class="$mq">Change password</router-link><br>
-
-                    <div class="daneh" :class="$mq">Name:</div>
-                    <div class="danev" :class="$mq">{{ $store.state.jwt.user.fullName }}</div>
-                    <router-link :to="{ name: 'nameChange' }" class="danea" :class="$mq">Change name</router-link>
+                <div class="s_item" :class="$mq">
+                    <div class="s_left" :class="$mq">Subscription</div>
+                    <div class="s_right" :class="$mq">
+                        <div class="daneh" :class="$mq">Status:</div>
+                        <div class="danev" :class="$mq">{{ subscription.status }}</div>
+                        <div class="danea" style="text-decoration: underline; cursor: pointer" :class="$mq" v-if="subscription.status == 'active' || subscription.status == 'incomplete'" v-on:click="cancel()">Cancel</div>
+                        <router-link :to="{ name: 'subscription'}" class="danea" :class="$mq" v-else>Activate</router-link>
+                    </div>
+                    <div class="s_line"></div>
                 </div>
-                <div class="s_line"></div>
-            </div>
-            <div class="s_item" :class="$mq">
-                <div class="s_left" :class="$mq">Subscription</div>
-                <div class="s_right" :class="$mq">
-                <div class="daneh" :class="$mq">Status:</div>
-                <div class="danev" :class="$mq">{{ subscription.status }}</div>
-                <div class="danea" style="text-decoration: underline; cursor: pointer" :class="$mq" v-if="subscription.status == 'active' || subscription.status == 'incomplete'" v-on:click="cancel()">Cancel</div>
-                <router-link :to="{ name: 'subscription'}" class="danea" :class="$mq" v-else>Activate</router-link>
+
+                <div class="s_item" :class="$mq">
+                    <div class="s_left" :class="$mq">Review</div>
+                    <div class="s_right" :class="$mq">
+                        <div class="daneh" :class="$mq">Your opinon:</div>
+                        <input class="danev" type="text" id="review-input">
+                        <div class="danea" v-on:click="submitReview()">Submit</div>
+                    </div>
+                    <div class="s_line"></div>
                 </div>
-                <div class="s_line"></div>
             </div>
-
-            <div class="review">
-                <input type="text" id="review-input">
-                <div class="review-submit" v-on:click="submitReview()">Submit</div>
-            </div>
-
         </div>
 
     </div>
@@ -126,10 +129,29 @@
 
 <style scoped lang="sass">
 @import '../assets/saas-vars.sass'
-.review
-    position: fixed
-    bottom: 50px
-    left: 20px
+.data-settings
+    padding-top: 100px
+    padding-bottom: 1px
+    box-shadow: 0px 2px 15px 4px rgba(0,0,0,0.09)
+    border-radius: 30px
+    background: $bg-color
+
+.menu-element
+    display: inline-block
+    float: left
+    font-family: Raleway-Regular
+    font-weight: bold
+    text-decoration: none
+    color: #303030
+    cursor: pointer
+    font-size: 30px
+    width: 33%
+    letter-spacing: 1px
+    
+.controler
+    margin-bottom: 100px
+    width: 80%
+    margin-left: 10%
 
 .shadow
     opacity: 0.3
@@ -242,7 +264,7 @@ h1
 
 #settings
     background: $bg2-color
-    padding: 100px 0
+    padding: 70px 0
     &.large
         margin: 50px 10%
 

@@ -46,19 +46,21 @@
             <h1 :class="$mq" style="margin-top: 60px; margin-left: 25%">Search results:</h1>
             <div v-on:click="quit()" class="quit" :class="$mq">x</div>
             <div style="margin-bottom: 80px"></div>
-            <div class="element" style="margin-left: 30%" v-for="(timeline, idx) in searchResults" :key="idx" :class="$mq">
-                <div v-if="!timeline.none">
-                    <div class="category" :class="$mq"></div>
-                    <router-link :to="{ path: 'timeline/' + timeline.id }" class="title" :class="$mq">{{ timeline.descriptionTitle }}</router-link>
-                    <router-link :to="{ path: 'timeline/' + timeline.id }" class="desc" :class="$mq">
-                        {{ timeline.description.substring(0, 100) }}...
-                    </router-link>
-                    <router-link :to="{ path: 'timeline/' + timeline.id }" class="image_container" :class="$mq" v-if="timeline.pictures.length > 0">
-                        <img :class="$mq" class="image" :src="timeline.pictures[0]">
-                    </router-link>
-                    <div class="author" :class="$mq">By {{ timeline.user.username }} <div class="views" v-on:click="openDetails(timeline.likes)">{{ timeline.views }} views &middot; {{ timeline.likes.length }} likes</div></div>
+            <div class="search-container">
+                <div class="element search-element" v-for="(timeline, idx) in searchResults" :key="idx" :class="$mq">
+                    <div v-if="!timeline.none">
+                        <div class="category" :class="$mq"></div>
+                        <router-link :to="{ path: 'timeline/' + timeline.id }" class="title" :class="$mq">{{ timeline.descriptionTitle }}</router-link>
+                        <router-link :to="{ path: 'timeline/' + timeline.id }" class="desc" :class="$mq">
+                            {{ timeline.description.substring(0, 100) }}...
+                        </router-link>
+                        <router-link :to="{ path: 'timeline/' + timeline.id }" class="image_container" :class="$mq" v-if="timeline.pictures.length > 0">
+                            <img :class="$mq" class="image" :src="timeline.pictures[0]">
+                        </router-link>
+                        <div class="author" :class="$mq">By {{ timeline.user.username }} <div class="views" v-on:click="openDetails(timeline.likes)">{{ timeline.views }} views &middot; {{ timeline.likes.length }} likes</div></div>
+                    </div>
+                    <div v-else class="empty">Can't find.</div>
                 </div>
-                <div v-else class="empty">Can't find.</div>
             </div>
         </div>
     </div>
@@ -379,7 +381,6 @@ input::-webkit-search-cancel-button
         margin-left: 5%
         width: 90%
 
-
 .element
     box-shadow: 0px 2px 15px 4px rgba(0,0,0,0.09)
     border-radius: 15px
@@ -395,6 +396,16 @@ input::-webkit-search-cancel-button
     &.small
         width: 100%
         margin-left: 0
+
+.search-element
+    width: 50%
+    display: inline-block
+    float: left
+    margin: 0
+
+.search-container
+    width: 70%
+    margin-left: 15%
 
 #homepage
     padding-top: 1px

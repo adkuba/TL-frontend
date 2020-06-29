@@ -800,7 +800,7 @@ div#sub_timeline::-webkit-scrollbar
     background: linear-gradient(0deg, rgba(48,48,48,0) 0%, rgba(48,48,48,1) 100%)
 
 #timeline
-    box-shadow: 0px 2px 15px 4px rgba(0,0,0,0.04)
+    box-shadow: 0px 2px 15px 4px rgba(0,0,0,0.09)
     border-radius: 30px
     background: $bg-color
     //wyskokosc evt desc to ok 866 desktop, 1149 mobile

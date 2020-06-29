@@ -794,7 +794,7 @@ h2
 #creator
     padding: 30px 0
     margin: 0 10%
-    background: $bg-color
+    background: $bg2-color
     &.medium
         margin: 0
     &.small
