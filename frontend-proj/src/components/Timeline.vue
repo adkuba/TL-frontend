@@ -522,7 +522,7 @@ export default {
 .gallery-container
     z-index: 2
     position: relative
-    margin: 180px 30%
+    margin: 70px 30%
     &.medium
         margin: 170px 15%
     &.small
@@ -800,25 +800,29 @@ div#sub_timeline::-webkit-scrollbar
     background: linear-gradient(0deg, rgba(48,48,48,0) 0%, rgba(48,48,48,1) 100%)
 
 #timeline
+    box-shadow: 0px 2px 15px 4px rgba(0,0,0,0.04)
+    border-radius: 30px
     background: $bg-color
     //wyskokosc evt desc to ok 866 desktop, 1149 mobile
     //pojawia sie 100px nad circle, po circle musza byc dwie linie czyli 160px
     //czyli 866-260px = 606 padding bottom
     //w praktyce gdzies 450 starczy
     padding-top: 100px
+    margin-top: 150px
     padding-bottom: 450px
     font-family: 'Raleway-Regular'
     &.large
-        margin: 0 10%
+        margin-left: 10%
+        margin-right: 10%
     &.small
         padding-bottom: 750px
     &.medium
         padding-bottom: 520px
 
 #descr
-    white-space: pre-wrap
     height: 200px
-    margin: 60px 30%
+    margin: 0 20%
+    margin-top: 100px 
     font-family: 'Raleway-Regular'
     p
         text-align: justify

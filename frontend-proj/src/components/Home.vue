@@ -7,27 +7,30 @@
     <div id="homepage" :class="$mq">
         <div v-if="searchResults.length == 0">
             <div v-if="$mq != 'small' && special" class="special-pc">
+                <div class="category-special">FOR YOU</div>
                 <div v-if="special.data[0].username != null" class="special-pc-users">
-                    Users: randomowi i new
+                    <h1 class="special-h1">Users</h1>
                     <div v-for="(user, idx) in special.data" :key="idx">
-                        {{ user.fullName }} <br> @{{user.username}} Followers: {{user.followers.filter(e => e.userId != null).length}}
+                        <div class="special-name" v-if="user.fullName">{{ user.fullName }} </div>
+                        <div class="special-name" v-else> New user </div>
+                        <div class="special-desc">@{{user.username}} &middot; {{user.followers.filter(e => e.userId != null).length}} followers </div>
                     </div>
                 </div>
                 <div v-else class="special-pc-timelines">
-                    Popular timelines:
+                    <h1 class="special-h1">Timelines</h1>
                     <div v-for="(timeline, idx) in special.data" :key="idx">
-                        Title: {{timeline.descriptionTitle}}
+                        <div class="special-name"> {{timeline.descriptionTitle}} </div>
+                        <div class="special-desc">by @{{ timeline.user.username }} &middot; {{ timeline.likes.length }} likes </div>
                     </div>
                 </div>
-                <div class="special-about">About, help</div>
+                <div class="special-about">About</div>
             </div>
-            <div v-for="(timeline, idx) in $store.state.timelines" :key="idx" :class="$mq"> 
+            <div v-for="(timeline, idx) in $store.state.timelines" :key="idx" :class="$mq">
                 <div v-if="timeline.data == null" class="element">
-                    <div class="s_line" :class="$mq"></div>
                     <div class="category" :class="$mq">{{ timeline.category }}</div>
                     <router-link :to="{ path: 'timeline/' + timeline.id }" class="title" :class="$mq">{{ timeline.descriptionTitle }}</router-link>
                     <router-link :to="{ path: 'timeline/' + timeline.id }" class="desc" :class="$mq">
-                        {{ timeline.description.substring(0, 100) }}...
+                        {{ timeline.description.substring(0, 200) }}...
                     </router-link>
                     <router-link :to="{ path: 'timeline/' + timeline.id }" class="image_container" :class="$mq" v-if="timeline.pictures.length > 0">
                         <img :class="$mq" class="image" :src="timeline.pictures[0]">
@@ -40,11 +43,11 @@
             </div>
         </div>
         <div v-else>
-            <h1 :class="$mq">Search results:</h1>
+            <h1 :class="$mq" style="margin-top: 60px; margin-left: 25%">Search results:</h1>
             <div v-on:click="quit()" class="quit" :class="$mq">x</div>
-            <div class="element" v-for="(timeline, idx) in searchResults" :key="idx" :class="$mq">
+            <div style="margin-bottom: 80px"></div>
+            <div class="element" style="margin-left: 30%" v-for="(timeline, idx) in searchResults" :key="idx" :class="$mq">
                 <div v-if="!timeline.none">
-                    <div class="s_line" :class="$mq"></div>
                     <div class="category" :class="$mq"></div>
                     <router-link :to="{ path: 'timeline/' + timeline.id }" class="title" :class="$mq">{{ timeline.descriptionTitle }}</router-link>
                     <router-link :to="{ path: 'timeline/' + timeline.id }" class="desc" :class="$mq">
@@ -169,22 +172,55 @@ export default {
 
 <style scoped lang="sass">
 @import '../assets/saas-vars.sass'
+.special-name
+    margin-top: 30px
+    font-family: Raleway-Regular
+    font-size: 20px
+
+.special-desc
+    color: #7e7e7e
+    margin-left: 2px
+    font-size: 14px
+
+.category-special
+    font-family: OpenSans-Regular
+    margin-top: 30px
+    margin-left: 8%
+    text-align: left
+    font-size: 16px
+    color: #7e7e7e
+
+.special-h1
+    margin-top: 10px
+    margin-left: 0
+    letter-spacing: 1px
+    margin-bottom: 50px
+
 .special-about
-    background: $bg-color
-    padding: 20px
+    color: #14426B
+    cursor: pointer
+    margin-top: 80px
+    margin-left: 8%
+    font-family: OpenSans-Regular
 
 .special-pc-users
-    background: $bg-color
-    padding: 20px
+    font-family: OpenSans-Regular
+    margin-left: 8%
+    width: 84%
 
 .special-pc-timelines
-    background: $bg-color
-    padding: 20px
+    font-family: OpenSans-Regular
+    width: 84%
+    margin-left: 8%
 
 .special-pc
+    text-align: left
+    padding: 20px
     position: fixed
-    top: 150px
-    right: 20%
+    top: 100px
+    right: 12%
+    width: 20%
+    padding-top: 15px
 
 .exit
     position: absolute
@@ -211,7 +247,7 @@ export default {
 
 .quit
     position: absolute
-    right: 20%
+    right: 25%
     top: 100px
     font-family: OpenSans-Regular
     font-size: 30px
@@ -233,26 +269,26 @@ h1
         margin-left: 5%
 
 .search-input
-    background: #303030
-    padding: 0 10px
+    background: rgba(50,50,50, 0.4)
+    padding: 0 15px
     outline: none
     border: none
     color: white
     width: 80%
-    height: 30px
+    height: 36px
     border-radius: 10px
     font-size: 17px
 
 .search-b
     display: inline-block
-    margin-left: 10%
+    margin-left: 2%
     background: none
     border: none
     outline: none
     color: #b8b8b8
     width: 10%
     font-size: 25px
-    transform: translateY(+4px) translateX(-10px)rotate(-45deg)
+    transform: translateY(+3px) translateX(-10px)rotate(-45deg)
     &.small
         transform: translateY(+6px) translateX(-10px)rotate(-45deg)
 
@@ -260,11 +296,11 @@ input::-webkit-search-cancel-button
   -webkit-appearance: none
 
 .search
-    width: 30%
+    width: 40%
     font-family: OpenSans-Regular
     position: fixed
     z-index: 4
-    transform: translateY(-41px) translateX(calc(-50% + 5px))
+    transform: translateY(-40px) translateX(calc(-50% + 5px))
     left: 50%
     &.medium
         width: 40%
@@ -282,7 +318,7 @@ input::-webkit-search-cancel-button
     text-align: left
     font-size: 16px
     color: #7e7e7e
-    margin-left: 10%
+    margin-left: 8%
     &.small
         margin-left: 5%
         width: 90%
@@ -293,33 +329,25 @@ input::-webkit-search-cancel-button
     text-align: left
     font-size: 15px
     margin-top: 20px
-    margin-left: 10%
+    margin-left: 8%
     color: #14426B
     &.small
         margin-left: 5%
         width: 90%
 
-.s_line
-    width: 100%
-    height: 100px
-    background: white
-    display: inline-block
-    &.small
-        height: 50px
-
 .image_container
     display: block
-    width: 80%
-    margin-left: 10%
+    width: 84%
+    margin-left: 8%
     margin-top: 30px
     &.small
         margin-left: 5%
         width: 90%
 
 .image
-    border-radius: 1px
+    border-radius: 5px
     width: 100%
-    max-height: 350px
+    max-height: 400px
     object-fit: cover
 
 .desc
@@ -329,9 +357,9 @@ input::-webkit-search-cancel-button
     font-family: OpenSans-Regular
     display: block
     vertical-align: top
-    width: 80%
+    width: 84%
     text-align: justify 
-    margin-left: 10%
+    margin-left: 8%
     &.small
         margin-left: 5%
         width: 90%
@@ -346,17 +374,20 @@ input::-webkit-search-cancel-button
     font-size: 40px
     font-weight: bold
     letter-spacing: 1px
-    margin-left: 10%
+    margin-left: 8%
     &.small
         margin-left: 5%
         width: 90%
 
 
 .element
-    border-radius: 5px
+    box-shadow: 0px 2px 15px 4px rgba(0,0,0,0.09)
+    border-radius: 15px
     padding-bottom: 40px
+    padding-top: 20px
     width: 40%
-    margin-left: 20%
+    margin-left: 15%
+    margin-top: 70px
     background: $bg-color
     &.medium
         width: 50%

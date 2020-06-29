@@ -60,7 +60,7 @@ html
     z-index: 4
     color: white
     float: right
-    margin: 10px 30px
+    margin: 11px 40px
     font-size: 23px
     &.small
         margin-right: 4%
@@ -69,7 +69,7 @@ html
 .home_b
     z-index: 4
     float: left
-    margin: 15px 30px
+    margin: 16px 40px
     &.small
         margin-left: 4%
 
@@ -77,11 +77,13 @@ html
     z-index: 3
     position: fixed
     top: 0
-    background: #303030
-    height: 55px
+    backdrop-filter: blur(2px)
+    background: rgba(30,30,30, 0.97)
+    height: 60px
     width: 100%
 
 body
+  background: #f9f9f9
   margin: 0
   padding-bottom: 25%
 

@@ -42,34 +42,6 @@
                 <div class="s_line"></div>
             </div>
 
-            <h1>Timelines</h1>
-            <p>Your timelines. You can edit them or delete. Try to keep things orginized.</p>
-
-            <div class="s_item" v-bind:class="{ shadow: subscription.status != 'active' && subscription.status != 'trial'}" v-for="(timeline, index) in timelines" :key="index">
-                <div class="s_left" :class="$mq">
-                    <router-link style="color: #303030; text-decoration: none" :to="{ path: 'timeline/' + timeline.id }"> {{ timeline.descriptionTitle }} </router-link><br>
-                    <router-link style="text-decoration: none" :to="{ path: 'editorLoader/' + timeline.id }" class="edit">Edit</router-link>
-                    <div class="edit" v-on:click="deleteTimeline(timeline)">Delete</div>
-                    <div class="likes">{{ timeline.views }} views &middot; {{ timeline.likes.length }} likes</div>
-                </div>
-                <div class="s_right" :class="$mq">{{ timeline.description.substring(0, 250) }}</div>
-                <div class="s_line"></div>
-            </div>
-
-            <h1>Likes</h1>
-            <p>Your likes. List of all likes. You can click on timeline and check it out.</p>
-            <div>
-                <div class="s_item" v-for="(timeline, index) in likes" :key="index">
-                <div class="s_left" :class="$mq">
-                    <router-link style="color: #303030; text-decoration: none" :to="{ path: 'timeline/' + timeline.id }"> {{ timeline.descriptionTitle }} </router-link><br>
-                    <div class="author">By {{timeline.user.username}}</div>
-                    <div class="likes">{{ timeline.views }} views &middot; {{ timeline.likes.length }} likes</div>
-                </div>
-                <div class="s_right" :class="$mq">{{ timeline.description.substring(0, 250) }}</div>
-                <div class="s_line"></div>
-            </div>
-            </div>
-
             <div class="review">
                 <input type="text" id="review-input">
                 <div class="review-submit" v-on:click="submitReview()">Submit</div>
@@ -86,25 +58,6 @@
     name: 'Settings',
     created() {
         window.scrollTo({ top: 0, behavior: 'smooth' })
-        var timelinesApi = this.baseApi + 'timelines/public/' + this.$store.state.jwt.user.username
-        this.axios.get(timelinesApi)
-        .then(response => {
-            this.timelines = response.data
-        })
-        .catch(error => {
-            console.log(error)
-        })
-
-        for (var i=0, len=this.$store.state.jwt.user.likes.length; i<len; i++){
-            this.axios.get(this.baseApi + 'timelines/public?id=' + this.$store.state.jwt.user.likes[i])
-            .then(response => {
-                this.likes.push(response.data)
-            })
-            .catch(error => {
-                console.log(error)
-            })
-        }
-
         this.axios.get(this.baseApi + "users/get-subscription", {
             headers: {
                 'Authorization': 'Bearer ' + this.$store.state.jwt.token
@@ -124,8 +77,6 @@
     data () {
       return {
           baseApi: 'http://localhost:8081/api/',
-          timelines: null,
-          likes: [],
           subscription: {status: 'disabled'},
       }
     },
@@ -136,23 +87,6 @@
                     .then(() => {this.$store.commit('set', null)})
                     .catch(error => {console.log(error)})
             this.$router.push({ path: '/home' })
-        },
-        deleteTimeline(timeline){
-            var timelinesApi = this.baseApi + 'timelines/' + timeline.id
-            this.axios.delete(timelinesApi, {
-                headers: {
-                    'Authorization': 'Bearer ' + this.$store.state.jwt.token
-                },
-            })
-            .then(() => {
-                var index = this.timelines.indexOf(timeline)
-                if (index > -1){
-                    this.timelines.splice(index, 1)
-                }
-            })
-            .catch(error =>{
-                console.log(error)
-            })
         },
         cancel(){
             this.axios.post(this.baseApi + 'users/cancel-subscription', null, {
@@ -307,7 +241,7 @@ h1
     margin-bottom: 120px
 
 #settings
-    background: $bg-color
+    background: $bg2-color
     padding: 100px 0
     &.large
         margin: 50px 10%

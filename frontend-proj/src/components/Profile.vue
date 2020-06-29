@@ -2,21 +2,30 @@
     <div id="profile">
         <div v-if="user" class="user">
             <h1>{{ user.fullName }}</h1>
-            <p class="username">@{{ user.username }} {{ user.creationTime }}</p>
-            <p class="email">{{ user.email }}</p>
             <div class="follow" v-if="$store.state.jwt">
                 <div v-on:click="follow()" v-if="$store.state.jwt.user.followers.filter(e => e.follow === user.username).length == 0">Follow</div>
                 <div v-on:click="follow()" v-else>Unfollow</div>
                 <div class="number-followers" v-on:click="openDetails(user.followers.filter(e => e.userId != null))">{{ user.followers.filter(e => e.userId != null).length }}</div>
             </div>
             <div v-else>Login to follow</div>
+            <p class="username">@{{ user.username }} {{ user.email }}</p>
         </div>
-        <div class="s_line"></div>
-        <div class="timeline" v-for="(timeline, index) in timelines" :key="index">
+        <div class="controls">
+            <div class="menu-item" v-on:click="openTimelines()">Timelines <div id="1" class="border"></div></div>
+            <div class="menu-item" v-on:click="openLikes()">Likes <div id="2" class="border"></div></div>
+            <div class="menu-item" v-on:click="openFollowing()">Following <div id="3" class="border"></div></div>
+        </div>
+        <div class="timeline" v-for="(timeline, index) in selected" :key="index">
             <div class="title">{{ timeline.descriptionTitle }}</div>
             <div class="descr">{{ timeline.description.substring(0, 150) }}...</div>
             <div class="image-container" v-if="timeline.pictures.length > 0">
                 <img class="image" :src="timeline.pictures[0]">
+            </div>
+            <div class="views" >{{ timeline.views }} views &middot; {{ timeline.likes.length }} likes</div>
+            <div class="views user-edit" >
+                <router-link style="text-decoration: none" :to="{ path: '/editorLoader/' + timeline.id }" class="edit">Edit</router-link>
+                <div class="edit">&middot;</div>
+                <div class="edit" v-on:click="deleteTimeline(timeline)">Delete</div>
             </div>
         </div>
         <div id="details">
@@ -39,7 +48,9 @@
             .then(response => {
                 if (response.data){
                     this.user = response.data
+                    document.getElementById("1").style.opacity = 1
                     this.getTimelines()
+                    this.getLikes()
                 } else {
                     this.$router.push( {path: "/"} )
                 }
@@ -52,15 +63,29 @@
           baseApi: 'http://localhost:8081/api/',
           timelines: null,
           user: null,
+          likes: [],
+          selected: null,
           details: [{username: 'kuba'}]
       }
     },
     methods: {
+        getLikes(){
+            for (var i=0, len=this.user.likes.length; i<len; i++){
+                this.axios.get(this.baseApi + 'timelines/public?id=' + this.user.likes[i])
+                .then(response => {
+                    this.likes.push(response.data)
+                })
+                .catch(error => {
+                    console.log(error)
+                })
+            }
+        },
         getTimelines(){
             var timelineApi = this.baseApi + 'timelines/public/' + this.$route.params.id
             this.axios.get(timelineApi)
                 .then(response => {
                     this.timelines = response.data
+                    this.selected = this.timelines
                 }).catch(err => {
                     console.log(err)
                 })
@@ -93,7 +118,42 @@
         closeDetails(){
             this.details = null
             document.getElementById('details').style.display = "none"
-        }
+        },
+        openLikes(){
+            this.selected = this.likes
+            document.getElementById("1").style.opacity = 0
+            document.getElementById("3").style.opacity = 0
+            document.getElementById("2").style.opacity = 1
+        },
+        openTimelines(){
+            this.selected = this.timelines
+            document.getElementById("1").style.opacity = 1
+            document.getElementById("3").style.opacity = 0
+            document.getElementById("2").style.opacity = 0
+        },
+        openFollowing(){
+            this.selected = []
+            document.getElementById("1").style.opacity = 0
+            document.getElementById("3").style.opacity = 1
+            document.getElementById("2").style.opacity = 0
+        },
+        deleteTimeline(timeline){
+            var timelinesApi = this.baseApi + 'timelines/' + timeline.id
+            this.axios.delete(timelinesApi, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.$store.state.jwt.token
+                },
+            })
+            .then(() => {
+                var index = this.timelines.indexOf(timeline)
+                if (index > -1){
+                    this.timelines.splice(index, 1)
+                }
+            })
+            .catch(error =>{
+                console.log(error)
+            })
+        },
     }
 }
 
@@ -101,10 +161,46 @@
 </script>
 
 <style scoped lang="sass">
+.controls
+    font-family: Raleway-Regular
+    margin-top: 140px
+    font-size: 24px
+    font-weight: bold
+    letter-spacing: 1px
+
+.menu-item
+    width: 33%
+    display: inline-block
+
+.border
+    width: 50%
+    margin: 6px auto
+    border-bottom: 2px solid #cdcdcd
+    opacity: 0
+
+.user-edit
+    float: right
+    margin-right: 5%
+
+.edit
+    color: #14426B
+    margin-left: 10px
+    display: inline-block
+
 .exit
     position: absolute
     top: 10px
     right: 20px
+
+.views
+    display: inline-block
+    cursor: pointer
+    margin-top: 5px
+    color: #7e7e7e
+    font-family: OpenSans-Regular
+    font-size: 14px
+    margin-left: 5%
+    margin-top: 15px
 
 #details
     position: fixed
@@ -117,17 +213,25 @@
     box-shadow: 0 0 0 1600px rgba(0,0,0,0.65)
 
 .timeline
-    margin-top: 100px
+    box-shadow: 0px 2px 15px 4px rgba(0,0,0,0.09)
+    box-sizing: border-box
+    padding: 30px 10px
+    border-radius: 20px
+    margin-top: 50px
     display: inline-block
     width: 50%
     float: left
     text-align: left
 
 .follow
+    position: absolute
+    right: 20%
+    top: 130px
     cursor: pointer
-    display: inline-block
-    float: right
     font-family: OpenSans-Regular
+
+.followers-item
+    display: inline-block
 
 .title
     width: 90%
@@ -148,6 +252,7 @@
     margin-left: 5%
 
 .image
+    border-radius: 5px
     width: 100%
     max-height: 350px
 
@@ -156,12 +261,14 @@
     margin-top: 120px
 
 h1
+    margin-bottom: 0
     font-family: Raleway-Regular
     font-size: 45px
 
 .username
     color: #7e7e7e
     margin-bottom: 0
+    margin-top: 5px
 
 #profile
     width: 60%
@@ -171,13 +278,15 @@ h1
 .email
     display: inline-block
     margin-top: 5px
+    margin-bottom: 5px
     color: #14426B
 
 .s_line
-    width: 100%
+    width: 70%
+    float: left
     height: 1px
     background: #cccccc
-    margin-top: 40px
+    margin-top: 15px
     display: inline-block
 
 </style>
