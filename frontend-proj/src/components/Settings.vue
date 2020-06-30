@@ -41,11 +41,11 @@
                 </div>
 
                 <div class="s_item" :class="$mq">
-                    <div class="s_left" :class="$mq">Review</div>
+                    <div class="s_left" :class="$mq">Contact</div>
                     <div class="s_right" :class="$mq">
-                        <div class="daneh" :class="$mq">Your opinon:</div>
-                        <input class="danev" type="text" id="review-input">
-                        <div class="danea" v-on:click="submitReview()">Submit</div>
+                        <div class="daneh" :class="$mq">Contact with us:</div>
+                        <div class="danev"></div>
+                        <router-link :to="{ name: 'review'}" class="danea">Write</router-link>
                     </div>
                     <div class="s_line"></div>
                 </div>
@@ -99,23 +99,6 @@
             })
             .then(() => {
                 this.subscription.status = 'disabled'
-            })
-            .catch(error => {
-                console.log(error)
-            })
-        },
-        submitReview(){
-            var review = {
-                username: this.$store.state.jwt.user.username,
-                opinion: document.getElementById("review-input").value
-            }
-            this.axios.post(this.baseApi + 'statistics/public/review', review, {
-                headers: {
-                    'Authorization': 'Bearer ' + this.$store.state.jwt.token
-                },
-            })
-            .then(() => {
-                document.getElementById("review-input").value = ''
             })
             .catch(error => {
                 console.log(error)

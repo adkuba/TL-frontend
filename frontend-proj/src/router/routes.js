@@ -10,6 +10,7 @@ import EditorLoader from '../components/EditorLoader.vue'
 import Admin from '../components/Admin.vue'
 import Subscription from '../components/Subscription.vue'
 import Profile from '../components/Profile.vue'
+import Review from '../components/Review.vue'
 
 // the routes are simply an array of objects
 const routes = [
@@ -101,7 +102,15 @@ const routes = [
         path: '/profile/:id',
         name: 'profile',
         component: Profile,
-    }
+    },
+    {
+        path: '/review',
+        name: 'review',
+        component: Review,
+        meta: {
+            requiresAuth: true
+          }
+    },
 ];
 
 export default routes;

@@ -3,9 +3,9 @@
         <div v-if="user" class="user">
             <h1>{{ user.fullName }}</h1>
             <div class="follow" v-if="$store.state.jwt">
-                <div v-on:click="follow()" v-if="$store.state.jwt.user.followers.filter(e => e.follow === user.username).length == 0">Follow</div>
-                <div v-on:click="follow()" v-else>Unfollow</div>
-                <div class="number-followers" v-on:click="openDetails(user.followers.filter(e => e.userId != null))">{{ user.followers.filter(e => e.userId != null).length }}</div>
+                <div class="follower-item" v-on:click="follow()" v-if="$store.state.jwt.user.followers.filter(e => e.follow === user.username).length == 0">Follow </div>
+                <div class="follower-item" v-on:click="follow()" v-else>Unfollow</div>
+                <div class="follower-item" v-on:click="openDetails(user.followers.filter(e => e.userId != null))">&middot; {{ user.followers.filter(e => e.userId != null).length }}</div>
             </div>
             <div v-else>Login to follow</div>
             <p class="username">@{{ user.username }} {{ user.email }}</p>
@@ -15,17 +15,21 @@
             <div class="menu-item" v-on:click="openLikes()">Likes <div id="2" class="border"></div></div>
             <div class="menu-item" v-on:click="openFollowing()">Following <div id="3" class="border"></div></div>
         </div>
-        <div class="timeline" v-for="(timeline, index) in selected" :key="index">
-            <div class="title">{{ timeline.descriptionTitle }}</div>
-            <div class="descr">{{ timeline.description.substring(0, 150) }}...</div>
-            <div class="image-container" v-if="timeline.pictures.length > 0">
-                <img class="image" :src="timeline.pictures[0]">
-            </div>
-            <div class="views" >{{ timeline.views }} views &middot; {{ timeline.likes.length }} likes</div>
-            <div class="views user-edit" >
-                <router-link style="text-decoration: none" :to="{ path: '/editorLoader/' + timeline.id }" class="edit">Edit</router-link>
-                <div class="edit">&middot;</div>
-                <div class="edit" v-on:click="deleteTimeline(timeline)">Delete</div>
+        <div class="timelines-container">
+            <div class="timeline" v-for="(timeline, index) in selected" :key="index">
+                <router-link :to="{ path: 'timeline/' + timeline.id }" class="tl-router">
+                    <div class="title">{{ timeline.descriptionTitle }}</div>
+                    <div class="descr">{{ timeline.description.substring(0, 150) }}...</div>
+                    <div class="image-container" v-if="timeline.pictures.length > 0">
+                        <img class="image" :src="timeline.pictures[0]">
+                    </div>
+                </router-link>
+                <div class="views" v-on:click="openDetails(timeline.likes)">{{ timeline.views }} views &middot; {{ timeline.likes.length }} likes</div>
+                <div class="views user-edit" v-if="$store.state.jwt && $store.state.jwt.user.username == timeline.user.username">
+                    <router-link style="text-decoration: none" :to="{ path: '/editorLoader/' + timeline.id }" class="edit">Edit</router-link>
+                    <div class="edit">&middot;</div>
+                    <div class="edit" v-on:click="deleteTimeline(timeline)">Delete</div>
+                </div>
             </div>
         </div>
         <div id="details">
@@ -161,9 +165,21 @@
 </script>
 
 <style scoped lang="sass">
+.timelines-container
+    text-align: left
+
+.tl-router
+    text-decoration: none
+    color: #303030
+
+.follower-item
+    display: inline-block
+    margin-left: 5px
+
 .controls
     font-family: Raleway-Regular
     margin-top: 140px
+    margin-bottom: 40px
     font-size: 24px
     font-weight: bold
     letter-spacing: 1px
@@ -217,16 +233,16 @@
     box-sizing: border-box
     padding: 30px 10px
     border-radius: 20px
-    margin-top: 50px
     display: inline-block
-    width: 50%
-    float: left
+    vertical-align: top
+    width: 45%
+    margin: 2%
     text-align: left
 
 .follow
     position: absolute
     right: 20%
-    top: 130px
+    top: 165px
     cursor: pointer
     font-family: OpenSans-Regular
 
@@ -271,8 +287,8 @@ h1
     margin-top: 5px
 
 #profile
-    width: 60%
-    margin-left: 20%
+    width: 70%
+    margin-left: 15%
     padding-bottom: 500px
 
 .email

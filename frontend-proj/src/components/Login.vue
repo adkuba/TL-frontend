@@ -171,7 +171,7 @@
 .login-desc
     margin: 100px auto
     text-align: justify
-    width: calc(70% + 20px)
+    width: calc(60% + 20px)
     &.medium
         width: calc(40% + 20px)
     &.small
@@ -188,8 +188,8 @@
     background: $bg-color
     padding-bottom: 10px
     font-family: 'Raleway-Regular'
-    width: 50%
-    margin: 0 25%
+    width: 40%
+    margin: 0 30%
     margin-top: 130px
     &.medium
         margin: 0
@@ -207,7 +207,7 @@
         margin: 0 auto
         margin-bottom: 40px
         text-align: left
-        width: calc(70% + 20px)
+        width: calc(60% + 20px)
         font-size: 40px
         &.medium
             width: calc(40% + 20px)
@@ -222,7 +222,7 @@
     border: 0px
     background: #e6e6e6
     height: 40px
-    width: 70%
+    width: 60%
     padding-left: 20px
     font-size: 15px
     font-family: 'OpenSans-Regular'
@@ -237,7 +237,7 @@
 .fsubmit
     border-radius: 3px
     text-align: center
-    width: calc(70% + 20px)
+    width: calc(60% + 20px)
     padding: 10px 0px
     font-family: 'Raleway-Regular'
     letter-spacing: 1px
@@ -258,7 +258,7 @@
     font-size: 14px
     text-align: left
     margin: 20px auto
-    width: calc(70% + 20px)
+    width: calc(60% + 20px)
     letter-spacing: 0px
     &.medium
         width: calc(40% + 20px)

@@ -42,7 +42,6 @@
                                 <textarea class="ttitle tlong" :id="'long'+index" required maxlength="1500" placeholder="Description" :value="evt.description"></textarea>
                                 <div class="control_item add_sub" v-on:click="addSubEvent(index)">&#43;</div>
                             </div>
-                            <div class="s_line"></div>
                         </div>
                         <transition-group name="fade">
                             <div class="sub" v-for="(subevt, subindex) in evt.sub" v-bind:key="subevt.id">
@@ -600,6 +599,7 @@
     user-select: none
     cursor: pointer
     margin-left: 50px
+    margin-bottom: 20px
     font-family: OpenSans-Regular
     display: inline-block
     vertical-align: bottom
@@ -616,7 +616,7 @@
 .errorID
     position: absolute
     right: 44%
-    top: 117px
+    top: 123px
     font-family: OpenSans-Regular
     color: #B8352D
 
@@ -661,7 +661,12 @@ h2
 
 #mainData
     text-align: left
-    margin-top: 50px   
+    margin-top: 50px
+    .ttitle
+        margin-left: 0
+        margin-right: 0
+    .tlong
+        width: 100%
 
 .p_line
     width: 100%
@@ -701,7 +706,7 @@ h2
 
 .add_sub
     float: right
-    margin: 0 10px !important
+    margin: 0 30px !important
 
 .controls
     text-align: left
@@ -715,35 +720,40 @@ h2
     font-weight: bold
     font-size: 18px
     display: inline-block
-    margin: 0 27px
+    margin: 0 30px
     font-family: OpenSans-Regular
     border-radius: 7px
 
 .normal
     margin-top: 100px
+    box-shadow: 0px 2px 15px 4px rgba(0,0,0,0.09)
+    border-radius: 20px
+    padding: 15px 0
 
 .sub
     width: 95%
     margin-top: 20px
     margin-left: 5%
     margin-bottom: 25px
+    box-shadow: 0px 2px 15px 4px rgba(0,0,0,0.09)
+    border-radius: 20px
+    padding: 15px 0
 
 .ttitle
     box-sizing: border-box
     height: 50px
     width: 40%
     font-size: 25px
-    .normal &
-        border-left: 2px solid #ff8484
     background: #f3f3f3
     color: #404040
     font-family: Raleway-Regular
     padding-left: 20px
     border: 0px
+    border-radius: 8px
+    margin: 20px
+    margin-top: 5px
     &:focus
         outline: none
-    .sub &
-        border-left: 2px solid #89bcbc
     &.small
         width: 100%
 
@@ -766,7 +776,7 @@ h2
     font-size: 12px
     width: 20%
     font-family: OpenSans-Regular
-    padding-left: 22px
+    padding: 0 10px
     margin-left: 45px
     height: 30px
     vertical-align: bottom
@@ -785,15 +795,16 @@ h2
     font-family: OpenSans-Regular
     padding: 10px 20px
     height: 160px
-    width: 100%
-    margin-top: 10px
+    width: calc( 100% - 40px )
+    margin-top: -10px
+    margin-bottom: 15px
     .sub &
         height: 120px
 
 //kolejnosc klas ma znaczenie te nizej sa wazniejsze
 #creator
-    padding: 30px 0
-    margin: 0 10%
+    padding: 5px 0
+    margin: 0 7%
     background: $bg2-color
     &.medium
         margin: 0
@@ -808,12 +819,6 @@ h2
         width: 90%
     &.small
         width: 90%
-
-.s_line
-    width: 100%
-    height: 1px
-    background: #cccccc
-    display: inline-block
 
 .s_left
     text-align: left

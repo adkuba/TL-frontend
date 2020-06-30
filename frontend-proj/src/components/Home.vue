@@ -398,13 +398,13 @@ input::-webkit-search-cancel-button
         margin-left: 0
 
 .search-element
-    width: 50%
+    width: 45%
     display: inline-block
-    float: left
-    margin: 0
+    margin: 2%
 
 .search-container
     width: 70%
+    text-align: left
     margin-left: 15%
 
 #homepage
