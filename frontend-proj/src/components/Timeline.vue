@@ -626,6 +626,7 @@ div#sub_timeline::-webkit-scrollbar
 
 
 .evt_desc_p
+    white-space: pre-line
     margin-top: 40px
     display: block
     text-align: justify
@@ -820,6 +821,7 @@ div#sub_timeline::-webkit-scrollbar
         padding-bottom: 520px
 
 #descr
+    white-space: pre-line
     height: 200px
     margin: 0 20%
     margin-top: 100px 

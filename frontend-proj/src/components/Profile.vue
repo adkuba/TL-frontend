@@ -1,7 +1,8 @@
 <template lang="html">
     <div id="profile">
         <div v-if="user" class="user">
-            <h1>{{ user.fullName }}</h1>
+            <h1 v-if="user.fullName">{{ user.fullName }}</h1>
+            <h1 v-else>New User</h1>
             <div class="follow" v-if="$store.state.jwt">
                 <div class="follower-item" v-on:click="follow()" v-if="$store.state.jwt.user.followers.filter(e => e.follow === user.username).length == 0">Follow </div>
                 <div class="follower-item" v-on:click="follow()" v-else>Unfollow</div>
@@ -15,9 +16,9 @@
             <div class="menu-item" v-on:click="openLikes()">Likes <div id="2" class="border"></div></div>
             <div class="menu-item" v-on:click="openFollowing()">Following <div id="3" class="border"></div></div>
         </div>
-        <div class="timelines-container">
+        <div class="timelines-container" v-if="selected && selected[0] && selected[0].id">
             <div class="timeline" v-for="(timeline, index) in selected" :key="index">
-                <router-link :to="{ path: 'timeline/' + timeline.id }" class="tl-router">
+                <router-link :to="{ path: '/timeline/' + timeline.id }" class="tl-router">
                     <div class="title">{{ timeline.descriptionTitle }}</div>
                     <div class="descr">{{ timeline.description.substring(0, 150) }}...</div>
                     <div class="image-container" v-if="timeline.pictures.length > 0">
@@ -31,6 +32,13 @@
                     <div class="edit" v-on:click="deleteTimeline(timeline)">Delete</div>
                 </div>
             </div>
+        </div>
+        <div class="fusers-container" v-if="selected && selected[0] && selected[0].email">
+            <router-link :to="{ path: '/profile/' + fuser.username }" class="fusers" v-for="(fuser, idx) in selected" :key="idx">
+                <div v-if="fuser.fullName" class="fuser-name">{{ fuser.fullName }}</div>
+                <div v-else class="fuser-name">New User</div>
+                <div class="fuser-desc">@{{ fuser.username }} &middot; {{ fuser.followers.filter(e => e.userId != null).length }} followers</div>
+            </router-link>
         </div>
         <div id="details">
             Users:
@@ -61,6 +69,11 @@
             }).catch(error => {
                 console.log(error)
             })
+    },
+    watch: {
+        '$route.params.id': function(){
+            window.location.reload()
+        }
     },
     data () {
       return {
@@ -107,6 +120,7 @@
                         var jwt = this.$store.state.jwt
                         jwt.user.followers = response.data
                         this.$store.commit('set', jwt)
+                        window.location.reload() //troche zamula
 
                     } else {
                         console.log("error following")
@@ -137,6 +151,16 @@
         },
         openFollowing(){
             this.selected = []
+            var following = this.user.followers.filter(e => e.follow != null)
+            for (var i=0, len=following.length; i<len; i++){
+                this.axios.get(this.baseApi + "users/public/" + following[i].follow)
+                    .then(response => {
+                        this.selected.push(response.data)
+                    })
+                    .catch(error => {
+                        console.log(error)
+                    })
+            }
             document.getElementById("1").style.opacity = 0
             document.getElementById("3").style.opacity = 1
             document.getElementById("2").style.opacity = 0
@@ -165,6 +189,26 @@
 </script>
 
 <style scoped lang="sass">
+.fuser-desc
+    font-family: OpenSans-Regular
+    font-size: 14px
+    color: #7e7e7e
+
+.fuser-name
+    font-size: 25px
+    font-family: Raleway-Regular
+    margin-bottom: 10px
+
+.fusers-container
+    text-align: left
+    
+.fusers
+    text-decoration: none
+    color: #303030
+    display: inline-block
+    width: 27%
+    margin: 20px 3%
+
 .timelines-container
     text-align: left
 
@@ -185,6 +229,7 @@
     letter-spacing: 1px
 
 .menu-item
+    cursor: pointer
     width: 33%
     display: inline-block
 

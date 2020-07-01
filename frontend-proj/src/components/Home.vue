@@ -10,20 +10,20 @@
                 <div class="category-special">FOR YOU</div>
                 <div v-if="special.data[0].username != null" class="special-pc-users">
                     <h1 class="special-h1">Users</h1>
-                    <div v-for="(user, idx) in special.data" :key="idx">
+                    <router-link :to="{ path: '/profile/' + user.username }" class="special-router" v-for="(user, idx) in special.data" :key="idx">
                         <div class="special-name" v-if="user.fullName">{{ user.fullName }} </div>
                         <div class="special-name" v-else> New user </div>
                         <div class="special-desc">@{{user.username}} &middot; {{user.followers.filter(e => e.userId != null).length}} followers </div>
-                    </div>
+                    </router-link>
                 </div>
                 <div v-else class="special-pc-timelines">
                     <h1 class="special-h1">Timelines</h1>
-                    <div v-for="(timeline, idx) in special.data" :key="idx">
+                    <router-link :to="{ path: '/timeline/' + timeline.id }" class="special-router" v-for="(timeline, idx) in special.data" :key="idx">
                         <div class="special-name"> {{timeline.descriptionTitle}} </div>
                         <div class="special-desc">by @{{ timeline.user.username }} &middot; {{ timeline.likes.length }} likes </div>
-                    </div>
+                    </router-link>
                 </div>
-                <div class="special-about">About</div>
+                <router-link :to="{ name: 'about' }" class="special-about">About</router-link>
             </div>
             <div v-for="(timeline, idx) in $store.state.timelines" :key="idx" :class="$mq">
                 <div v-if="timeline.data == null" class="element">
@@ -200,8 +200,9 @@ export default {
 
 .special-about
     color: #14426B
-    cursor: pointer
+    text-decoration: none
     margin-top: 80px
+    display: block
     margin-left: 8%
     font-family: OpenSans-Regular
 
@@ -209,6 +210,10 @@ export default {
     font-family: OpenSans-Regular
     margin-left: 8%
     width: 84%
+
+.special-router
+    text-decoration: none
+    color: #303030
 
 .special-pc-timelines
     font-family: OpenSans-Regular
