@@ -13,7 +13,10 @@
                 </div>
                 <br v-if="!errMessage">
                 <div class="fsignup error" :class="$mq" v-if="errMessage">{{ errMessage }}</div>
-                <input type="submit" value="Submit" class="fsubmit" :class="$mq" v-on:click="signin()">
+                <input v-if="action=='Sign in'" type="submit" value="Submit" class="fsubmit" :class="$mq" v-on:click="signin()">
+                <vue-recaptcha v-else sitekey="6LcwcqwZAAAAAGHazabCBGXKndRustjOflfOFQSX" ref="recaptcha" @verify="onCaptchaVerified" @expired="onCaptchaExpired" size="invisible">
+                    <input :disabled="status==='submitting'" type="submit" value="Submit" class="fsubmit" :class="$mq" v-on:click="signUp()">
+                </vue-recaptcha>
                 <div class="fsignup" :class="$mq" v-on:click="signupShow()">{{signupText}}</div>
             </form>
             <div class="login-desc" :class="$mq">
@@ -27,11 +30,15 @@
 </template>
 
 <script lang="js">
+import VueRecaptcha from 'vue-recaptcha'
 
   export default  {
     name: 'Login',
     props: {
         path: Object
+    },
+    components: {
+        'vue-recaptcha': VueRecaptcha
     },
     created(){
         window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -50,11 +57,23 @@
           errMessage: '',
           routerPath: null,
           action: 'Sign in',
-          signupText: 'Sign up'
+          signupText: 'Sign up',
+          status: 'ok'
       }
     },
     methods: {
-        signin(){
+        signUp(){
+            this.$refs.recaptcha.execute()
+        },
+        onCaptchaVerified(recaptchaToken){
+            this.$refs.recaptcha.reset()
+            this.status = "submitting"
+            this.signin(recaptchaToken)
+        },
+        onCaptchaExpired(){
+            this.$refs.recaptch.reset()
+        },
+        signin(recaptchaToken = null){
             let self = this;
 
             if(this.action == "Sign in"){
@@ -101,7 +120,8 @@
                     this.axios.post(signupApi, {
                         username: document.getElementById("username").value,
                         password: passwordValue,
-                        email: document.getElementById("email").value
+                        email: document.getElementById("email").value,
+                        recaptchaToken: recaptchaToken
                     }, {
                         withCredentials: true
                     })
