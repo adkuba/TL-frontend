@@ -3,13 +3,15 @@
         <router-link :to="{ path: '/profile/' + timeline.user.username }" class="user_d" :class="$mq" v-if="!mockEvents"> {{ timeline.user.fullName }} </router-link>
 
         <div id="image-viewer">
-            <div class="viewer viewer-prev" :class="$mq" v-on:click="imageViewerScroll(mainImageIndex-1)">
-                <div class="arrow"> &#8249; </div>
+            <div class="viewer-menu">
+                <div class="left">
+                    <div v-on:click="imageViewerScroll(mainImageIndex-1)" class="arrow"> &#8249; </div>
+                    <div v-on:click="imageViewerScroll(mainImageIndex+1)" class="arrow"> &#8250; </div>
+                </div>
+                <div class="center" v-if="mainImages">Image {{ mainImageIndex+1 }} of {{ mainImages.length }}</div>
+                <div class="vm-item" v-on:click="closeImage()"> x </div>
             </div>
-            <img v-on:click="closeImage()" :src="mainImages[mainImageIndex]" id="main-image" v-if="mainImages">
-            <div class="viewer" :class="$mq" v-on:click="imageViewerScroll(mainImageIndex+1)">
-                <div class="arrow right-arrow"> &#8250; </div>
-            </div>
+            <img :src="mainImages[mainImageIndex]" id="main-image" v-if="mainImages">
         </div>
 
         <div id="timeline" :class="$mq">
@@ -95,15 +97,18 @@
             <div v-if="$store.state.jwt">
                 <div v-if="$store.state.jwt.user.likes.includes(timeline.id)">
                     <div v-if="timeline.likes != null" style="display: inline-block" v-on:click="dislikeTimeline()">Dislike &middot; {{ timeline.likes.length }} &middot; views {{ timeline.views }}</div>
+                    <div class="trending">{{ timeline.creationDate }} &middot; &#8593;{{ timeline.trendingViews }}</div>
                     <div v-if="timeline.user" class="email" :class="$mq">{{ timeline.user.email }}</div>
                 </div>
                 <div v-else>
                     <div v-if="timeline.likes != null" style="display: inline-block" v-on:click="likeTimeline()">Like &middot; {{ timeline.likes.length }} &middot; views {{ timeline.views }}</div> 
+                    <div class="trending">{{ timeline.creationDate }} &middot; &#8593;{{ timeline.trendingViews }}</div>
                     <div v-if="timeline.user" class="email" :class="$mq">{{ timeline.user.email }}</div>
                 </div>
             </div>
             <div v-else>
                 <router-link v-if="timeline.likes != null" style="display: inline-block" class="login-like" :to="{ name: 'login', params: {path: {path: '/timeline/' + timeline.id}}}">Login to like &middot; {{ timeline.likes.length }} &middot; views {{ timeline.views }}</router-link>
+                <div class="trending">{{ timeline.creationDate }} &middot; &#8593;{{ timeline.trendingViews }}</div>
                 <div v-if="timeline.user" class="email" :class="$mq">{{ timeline.user.email }}</div>
             </div>
         </div>
@@ -422,10 +427,15 @@ export default {
 
 <style scoped lang="sass">
 @import '../assets/saas-vars.sass'
+.trending
+    display: inline-block
+    margin-left: 85px
+    color: #7e7e7e
+
 .email
     display: inline-block
     color: #303030
-    margin-left: 120px
+    margin-left: 85px
     user-select: text
     &:hover
         cursor: default
@@ -444,63 +454,60 @@ export default {
     &:hover
         cursor: pointer
 
-.right-arrow
-    right: 0
+.left
+    position: absolute
+    left: 20px
+
+.vm-item
+    background: #3a3a3a
+    padding: 0 15px
+    margin-top: 3px
+    border-radius: 5px
+    border: 1px solid #303030
+    position: absolute
+    right: 15px
+
+.center
+    color: #cccccc
+    position: absolute
+    left: 50%
+    top: 3px
+    transform: translateX(-50%)
 
 .arrow
-    top: calc(50% - 40px)
-    margin: 10px
-    position: absolute
-
-.viewer-prev
-    transform: translateX(0) !important
-    background: linear-gradient(-90deg, rgba(48,48,48,0) 0%, rgba(48,48,48,1) 100%) !important
-
-.viewer
-    transition: all 0.2s
-    position: absolute
+    border: 1px solid #303030
+    margin-top: 3px
+    background: #3a3a3a
+    border-radius: 5px
+    padding: 0 15px
+    margin-right: 30px
     display: inline-block
+
+.viewer-menu
     color: white
-    top: 0
-    height: calc(100% - 50px)
-    font-size: 60px
-    width: 100px
-    z-index: 5
-    transform: translateX(-100px)
-    opacity: 0.4
-    background: rgb(48,48,48)
-    background: linear-gradient(90deg, rgba(48,48,48,0) 0%, rgba(48,48,48,1) 100%)
-    //tylko dla urzadzen obslugujacych hover
-    @media(hover: hover) and (pointer: fine)
-        &:hover
-            opacity: 0.6
-    &:active
-        opacity: 0.6
-    &.medium
-        width: 80px
-        transform: translateX(-80px)
-    &.small
-        width: 40px
-        transform: translateX(-40px)
+    font-size: 14px
+    font-family: OpenSans-Regular
+    width: 100%
+    height: 30px
+    border-top-left-radius: 5px
+    border-top-right-radius: 5px
+    background: #262626
 
 #main-image
-    border-radius: 5px
-    display: inline-block
-    height: 80%
-    max-width: 100%
-    object-fit: contain
-    margin-top: 50px
+    border-bottom-left-radius: 5px
+    border-bottom-right-radius: 5px
+    width: 100%
+    transform: scaleY(1.01) translateY(+1px)
 
 #image-viewer
+    top: 100px
     user-select: none
-    color: white
     position: fixed
-    z-index: 3
-    background: #303030
-    width: 100%
-    height: calc( 100% - 50px )
-    bottom: 0
-    left: 0
+    z-index: 4
+    width: 70%
+    left: 15%
+    box-shadow: 0 0 0 1600px rgba(0,0,0,0.65)
+    border-radius: 5px
     display: none
 
 .image-container
@@ -592,7 +599,7 @@ div#sub_timeline::-webkit-scrollbar
     display: inline-block
 
 #evt_desc_text
-    margin-bottom: 100px
+    margin-bottom: 40px
 
 .sub_nav
     background: #14426B
@@ -613,7 +620,7 @@ div#sub_timeline::-webkit-scrollbar
     overflow-y: hidden
     white-space: nowrap
     height: 80px
-    margin-top: 40px
+    margin-top: 30px
     &.large
         margin-left: auto
         margin-right: auto
@@ -810,15 +817,15 @@ div#sub_timeline::-webkit-scrollbar
     //w praktyce gdzies 450 starczy
     padding-top: 100px
     margin-top: 150px
-    padding-bottom: 450px
+    padding-bottom: 500px
     font-family: 'Raleway-Regular'
     &.large
         margin-left: 10%
         margin-right: 10%
     &.small
-        padding-bottom: 750px
+        padding-bottom: 800px
     &.medium
-        padding-bottom: 520px
+        padding-bottom: 570px
 
 #descr
     white-space: pre-line

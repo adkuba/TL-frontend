@@ -35,7 +35,9 @@
                     <router-link :to="{ path: 'timeline/' + timeline.id }" class="image_container" :class="$mq" v-if="timeline.pictures.length > 0">
                         <img :class="$mq" class="image" :src="timeline.pictures[0]">
                     </router-link>
-                    <div class="author" :class="$mq">By {{ timeline.user.username }} <div class="views" v-on:click="openDetails(timeline.likes)">{{ timeline.views }} views &middot; {{ timeline.likes.length }} likes</div></div>
+                    <div class="author" :class="$mq">By {{ timeline.user.username }}</div>
+                    <div class="views" v-on:click="openDetails(timeline.likes)">{{ timeline.views }} views &middot; {{ timeline.likes.length }} likes</div>
+                    <div class="views creation">{{ timeline.creationDate }} <br> &#8593;{{ timeline.trendingViews }}</div>
                 </div>
                 <div v-else>
                     <div v-if="$mq == 'small'"> specjalny elem na mobile</div>
@@ -57,7 +59,9 @@
                         <router-link :to="{ path: 'timeline/' + timeline.id }" class="image_container" :class="$mq" v-if="timeline.pictures.length > 0">
                             <img :class="$mq" class="image" :src="timeline.pictures[0]">
                         </router-link>
-                        <div class="author" :class="$mq">By {{ timeline.user.username }} <div class="views" v-on:click="openDetails(timeline.likes)">{{ timeline.views }} views &middot; {{ timeline.likes.length }} likes</div></div>
+                        <div class="author" :class="$mq">By {{ timeline.user.username }}</div>
+                        <div class="views" v-on:click="openDetails(timeline.likes)">{{ timeline.views }} views &middot; {{ timeline.likes.length }} likes</div>
+                        <div class="views creation">{{ timeline.creationDate }} <br> &#8593;{{ timeline.trendingViews }}</div>
                     </div>
                     <div v-else class="empty">Can't find.</div>
                 </div>
@@ -315,9 +319,19 @@ input::-webkit-search-cancel-button
         width: 60%
 
 .views
+    font-family: OpenSans-Regular
+    font-size: 14px
+    float: left
+    margin-left: 8%
     cursor: pointer
     margin-top: 5px
     color: #7e7e7e
+
+.creation
+    text-align: right
+    transform: translateY(-19px)
+    float: right
+    margin-right: 8%
 
 .category
     font-family: OpenSans-Regular
@@ -389,7 +403,7 @@ input::-webkit-search-cancel-button
 .element
     box-shadow: 0px 2px 15px 4px rgba(0,0,0,0.09)
     border-radius: 15px
-    padding-bottom: 40px
+    padding-bottom: 50px
     padding-top: 20px
     width: 40%
     margin-left: 15%
@@ -404,6 +418,7 @@ input::-webkit-search-cancel-button
 
 .search-element
     width: 45%
+    padding-bottom: 30px
     display: inline-block
     margin: 2%
 

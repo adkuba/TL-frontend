@@ -25,11 +25,17 @@
                         <img class="image" :src="timeline.pictures[0]">
                     </div>
                 </router-link>
-                <div class="views" v-on:click="openDetails(timeline.likes)">{{ timeline.views }} views &middot; {{ timeline.likes.length }} likes</div>
-                <div class="views user-edit" v-if="$store.state.jwt && $store.state.jwt.user.username == timeline.user.username">
-                    <router-link style="text-decoration: none" :to="{ path: '/editorLoader/' + timeline.id }" class="edit">Edit</router-link>
-                    <div class="edit">&middot;</div>
-                    <div class="edit" v-on:click="deleteTimeline(timeline)">Delete</div>
+                <div class="views-container">
+                    <div class="views" v-on:click="openDetails(timeline.likes)">{{ timeline.views }} views &middot; {{ timeline.likes.length }} likes</div>
+                    <div class="views">{{timeline.creationDate}} &middot; &#8593;{{ timeline.trendingViews }}</div>
+                </div>
+                <div class="views-container user-edit">
+                    <div class="views">Premium +0</div>
+                    <div class="views" v-if="$store.state.jwt && $store.state.jwt.user.username == timeline.user.username">
+                        <router-link style="text-decoration: none" :to="{ path: '/editorLoader/' + timeline.id }" class="edit">Edit</router-link>
+                        <div class="edit">&middot;</div>
+                        <div class="edit" v-on:click="deleteTimeline(timeline)">Delete</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -241,6 +247,7 @@
 
 .user-edit
     float: right
+    text-align: right
     margin-right: 5%
 
 .edit
@@ -254,14 +261,16 @@
     right: 20px
 
 .views
-    display: inline-block
     cursor: pointer
-    margin-top: 5px
     color: #7e7e7e
     font-family: OpenSans-Regular
     font-size: 14px
+    margin-bottom: 5px
+
+.views-container
     margin-left: 5%
     margin-top: 15px
+    display: inline-block
 
 #details
     position: fixed
