@@ -49,6 +49,7 @@
 
 <style scoped lang="sass">
 .opinion
+    border: 1px solid #d7d7d7
     box-sizing: padding-box
     padding: 8px 11px
     resize: none

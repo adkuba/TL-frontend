@@ -8,7 +8,9 @@
                 <div class="follower-item" v-on:click="follow()" v-else>Unfollow</div>
                 <div class="follower-item" v-on:click="openDetails(user.followers.filter(e => e.userId != null))">&middot; {{ user.followers.filter(e => e.userId != null).length }}</div>
             </div>
-            <div v-else>Login to follow</div>
+            <div v-else class="follow">
+                <div class="follower-item">Login to follow &middot; {{ user.followers.filter(e => e.userId != null).length }}</div>
+            </div>
             <p class="username">@{{ user.username }} {{ user.email }}</p>
         </div>
         <div class="controls">

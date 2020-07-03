@@ -37,7 +37,7 @@
                     </router-link>
                     <div class="author" :class="$mq">By {{ timeline.user.username }}</div>
                     <div class="views" v-on:click="openDetails(timeline.likes)">{{ timeline.views }} views &middot; {{ timeline.likes.length }} likes</div>
-                    <div class="views creation">{{ timeline.creationDate }} <br> &#8593;{{ timeline.trendingViews }}</div>
+                    <div class="views creation">{{ timeline.creationDate }} </div>
                 </div>
                 <div v-else>
                     <div v-if="$mq == 'small'"> specjalny elem na mobile</div>
@@ -61,7 +61,7 @@
                         </router-link>
                         <div class="author" :class="$mq">By {{ timeline.user.username }}</div>
                         <div class="views" v-on:click="openDetails(timeline.likes)">{{ timeline.views }} views &middot; {{ timeline.likes.length }} likes</div>
-                        <div class="views creation">{{ timeline.creationDate }} <br> &#8593;{{ timeline.trendingViews }}</div>
+                        <div class="views creation">{{ timeline.creationDate }} </div>
                     </div>
                     <div v-else class="empty">Can't find.</div>
                 </div>

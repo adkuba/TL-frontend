@@ -1,13 +1,20 @@
 <template lang="html">
-    <form id="subscription-form" action="javascript:void(0);">
-        <div id="card-element" class="MyCardElement">
-        <!-- Elements will create input elements here -->
-        </div>
+    <div id="subscription">
+        <h1>Subscription</h1>
+        <p>Unlock premium plan, submit your details.</p>
+        <form id="subscription-form" action="javascript:void(0);">
+            <input autocorrect="off" spellcheck="false" type="text" placeholder="Your name" class="fin">
+            <div id="card-element" class="MyCardElement">
+                <!-- Elements will create input elements here -->
+            </div>
+            <div id="card-expiry"></div>
+            <div id="card-cvc"></div>
 
-        <!-- We'll put the error messages in this element -->
-        <div id="card-errors" role="alert"></div>
-        <button v-on:click="createPaymentMethod(2)" type="submit">Subscribe</button>
-    </form>
+            <!-- We'll put the error messages in this element -->
+            <div id="card-errors" role="alert"></div>
+            <button class="fsubmit" :class="$mq" v-on:click="createPaymentMethod(2)" type="submit">Subscribe</button>
+        </form>
+    </div>
 </template>
 
 <script src="https://js.stripe.com/v3/"></script>
@@ -19,15 +26,24 @@
     export default  {
     name: 'Subscription',
     mounted() {
+        var elements = stripe.elements({
+            fonts: [
+            {
+                cssSrc: 'https://fonts.googleapis.com/css2?family=Open+Sans',
+            },
+            ],
+            // Stripe's examples are localized to specific languages, but if
+            // you wish to have Elements automatically detect your user's locale,
+            // use `locale: 'auto'` instead.
+            locale: window.__exampleLocale
+        });
+
         var style = {
             base: {
-                color: "#32325d",
-                fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+                color: "#303030",
+                fontFamily: "Open Sans, sans-serif",
                 fontSmoothing: "antialiased",
-                fontSize: "16px",
-                "::placeholder": {
-                color: "#aab7c4"
-                }
+                fontSize: "16px"
             },
             invalid: {
                 color: "#fa755a",
@@ -36,17 +52,26 @@
         };
 
         try {
-            this.cardElement = elements.create("card", { style: style })
+            this.cardElement = elements.create("cardNumber", { showIcon: true, style: style })
+            this.cardCvc = elements.create('cardCvc', { style: style})
+            this.cardExpiry = elements.create('cardExpiry', { style: style})
+            
         } catch (error){
             //czasem jest error ze nie mozna stworzyc dwoch card element - to zalatwia sprawe
             window.location.reload()
         }
         this.cardElement.mount("#card-element")
+        this.cardExpiry.mount('#card-expiry');
+        this.cardCvc.mount('#card-cvc')
         this.cardElement.on('change', this.showCardError)
+        this.cardExpiry.on('change', this.showCardError)
+        this.cardCvc.on('change', this.showCardError)
     },
     data () {
         return {
             cardElement: null,
+            cardCvc: null,
+            cardExpiry: null,
             baseApi: 'http://localhost:8081/api/',
         }
     },
@@ -163,9 +188,71 @@
 </script>
 
 <style scoped lang="sass">
+@import '../assets/saas-vars.sass'
+
+#subscription
+    text-align: left
+    box-shadow: 0px 2px 15px 4px rgba(0,0,0,0.09)
+    border-radius: 30px
+    margin: 140px auto
+    width: 40%
+    padding-top: 60px
+    padding-bottom: 80px
+
+h1
+    font-family: Raleway-Regular
+    font-size: 40px
+    margin: 20px auto
+    width: 60%
+
+p
+    margin: 20px auto
+    width: 60%
+    margin-bottom: 50px
 
 #subscription-form
-    width: 30%
-    margin: 100px auto
+    margin: 20px auto
+    width: 60%
+
+#card-element
+    border-radius: 2px
+    background: #e6e6e6
+    padding: 12px 20px
+    margin: 5px auto
+
+#card-errors
+    margin: 10px auto
+    color: #B8352D
+    font-family: OpenSans-Regular
+
+#card-expiry
+    border-radius: 2px
+    margin-top: 5px
+    background: #e6e6e6
+    width: 45%
+    margin-right: 10%
+    padding: 10px 20px
+    box-sizing: border-box
+    display: inline-block
+
+#card-cvc
+    border-radius: 2px
+    box-sizing: border-box
+    padding: 10px 20px
+    background: #e6e6e6
+    display: inline-block
+    width: 45%
+
+.fsubmit
+    width: 100%
+    margin-top: 25px
+
+.fin
+    box-sizing: border-box
+    border-radius: 2px
+    width: 100%
+    color: #303030
+    font-size: 16px
+    margin: 5px auto
 
 </style>

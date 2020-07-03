@@ -459,36 +459,42 @@ export default {
     left: 20px
 
 .vm-item
-    background: #3a3a3a
     padding: 0 15px
-    margin-top: 3px
+    margin-top: 5px
     border-radius: 5px
-    border: 1px solid #303030
+    font-size: 17px
     position: absolute
     right: 15px
+    &:focus
+        background: #3a3a3a
+    &:hover
+        background: #3a3a3a
 
 .center
     color: #cccccc
     position: absolute
     left: 50%
-    top: 3px
+    top: 5px
     transform: translateX(-50%)
 
 .arrow
-    border: 1px solid #303030
-    margin-top: 3px
-    background: #3a3a3a
+    font-size: 20px
     border-radius: 5px
-    padding: 0 15px
+    margin-top: 2px
+    padding: 0 20px
     margin-right: 30px
     display: inline-block
+    &:focus
+        background: #3a3a3a
+    &:hover
+        background: #3a3a3a
 
 .viewer-menu
     color: white
-    font-size: 14px
+    font-size: 15px
     font-family: OpenSans-Regular
     width: 100%
-    height: 30px
+    height: 35px
     border-top-left-radius: 5px
     border-top-right-radius: 5px
     background: #262626
