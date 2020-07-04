@@ -170,7 +170,8 @@
                     }
                 }
                 if (subTimelines.length == 0){
-                    alert("Submitted1")
+                    this.$store.commit('setMessage', "Submitted!")
+                    document.getElementById("modal").style.display = "block"
                     this.$router.push({ path: '/settings' })
 
                 } else {
@@ -222,7 +223,8 @@
                             })
                     }
                 }
-                alert("Submitted2")
+                this.$store.commit('setMessage', "Submitted!")
+                document.getElementById("modal").style.display = "block"
                 this.$router.push({ path: '/settings' })
             }
         }

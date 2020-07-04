@@ -52,7 +52,7 @@
             Users:
             <div class="exit" v-on:click="closeDetails()">x</div>
             <div v-for="(detail, index) in details" :key="index">
-                {{ detail.userId }}
+                @{{ detail.userId }}
             </div>
         </div>
     </div>
@@ -257,11 +257,6 @@
     margin-left: 10px
     display: inline-block
 
-.exit
-    position: absolute
-    top: 10px
-    right: 20px
-
 .views
     cursor: pointer
     color: #7e7e7e
@@ -276,10 +271,14 @@
 
 #details
     position: fixed
-    top: 40%
-    left: 50%
-    transform: translateX(-50%) translateY(-50%)
+    top: 20%
+    left: 40%
     width: 20%
+    padding: 20px
+    box-sizing: border-box
+    font-family: OpenSans-Regular
+    border-radius: 10px
+    text-align: left
     background: white
     display: none
     box-shadow: 0 0 0 1600px rgba(0,0,0,0.65)

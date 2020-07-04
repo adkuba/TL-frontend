@@ -22,7 +22,8 @@ Vue.use(VueMq, {
 const store = new Vuex.Store({
   state: {
     jwt: '',
-    timelines: []
+    timelines: [],
+    message: ''
   },
   mutations: {
     set (state, newJwt) {
@@ -38,6 +39,9 @@ const store = new Vuex.Store({
         //return obj.data == null
       //})
       state.timelines.push(special)
+    },
+    setMessage(state, newMessage){
+      state.message = newMessage
     }
   }
 })

@@ -92,7 +92,8 @@
                 })
                 .then((result) => {
                     if (result.error) {
-                        alert(error.message);
+                        this.$store.commit('setMessage', error.message)
+                        document.getElementById("modal").style.display = "block"
                     } else {
                         this.createSubscription({
                         paymentMethodId: result.paymentMethod.id,
@@ -123,12 +124,14 @@
                 }
             })
             .catch(error =>{
-                alert(error)
+                this.$store.commit('setMessage', error.message)
+                document.getElementById("modal").style.display = "block"
             })
         },
         handleCustomerActionRequired({ subscription, priceId, paymentMethodId, isRetry}){
             if (subscription && subscription.status === 'active') {
-                alert("Succces!")
+                this.$store.commit('setMessage', "Succces!")
+                document.getElementById("modal").style.display = "block"
                 return { subscription, priceId, paymentMethodId };
             }
 
@@ -147,7 +150,8 @@
                         throw result;
                     } else {
                         if (result.paymentIntent.status === 'succeeded') {
-                            alert("Succes! Reload page")
+                            this.$store.commit('setMessage', "Succes! Reload page.")
+                            document.getElementById("modal").style.display = "block"
                             return {
                                 priceId: priceId,
                                 subscription: subscription,
@@ -161,7 +165,8 @@
                 });
             }
             else if (paymentIntent.status === 'requires_payment_method'){
-                alert("Your card was rejected! Try again.")
+                this.$store.commit('setMessage', "Your card was rejected! Try again.")
+                document.getElementById("modal").style.display = "block"
                 this.cancelSubscription()
                 window.location.reload()
                 return "rejected"

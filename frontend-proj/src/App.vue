@@ -6,6 +6,10 @@
       </router-link>
       <router-link :to="{ name: 'settings' }" class="login_b" :class="$mq">&#9868;</router-link>
     </div>
+    <div id="modal">
+        <div class="message">{{ $store.state.message }}</div>
+        <div v-on:click="closeModal()" class="ok-button">OK</div>
+    </div>
     <router-view></router-view>
   </div>
 </template>
@@ -20,8 +24,8 @@ export default {
     },
     data(){
         return {
-        baseApi: 'http://localhost:8081/api/',
-        tokenRefresh: null
+            baseApi: 'http://localhost:8081/api/',
+            tokenRefresh: null
         }
     },
     methods: {
@@ -30,6 +34,9 @@ export default {
             this.axios.post(refreshApi, {}, {withCredentials: true})
                     .then(response => {this.$store.commit('set', response.data)})
                     .catch(error => {console.log(error)})
+        },
+        closeModal(){
+            document.getElementById("modal").style.display = "none"
         }
     }
 }
@@ -37,6 +44,39 @@ export default {
 </script>
 
 <style lang="sass">
+@import './assets/saas-vars.sass'
+
+.exit
+    position: absolute
+    top: 10px
+    cursor: pointer
+    right: 20px
+
+#modal
+    display: none
+    position: fixed
+    top: 25%
+    z-index: 5
+    width: 20%
+    margin-left: 40%
+    box-shadow: 0 0 0 1600px rgba(0,0,0,0.65)
+    border-radius: 10px
+    background: $bg2-color
+
+.message
+    font-family: OpenSans-Regular
+    text-align: left
+    margin: 30px 35px
+
+.ok-button
+    width: 50%
+    background: #B8352D
+    color: white
+    font-family: Raleway-Regular
+    margin: 40px auto
+    padding: 8px 0
+    border-radius: 5px
+
 html
     scroll-padding-top: 75px
 

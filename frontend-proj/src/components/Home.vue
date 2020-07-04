@@ -72,7 +72,7 @@
         Users:
         <div class="exit" v-on:click="closeDetails()">x</div>
         <div v-for="(detail, index) in details" :key="index">
-            {{ detail.userId }}
+            @{{ detail.userId }}
         </div>
     </div>
 </div>
@@ -233,16 +233,15 @@ export default {
     width: 20%
     padding-top: 15px
 
-.exit
-    position: absolute
-    top: 10px
-    right: 20px
-
 #details
     position: fixed
-    top: 40%
-    left: 50%
-    transform: translateX(-50%) translateY(-50%)
+    top: 20%
+    left: 40%
+    padding: 20px
+    box-sizing: border-box
+    font-family: OpenSans-Regular
+    border-radius: 10px
+    text-align: left
     width: 20%
     background: white
     display: none
