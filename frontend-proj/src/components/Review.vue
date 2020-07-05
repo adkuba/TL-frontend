@@ -3,7 +3,7 @@
         <div id="login" :class="$mq">
             <form action="javascript:void(0);" class="login_form" :class="$mq">
                 <h1 :class="$mq">Contact</h1>
-                <textarea class="fin opinion" :class="$mq" type="text" id="review-input" placeholder="Type"></textarea>
+                <textarea class="fin opinion" :class="$mq" type="text" id="review-input" placeholder="Type"></textarea><br>
                 <input type="submit" :class="$mq" value="Submit" class="fsubmit" v-on:click="submitReview()">
             </form>
             <div class="login-desc" :class="$mq">
@@ -50,7 +50,6 @@
 <style scoped lang="sass">
 .opinion
     border: 1px solid #d7d7d7
-    box-sizing: padding-box
     padding: 8px 11px
     resize: none
     height: 100px

@@ -6,8 +6,8 @@
                 <router-link :to="{ name: 'creator' }" class="menu-element" v-bind:class="[{ shadow: subscription.status != 'active' && subscription.status != 'trial'}, $mq]">Create</router-link>
                 <div class="menu-element" :class="$mq" v-on:click="logout()">Logout</div>
             </div>
-            <div class="data-settings">
-                <div class="s_item">
+            <div class="data-settings" :class="$mq">
+                <div class="s_item" :class="$mq">
                     <div class="s_left" :class="$mq">Details</div>
                     <div class="s_right" :class="$mq">
                         <div class="daneh" :class="$mq">Username:</div>
@@ -45,7 +45,7 @@
                     <div class="s_right" :class="$mq">
                         <div class="daneh" :class="$mq">Contact with us:</div>
                         <div class="danev"></div>
-                        <router-link :to="{ name: 'review'}" class="danea">Write</router-link>
+                        <router-link :to="{ name: 'review'}" class="danea" :class="$mq">Write</router-link>
                     </div>
                     <div class="s_line"></div>
                 </div>
@@ -118,10 +118,11 @@
     box-shadow: 0px 2px 15px 4px rgba(0,0,0,0.09)
     border-radius: 30px
     background: $bg-color
+    &.small
+        padding-top: 60px
 
 .menu-element
     display: inline-block
-    float: left
     font-family: Raleway-Regular
     font-weight: bold
     text-decoration: none
@@ -130,11 +131,23 @@
     font-size: 30px
     width: 33%
     letter-spacing: 1px
+    &.small
+        
     
 .controler
-    margin-bottom: 100px
+    margin-bottom: 70px
     width: 80%
     margin-left: 10%
+    &.medium
+        margin-bottom: 50px
+        margin-top: 30px
+        margin-left: 1%
+        width: 98%
+    &.small
+        margin-bottom: 50px
+        margin-top: 30px
+        margin-left: 1%
+        width: 98%
 
 .shadow
     opacity: 0.3
@@ -244,6 +257,8 @@ h1
     margin: 0 auto
     width: 80%
     margin-bottom: 120px
+    &.small
+        margin-bottom: 60px
 
 #settings
     background: $bg2-color

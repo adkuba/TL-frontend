@@ -1,8 +1,8 @@
 <template lang="html">
-    <div id="subscription">
-        <h1>Subscription</h1>
-        <p>Unlock premium plan, submit your details.</p>
-        <form id="subscription-form" action="javascript:void(0);">
+    <div id="subscription" :class="$mq">
+        <h1 :class="$mq">Subscription</h1>
+        <p :class="$mq">Unlock premium plan, submit your details.</p>
+        <form id="subscription-form" action="javascript:void(0);" :class="$mq">
             <input autocorrect="off" spellcheck="false" type="text" placeholder="Your name" class="fin">
             <div id="card-element" class="MyCardElement">
                 <!-- Elements will create input elements here -->
@@ -203,21 +203,39 @@
     width: 40%
     padding-top: 60px
     padding-bottom: 80px
+    &.medium
+        width: 90%
+        margin: 120px 5%
+    &.small
+        width: 100%
+        margin: 100px 0
 
 h1
     font-family: Raleway-Regular
     font-size: 40px
     margin: 20px auto
     width: 60%
+    &.small
+        width: 90%
+    &.medium
+        width: 70%
 
 p
     margin: 20px auto
     width: 60%
     margin-bottom: 50px
+    &.small
+        width: 90%
+    &.medium
+        width: 70%
 
 #subscription-form
     margin: 20px auto
     width: 60%
+    &.small
+        width: 90%
+    &.medium
+        width: 70%
 
 #card-element
     border-radius: 2px

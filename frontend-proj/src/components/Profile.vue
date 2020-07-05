@@ -1,9 +1,10 @@
 <template lang="html">
-    <div id="profile">
-        <div v-if="user" class="user">
+    <div id="profile" :class="$mq">
+        <div v-if="user" class="user" :class="$mq">
             <h1 v-if="user.fullName">{{ user.fullName }}</h1>
             <h1 v-else>New User</h1>
-            <div class="follow" v-if="$store.state.jwt">
+            <p class="username">@{{ user.username }} {{ user.email }}</p>
+            <div class="follow" :class="$mq" v-if="$store.state.jwt">
                 <div class="follower-item" v-on:click="follow()" v-if="$store.state.jwt.user.followers.filter(e => e.follow === user.username).length == 0">Follow </div>
                 <div class="follower-item" v-on:click="follow()" v-else>Unfollow</div>
                 <div class="follower-item" v-on:click="openDetails(user.followers.filter(e => e.userId != null))">&middot; {{ user.followers.filter(e => e.userId != null).length }}</div>
@@ -11,15 +12,14 @@
             <div v-else class="follow">
                 <div class="follower-item">Login to follow &middot; {{ user.followers.filter(e => e.userId != null).length }}</div>
             </div>
-            <p class="username">@{{ user.username }} {{ user.email }}</p>
         </div>
-        <div class="controls">
-            <div class="menu-item" v-on:click="openTimelines()">Timelines <div id="1" class="border"></div></div>
-            <div class="menu-item" v-on:click="openLikes()">Likes <div id="2" class="border"></div></div>
-            <div class="menu-item" v-on:click="openFollowing()">Following <div id="3" class="border"></div></div>
+        <div class="controls" :class="$mq">
+            <div class="menu-item" :class="$mq" v-on:click="openTimelines()">Timelines <div id="1" class="border" :class="$mq"></div></div>
+            <div class="menu-item" :class="$mq" v-on:click="openLikes()">Likes <div id="2" class="border" :class="$mq"></div></div>
+            <div class="menu-item" :class="$mq" v-on:click="openFollowing()">Following <div id="3" class="border" :class="$mq"></div></div>
         </div>
-        <div class="timelines-container" v-if="selected && selected[0] && selected[0].id">
-            <div class="timeline" v-for="(timeline, index) in selected" :key="index">
+        <div class="timelines-container" v-if="selected && selected[0] && selected[0].id" :class="$mq">
+            <div class="timeline" v-for="(timeline, index) in selected" :key="index" :class="$mq">
                 <router-link :to="{ path: '/timeline/' + timeline.id }" class="tl-router">
                     <div class="title">{{ timeline.descriptionTitle }}</div>
                     <div class="descr">{{ timeline.description.substring(0, 150) }}...</div>
@@ -235,6 +235,9 @@
     font-size: 24px
     font-weight: bold
     letter-spacing: 1px
+    &.small
+        margin-top: 80px
+        font-size: 20px
 
 .menu-item
     cursor: pointer
@@ -246,6 +249,8 @@
     margin: 6px auto
     border-bottom: 2px solid #cdcdcd
     opacity: 0
+    &.small
+        width: 70%
 
 .user-edit
     float: right
@@ -293,13 +298,26 @@
     width: 45%
     margin: 2%
     text-align: left
+    &.small
+        margin-left: 0
+        margin-right: 0
+        width: 100%
 
 .follow
-    position: absolute
-    right: 20%
-    top: 165px
     cursor: pointer
     font-family: OpenSans-Regular
+    &.large
+        position: absolute
+        right: 20%
+        top: 165px
+    &.medium
+        position: absolute
+        right: 5%
+        top: 165px
+    &.small
+        position: relative
+        margin-top: 20px
+        margin-left: -2px
 
 .followers-item
     display: inline-block
@@ -345,6 +363,12 @@ h1
     width: 70%
     margin-left: 15%
     padding-bottom: 500px
+    &.medium
+        margin-left: 5%
+        width: 90%
+    &.small
+        margin-left: 5%
+        width: 90%
 
 .email
     display: inline-block

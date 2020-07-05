@@ -1,12 +1,12 @@
 <template>
 <div>
     <form action="javascript:void(0);" class="search" :class="$mq">
-        <input placeholder="Search" type="search" class="search-input" onfocus="window.scrollTo({ top: 0, behavior: 'smooth' })" id="search-input">
+        <input autocorrect="off" spellcheck="false" placeholder="Search" type="search" class="search-input" onfocus="window.scrollTo({ top: 0, behavior: 'smooth' })" id="search-input">
         <button type="submit" v-on:click="search()" class="search-b" :class="$mq">&#9906;</button>
     </form>
     <div id="homepage" :class="$mq">
         <div v-if="searchResults.length == 0">
-            <div v-if="$mq != 'small' && special" class="special-pc">
+            <div v-if="$mq != 'small' && special" class="special-pc" :class="$mq">
                 <div class="category-special">FOR YOU</div>
                 <div v-if="special.data[0].username != null" class="special-pc-users">
                     <h1 class="special-h1">Users</h1>
@@ -25,8 +25,8 @@
                 </div>
                 <router-link :to="{ name: 'about' }" class="special-about">About</router-link>
             </div>
-            <div v-for="(timeline, idx) in $store.state.timelines" :key="idx" :class="$mq">
-                <div v-if="timeline.data == null" class="element">
+            <div v-for="(timeline, idx) in $store.state.timelines" :key="idx">
+                <div v-if="timeline.data == null" class="element" :class="$mq">
                     <div class="category" :class="$mq">{{ timeline.category }}</div>
                     <router-link :to="{ path: 'timeline/' + timeline.id }" class="title" :class="$mq">{{ timeline.descriptionTitle }}</router-link>
                     <router-link :to="{ path: 'timeline/' + timeline.id }" class="desc" :class="$mq">
@@ -40,15 +40,32 @@
                     <div class="views creation">{{ timeline.creationDate }} </div>
                 </div>
                 <div v-else>
-                    <div v-if="$mq == 'small'"> specjalny elem na mobile</div>
+                    <div v-if="$mq == 'small' && special" class="special-mobile">
+                        <div class="category-special" :class="$mq">FOR YOU</div>
+                        <div v-if="special.data[0].username != null" class="special-pc-users" :class="$mq">
+                            <h1 class="special-h1" :class="$mq">Users</h1>
+                            <router-link :to="{ path: '/profile/' + user.username }" class="special-router" :class="$mq" v-for="(user, idx) in special.data" :key="idx">
+                                <div class="special-name" :class="$mq" v-if="user.fullName">{{ user.fullName }} </div>
+                                <div class="special-name" :class="$mq" v-else> New user </div>
+                                <div class="special-desc" :class="$mq">@{{user.username}} &middot; {{user.followers.filter(e => e.userId != null).length}} followers </div>
+                            </router-link>
+                        </div>
+                        <div v-else class="special-pc-timelines" :class="$mq">
+                            <h1 class="special-h1" :class="$mq">Timelines</h1>
+                            <router-link :to="{ path: '/timeline/' + timeline.id }" class="special-router" :class="$mq" v-for="(timeline, idx) in special.data" :key="idx">
+                                <div class="special-name" :class="$mq"> {{timeline.descriptionTitle}} </div>
+                                <div class="special-desc" :class="$mq">by @{{ timeline.user.username }} &middot; {{ timeline.likes.length }} likes </div>
+                            </router-link>
+                        </div>
+                        <router-link :to="{ name: 'about' }" class="special-about" :class="$mq">About</router-link>
+                    </div>
                 </div>
             </div>
         </div>
         <div v-else>
-            <h1 :class="$mq" style="margin-top: 60px; margin-left: 25%">Search results:</h1>
+            <h1 :class="$mq" class="search-h1" >Search results</h1>
             <div v-on:click="quit()" class="quit" :class="$mq">x</div>
-            <div style="margin-bottom: 80px"></div>
-            <div class="search-container">
+            <div class="search-container" :class="$mq">
                 <div class="element search-element" v-for="(timeline, idx) in searchResults" :key="idx" :class="$mq">
                     <div v-if="!timeline.none">
                         <div class="category" :class="$mq"></div>
@@ -83,8 +100,7 @@
 export default {
     name: 'Home',
     created(){
-        this.getTimelines()
-        this.getSpecial()
+        this.getTimelines(true)
         this.axios.post(this.baseApi + 'statistics/public', null)
         .catch(error => {
             console.log(error)
@@ -113,20 +129,25 @@ export default {
                 let bottomOfWindow = document.documentElement.scrollTop + window.innerHeight === document.documentElement.offsetHeight;
 
                 if (bottomOfWindow) {
-                    this.getTimelines()
                     if (this.counter == 2){
                         this.counter = 0
-                        this.getSpecial()
+                        this.getTimelines(true)
+                        
+                    } else {
+                        this.getTimelines()
                     }
                     this.counter += 1
                 }
             };
         },
-        getTimelines(){
+        getTimelines(withSpecial=false){
             var timelinesApi = this.baseApi + 'timelines/public/homepage'
             this.axios.get(timelinesApi)
             .then(response => {
                 this.$store.commit('addTimelines', response.data)
+                if (withSpecial){
+                    this.getSpecial()
+                }
             })
             .catch(error => {
                 console.log(error)
@@ -178,6 +199,13 @@ export default {
 
 <style scoped lang="sass">
 @import '../assets/saas-vars.sass'
+
+.search-h1
+    margin-top: 60px
+    margin-left: 25%
+    &.small
+        margin-top: 40px
+
 .special-name
     margin-top: 30px
     font-family: Raleway-Regular
@@ -195,12 +223,17 @@ export default {
     text-align: left
     font-size: 16px
     color: #7e7e7e
+    &.small
+        margin-left: 5%
 
 .special-h1
     margin-top: 10px
     margin-left: 0
     letter-spacing: 1px
     margin-bottom: 50px
+    &.small
+        margin-left: 0
+        margin-bottom: 20px
 
 .special-about
     color: #14426B
@@ -209,11 +242,16 @@ export default {
     display: block
     margin-left: 8%
     font-family: OpenSans-Regular
+    &.small
+        margin-top: 40px
+        margin-left: 5%
 
 .special-pc-users
     font-family: OpenSans-Regular
     margin-left: 8%
     width: 84%
+    &.small
+        margin-left: 5%
 
 .special-router
     text-decoration: none
@@ -223,15 +261,23 @@ export default {
     font-family: OpenSans-Regular
     width: 84%
     margin-left: 8%
+    &.small
+        margin-left: 5%
+
+.special-mobile
+    text-align: left
+    margin: 60px 0
 
 .special-pc
     text-align: left
     padding: 20px
     position: fixed
     top: 100px
-    right: 12%
-    width: 20%
+    right: 5%
+    width: 25%
     padding-top: 15px
+    &.medium
+        width: 23%
 
 #details
     position: fixed
@@ -258,10 +304,10 @@ export default {
 .quit
     position: absolute
     right: 25%
-    top: 100px
+    top: 97px
     font-family: OpenSans-Regular
-    font-size: 30px
-    color: #7e7e7e
+    font-size: 25px
+    color: #b1b1b1
     &.small
         right: 5%
     &.medium
@@ -300,7 +346,7 @@ h1
     font-size: 25px
     transform: translateY(+3px) translateX(-10px)rotate(-45deg)
     &.small
-        transform: translateY(+6px) translateX(-10px)rotate(-45deg)
+        transform: translateY(+6px) rotate(-45deg)
 
 input::-webkit-search-cancel-button
   -webkit-appearance: none
@@ -315,7 +361,7 @@ input::-webkit-search-cancel-button
     &.medium
         width: 40%
     &.small
-        width: 60%
+        width: 70%
 
 .views
     font-family: OpenSans-Regular
@@ -409,10 +455,11 @@ input::-webkit-search-cancel-button
     margin-top: 70px
     background: $bg-color
     &.medium
-        width: 50%
-        margin-left: 10%
+        width: 60%
+        margin-left: 5%
     &.small
         width: 100%
+        margin-top: 20px
         margin-left: 0
 
 .search-element
@@ -425,6 +472,11 @@ input::-webkit-search-cancel-button
     width: 70%
     text-align: left
     margin-left: 15%
+    margin-top: 80px
+    &.small
+        width: 100%
+        margin-left: 0
+        margin-top: 30px
 
 #homepage
     padding-top: 1px

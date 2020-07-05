@@ -18,9 +18,9 @@
                 <div class="opis">Create your timeline.</div>
 
                 <div id="mainData">
-                    <input class="ttitle" :class="$mq" type="text" id="mainTitle" required maxlength="60" placeholder="Title" :value="timeline.descriptionTitle">
+                    <input class="ttitle main-tl" :class="$mq" type="text" id="mainTitle" required maxlength="60" placeholder="Title" :value="timeline.descriptionTitle">
                     <div v-if="timeline.pictures" class="file-container" :class="$mq" v-on:click="open(-1)">Files {{timeline.pictures.length}}</div>
-                    <textarea class="ttitle tlong" id="mainLong" required placeholder="Description" maxlength="3000" :value="timeline.description"></textarea>
+                    <textarea class="ttitle tlong main-long" :class="$mq" id="mainLong" required placeholder="Description" maxlength="3000" :value="timeline.description"></textarea>
                 </div>
 
                 <h2>Events</h2>
@@ -39,7 +39,7 @@
                                 <input class="ttitle" :class="$mq" type="text" :id="'title'+index" required maxlength="40" placeholder="Title" :value="evt.title">
                                 <input class="ttitle tdate" :class="$mq" type="date" required :id="'date'+index" placeholder="mm/dd/yyyy" :value="evt.date">
                                 <div v-if="timeline.pictures" :class="$mq" class="file-container" v-on:click="open(index)">Files {{evt.pictures.length}}</div>
-                                <textarea class="ttitle tlong" :id="'long'+index" required maxlength="1500" placeholder="Description" :value="evt.description"></textarea>
+                                <textarea class="ttitle tlong" :class="$mq" :id="'long'+index" required maxlength="1500" placeholder="Description" :value="evt.description"></textarea>
                                 <div class="control_item add_sub" v-on:click="addSubEvent(index)">&#43;</div>
                             </div>
                         </div>
@@ -54,7 +54,7 @@
                                     <input class="ttitle" :class="$mq" :id="'sub'+index+'title'+subindex" required maxlength="40" type="text" placeholder="Title" :value="subevt.title">
                                     <input class="ttitle tdate" :class="$mq" type="date" required :id="'sub'+index+'date'+subindex" placeholder="mm/dd/yyyy" :value="subevt.date">
                                     <div v-if="timeline.pictures" :class="$mq" class="file-container" v-on:click="open(index, subindex)">Files {{subevt.pictures.length}}</div>
-                                    <textarea class="ttitle tlong" :id="'sub'+index+'long'+subindex" required maxlength="1500" placeholder="Description" :value="subevt.description"></textarea>
+                                    <textarea class="ttitle tlong" :class="$mq" :id="'sub'+index+'long'+subindex" required maxlength="1500" placeholder="Description" :value="subevt.description"></textarea>
                                 </div>
                             </div>
                         </transition-group>
@@ -582,9 +582,8 @@
 .file-selector
     position: fixed
     font-family: OpenSans-Regular
-    top: 40%
-    left: 50%
-    transform: translateX(-50%) translateY(-50%) scale(0.99)
+    top: 25%
+    left: 20%
     width: 30%
     padding-bottom: 20px
     border-radius: 10px
@@ -594,8 +593,10 @@
     display: none
     &.medium
         width: 50%
+        left: 25%
     &.small
         width: 90%
+        left: 5%
 
 .file-container
     user-select: none
@@ -606,14 +607,18 @@
     display: inline-block
     vertical-align: bottom
     color: #14426B
+    &.medium
+        margin-left: 20px
     &.small
         position: absolute
         right: 5%
-        transform: translateY(-30px)
+        transform: translateY(-20px)
         .normal &
-            transform: translateY(-80px)
+            transform: translateY(-75px)
+            right: 10%
         .sub &
-            transform: translateY(-80px)
+            transform: translateY(-75px)
+            right: 10%
 
 .errorID
     position: absolute
@@ -689,7 +694,8 @@ h2
     font-weight: bold
     font-size: 30px
     &.small
-        margin: 120px 5px
+        margin: 130px 5px
+        margin-bottom: 0
 
 .fade-leave-active
     transition: all 1ms
@@ -754,10 +760,15 @@ h2
     border-radius: 8px
     margin: 20px
     margin-top: 5px
+    &.medium
+        width: 50%
     &:focus
         outline: none
     &.small
-        width: 100%
+        border-radius: 8px 8px 0 0
+        width: 94%
+        margin: 0 3%
+        margin-top: 10px
 
 .tlid
     font-size: 18px
@@ -770,9 +781,10 @@ h2
         right: 5%
         width: 35%
     &.small
-        left: 5%
-        top: 90px
-        width: 90%
+        border-radius: 8px
+        left: 2%
+        top: 85px
+        width: 89%
 
 .tdate
     font-size: 12px
@@ -783,8 +795,14 @@ h2
     height: 30px
     vertical-align: bottom
     color: #535353
+    &.medium
+        margin-left: 10px
+        width: calc(20% + 20px)
     &.small
-        margin-left: 0
+        padding: 0 20px
+        height: 40px
+        border-radius: 0
+        margin-left: 3%
         margin-top: 0
 
 ::-webkit-inner-spin-button
@@ -800,8 +818,25 @@ h2
     width: calc( 100% - 40px )
     margin-top: -10px
     margin-bottom: 15px
+    &.medium
+        width: 94%
     .sub &
         height: 120px
+    &.small
+        border-radius: 0 0 8px 8px
+        margin-left: 3%
+        width: 94%
+        margin-top: 0
+
+.main-long
+    &.small
+        margin-top: 10px
+        border-radius: 8px
+
+.main-tl
+    &.small
+        width: 100%
+        border-radius: 8px
 
 //kolejnosc klas ma znaczenie te nizej sa wazniejsze
 #creator

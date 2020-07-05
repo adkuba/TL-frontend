@@ -212,12 +212,12 @@ import VueRecaptcha from 'vue-recaptcha'
     margin: 0 30%
     margin-top: 130px
     &.medium
-        margin: 0
-        margin-top: 50px
-        width: 100%
+        margin: 5%
+        margin-top: 100px
+        width: 90%
     &.small
         margin: 0
-        margin-top: 50px
+        margin-top: 90px
         width: 100%
 
 .login_form
