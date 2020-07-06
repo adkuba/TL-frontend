@@ -21,6 +21,9 @@
 
   export default  {
     name: 'EmailChange',
+    created() {
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+    },
     data () {
       return {
           baseApi: 'http://localhost:8081/api/',

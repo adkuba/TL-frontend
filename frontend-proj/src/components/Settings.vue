@@ -265,5 +265,7 @@ h1
     padding: 70px 0
     &.large
         margin: 50px 10%
+    &.medium
+        margin: 0 5%
 
 </style>

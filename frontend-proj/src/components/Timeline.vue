@@ -2,14 +2,14 @@
     <div v-if="eventsParsed">
         <router-link :to="{ path: '/profile/' + timeline.user.username }" class="user_d" :class="$mq" v-if="!mockEvents"> {{ timeline.user.fullName }} </router-link>
 
-        <div id="image-viewer">
-            <div class="viewer-menu">
-                <div class="left">
-                    <div v-on:click="imageViewerScroll(mainImageIndex-1)" class="arrow"> &#8249; </div>
-                    <div v-on:click="imageViewerScroll(mainImageIndex+1)" class="arrow"> &#8250; </div>
+        <div id="image-viewer" :class="$mq">
+            <div class="viewer-menu" :class="$mq">
+                <div class="left" :class="$mq">
+                    <div v-on:click="imageViewerScroll(mainImageIndex-1)" class="arrow" :class="$mq"> &#8249; </div>
+                    <div v-on:click="imageViewerScroll(mainImageIndex+1)" class="arrow" :class="$mq"> &#8250; </div>
                 </div>
-                <div class="center" v-if="mainImages">Image {{ mainImageIndex+1 }} of {{ mainImages.length }}</div>
-                <div class="vm-item" v-on:click="closeImage()"> x </div>
+                <div class="center" :class="$mq" v-if="mainImages">Image {{ mainImageIndex+1 }} of {{ mainImages.length }}</div>
+                <div class="vm-item" :class="$mq" v-on:click="closeImage()"> x </div>
             </div>
             <img :src="mainImages[mainImageIndex]" id="main-image" v-if="mainImages">
         </div>
@@ -93,22 +93,22 @@
                 </div>
             </div>
         </div>
-        <div class="like">
+        <div class="like" :class="$mq">
             <div v-if="$store.state.jwt">
                 <div v-if="$store.state.jwt.user.likes.includes(timeline.id)">
                     <div v-if="timeline.likes != null" style="display: inline-block" v-on:click="dislikeTimeline()">Dislike &middot; {{ timeline.likes.length }} &middot; views {{ timeline.views }}</div>
-                    <div class="trending">{{ timeline.creationDate }} &middot; &#8593;{{ timeline.trendingViews }}</div>
+                    <div class="trending" :class="$mq">{{ timeline.creationDate }} &middot; &#8593;{{ timeline.trendingViews }}</div>
                     <div v-if="timeline.user" class="email" :class="$mq">{{ timeline.user.email }}</div>
                 </div>
                 <div v-else>
                     <div v-if="timeline.likes != null" style="display: inline-block" v-on:click="likeTimeline()">Like &middot; {{ timeline.likes.length }} &middot; views {{ timeline.views }}</div> 
-                    <div class="trending">{{ timeline.creationDate }} &middot; &#8593;{{ timeline.trendingViews }}</div>
+                    <div class="trending" :class="$mq">{{ timeline.creationDate }} &middot; &#8593;{{ timeline.trendingViews }}</div>
                     <div v-if="timeline.user" class="email" :class="$mq">{{ timeline.user.email }}</div>
                 </div>
             </div>
             <div v-else>
                 <router-link v-if="timeline.likes != null" style="display: inline-block" class="login-like" :to="{ name: 'login', params: {path: {path: '/timeline/' + timeline.id}}}">Login to like &middot; {{ timeline.likes.length }} &middot; views {{ timeline.views }}</router-link>
-                <div class="trending">{{ timeline.creationDate }} &middot; &#8593;{{ timeline.trendingViews }}</div>
+                <div class="trending" :class="$mq">{{ timeline.creationDate }} &middot; &#8593;{{ timeline.trendingViews }}</div>
                 <div v-if="timeline.user" class="email" :class="$mq">{{ timeline.user.email }}</div>
             </div>
         </div>
@@ -431,6 +431,8 @@ export default {
     display: inline-block
     margin-left: 85px
     color: #7e7e7e
+    &.small
+        margin-left: 40px
 
 .email
     display: inline-block
@@ -441,7 +443,7 @@ export default {
         cursor: default
     &.small
         display: block
-        margin: 10px 0
+        margin: 15px 0
 
 .login-like
     text-decoration: none
@@ -451,12 +453,19 @@ export default {
     color: #14426B
     font-family: RaleWay-Regular
     user-select: none
+    &.small
+        width: 90%
+        margin-left: 5%
     &:hover
         cursor: pointer
 
 .left
     position: absolute
     left: 20px
+    &.medium
+        left: 10px
+    &.small
+        left: 5px
 
 .vm-item
     padding: 0 15px
@@ -465,6 +474,10 @@ export default {
     font-size: 17px
     position: absolute
     right: 15px
+    &.medium
+        right: 10px
+    &.small
+        right: 5px
     &:focus
         background: #3a3a3a
     &:hover
@@ -484,6 +497,8 @@ export default {
     padding: 0 20px
     margin-right: 30px
     display: inline-block
+    &.small
+        margin-right: 5px
     &:focus
         background: #3a3a3a
     &:hover
@@ -503,7 +518,9 @@ export default {
     border-bottom-left-radius: 5px
     border-bottom-right-radius: 5px
     width: 100%
-    transform: scaleY(1.01) translateY(+1px)
+    max-height: calc( 100vh - 150px )
+    object-fit: contain
+    background: #262626
 
 #image-viewer
     top: 100px
@@ -511,10 +528,17 @@ export default {
     position: fixed
     z-index: 4
     width: 70%
+    height: 0
     left: 15%
-    box-shadow: 0 0 0 1600px rgba(0,0,0,0.65)
+    box-shadow: 0px 0px 0px 1600px rgba(0,0,0,0.65)
     border-radius: 5px
     display: none
+    &.small
+        width: 100%
+        left: 0
+    &.medium
+        width: 80%
+        left: 10%
 
 .image-container
     display: inline-block
@@ -822,7 +846,7 @@ div#sub_timeline::-webkit-scrollbar
     //czyli 866-260px = 606 padding bottom
     //w praktyce gdzies 450 starczy
     padding-top: 100px
-    margin-top: 150px
+    margin-top: 120px
     padding-bottom: 500px
     font-family: 'Raleway-Regular'
     &.large

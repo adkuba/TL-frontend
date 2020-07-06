@@ -126,7 +126,9 @@ import VueRecaptcha from 'vue-recaptcha'
                         withCredentials: true
                     })
                     .then(() => {
-                        self.errMessage = "Created!"
+                        //self.errMessage = "Created!"
+                        this.$store.commit('setMessage', "Created!")
+                        document.getElementById("modal").style.display = "block"
                         self.signupShow()
                         self.clearData()
                     })

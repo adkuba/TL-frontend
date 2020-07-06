@@ -25,6 +25,9 @@
 
     export default  {
     name: 'Subscription',
+    created() {
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+    },
     mounted() {
         var elements = stripe.elements({
             fonts: [

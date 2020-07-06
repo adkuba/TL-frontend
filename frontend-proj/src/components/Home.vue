@@ -6,7 +6,7 @@
     </form>
     <div id="homepage" :class="$mq">
         <div v-if="searchResults.length == 0">
-            <div v-if="$mq != 'small' && special" class="special-pc" :class="$mq">
+            <div v-if="$mq != 'small' && special && special.data[0]" class="special-pc" :class="$mq">
                 <div class="category-special">FOR YOU</div>
                 <div v-if="special.data[0].username != null" class="special-pc-users">
                     <h1 class="special-h1">Users</h1>
