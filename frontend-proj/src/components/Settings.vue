@@ -3,7 +3,7 @@
         <div id="settings" :class="$mq">
             <div class="controler" :class="$mq">
                 <router-link :to="{ path: '/profile/' + $store.state.jwt.user.username}" class="menu-element" :class="$mq">Profile</router-link>
-                <router-link :to="{ name: 'creator' }" class="menu-element" v-bind:class="[{ shadow: subscription.status != 'active' && subscription.status != 'trial'}, $mq]">Create</router-link>
+                <router-link :to="{ name: 'creator' }" class="menu-element" v-bind:class="[{ shadow: (!$store.state.jwt.user.subscriptionEnd && timelinesNumber && timelinesNumber >= 2) ||  !$store.state.jwt.user.subscriptionEnd && !timelinesNumber}, $mq]">Create</router-link>
                 <div class="menu-element" :class="$mq" v-on:click="logout()">Logout</div>
             </div>
             <div class="data-settings" :class="$mq">
@@ -32,9 +32,12 @@
                 <div class="s_item" :class="$mq">
                     <div class="s_left" :class="$mq">Subscription</div>
                     <div class="s_right" :class="$mq">
+                        <div v-if="$store.state.jwt.user.card && $store.state.jwt.user.subscriptionEnd && $store.state.jwt.user.subscriptionID">{{ $store.state.jwt.user.card }}</div>
                         <div class="daneh" :class="$mq">Status:</div>
-                        <div class="danev" :class="$mq">{{ subscription.status }}</div>
-                        <div class="danea" style="text-decoration: underline; cursor: pointer" :class="$mq" v-if="subscription.status == 'active' || subscription.status == 'incomplete'" v-on:click="cancel()">Cancel</div>
+                        <div class="danev" :class="$mq" v-if="$store.state.jwt.user.subscriptionEnd && $store.state.jwt.user.subscriptionID">Active, next billing: {{ $store.state.jwt.user.subscriptionEnd }}</div>
+                        <div class="danev" :class="$mq" v-if="$store.state.jwt.user.subscriptionEnd && !$store.state.jwt.user.subscriptionID">Canceled, ends: {{ $store.state.jwt.user.subscriptionEnd }}</div>
+                        <div class="danev" :class="$mq" v-if="!$store.state.jwt.user.subscriptionEnd && !$store.state.jwt.user.subscriptionID">Free</div>
+                        <div class="danea" style="text-decoration: underline; cursor: pointer" :class="$mq" v-if="$store.state.jwt.user.subscriptionID" v-on:click="cancel()">Cancel</div>
                         <router-link :to="{ name: 'subscription'}" class="danea" :class="$mq" v-else>Activate</router-link>
                     </div>
                     <div class="s_line"></div>
@@ -61,26 +64,23 @@
     name: 'Settings',
     created() {
         window.scrollTo({ top: 0, behavior: 'smooth' })
-        this.axios.get(this.baseApi + "users/get-subscription", {
+        this.axios.get(this.baseApi + 'users/check-subscription', {
             headers: {
-                'Authorization': 'Bearer ' + this.$store.state.jwt.token
-            },
+                    'Authorization': 'Bearer ' + this.$store.state.jwt.token
+                }
         })
-        .then(response => {
-            this.subscription = response.data
-        })
-        .catch(error => {
-            console.log(error)
-            const diffTime = Math.abs(new Date() - new Date(this.$store.state.jwt.user.creationTime))
-            if (Math.ceil(diffTime / (1000 * 60 * 60 * 24)) <= 30){
-                this.subscription.status = "trial"
-            }
-        })
+        var timelineApi = this.baseApi + 'timelines/public/' + this.$store.state.jwt.user.username
+            this.axios.get(timelineApi)
+                .then(response => {
+                    this.timelinesNumber = response.data.length
+                }).catch(err => {
+                    console.log(err)
+                })
     },
     data () {
       return {
           baseApi: 'http://localhost:8081/api/',
-          subscription: {status: 'disabled'},
+          timelinesNumber: null,
       }
     },
     methods: {
@@ -92,13 +92,22 @@
             this.$router.push({ path: '/home' })
         },
         cancel(){
+            document.getElementById("modal-button").innerHTML = "..."
+            document.getElementById("modal-button").style.pointerEvents = "none"
+            document.getElementById("modal").style.display = "block"
+            this.$store.commit('setMessage', "Please wait...")
             this.axios.post(this.baseApi + 'users/cancel-subscription', null, {
                 headers: {
                     'Authorization': 'Bearer ' + this.$store.state.jwt.token
                 },
             })
             .then(() => {
-                this.subscription.status = 'disabled'
+                var jwt = this.$store.state.jwt
+                jwt.user.subscriptionID = null
+                this.$store.commit('set', jwt)
+                this.$store.commit('setMessage', "Sucess!")
+                document.getElementById("modal-button").innerHTML = "OK"
+                document.getElementById("modal-button").style.pointerEvents = "auto"
             })
             .catch(error => {
                 console.log(error)
@@ -135,6 +144,7 @@
         
     
 .controler
+    user-select: none
     margin-bottom: 70px
     width: 80%
     margin-left: 10%
@@ -148,10 +158,6 @@
         margin-top: 30px
         margin-left: 1%
         width: 98%
-
-.shadow
-    opacity: 0.3
-    pointer-events: none
 
 .likes
     font-weight: normal

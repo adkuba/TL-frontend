@@ -3,7 +3,7 @@
         <h1 :class="$mq">Subscription</h1>
         <p :class="$mq">Unlock premium plan, submit your details.</p>
         <form id="subscription-form" action="javascript:void(0);" :class="$mq">
-            <input autocorrect="off" spellcheck="false" type="text" placeholder="Your name" class="fin">
+            <input autocorrect="off" spellcheck="false" type="text" placeholder="Your name" id="name" class="fin">
             <div id="card-element" class="MyCardElement">
                 <!-- Elements will create input elements here -->
             </div>
@@ -88,6 +88,10 @@
             }
         },
         createPaymentMethod(priceId) {
+            document.getElementById("modal-button").innerHTML = "..."
+            document.getElementById("modal-button").style.pointerEvents = "none"
+            document.getElementById("modal").style.display = "block"
+            this.$store.commit('setMessage', "Please wait...")
             return stripe
                 .createPaymentMethod({
                     type: 'card',
@@ -96,17 +100,20 @@
                 .then((result) => {
                     if (result.error) {
                         this.$store.commit('setMessage', error.message)
-                        document.getElementById("modal").style.display = "block"
+                        document.getElementById("modal-button").innerHTML = "OK"
+                        document.getElementById("modal-button").style.pointerEvents = "auto"
                     } else {
                         this.createSubscription({
                         paymentMethodId: result.paymentMethod.id,
                         priceId: priceId,
+                        fullName: document.getElementById("name").value
                         })
                     }
                 })
         },
-        createSubscription({ paymentMethodId, priceId }) {
+        createSubscription({ paymentMethodId, priceId, fullName }) {
             this.axios.post(this.baseApi + 'users/create-subscription', {
+                fullName: fullName,
                 username: null,
                 paymentMethodId: paymentMethodId,
                 priceId: priceId
@@ -128,13 +135,21 @@
             })
             .catch(error =>{
                 this.$store.commit('setMessage', error.message)
-                document.getElementById("modal").style.display = "block"
+                document.getElementById("modal-button").innerHTML = "OK"
+                document.getElementById("modal-button").style.pointerEvents = "auto"
             })
         },
         handleCustomerActionRequired({ subscription, priceId, paymentMethodId, isRetry}){
             if (subscription && subscription.status === 'active') {
                 this.$store.commit('setMessage', "Succces!")
-                document.getElementById("modal").style.display = "block"
+                var jwt = this.$store.state.jwt
+                jwt.user.subscriptionID = subscription.id
+                var today = new Date()
+                today.setMonth(today.getMonth() + 1)
+                jwt.user.subscriptionEnd = today.getFullYear() + '-' + (today.getMonth()+1) + '-' + today.getDate()
+                this.$store.commit('set', jwt)
+                document.getElementById("modal-button").innerHTML = "OK"
+                document.getElementById("modal-button").style.pointerEvents = "auto"
                 return { subscription, priceId, paymentMethodId };
             }
 
@@ -153,8 +168,12 @@
                         throw result;
                     } else {
                         if (result.paymentIntent.status === 'succeeded') {
+                            var jwt = this.$store.state.jwt
+                            jwt.user.subscriptionID = subscription.id
+                            this.$store.commit('set', jwt)
                             this.$store.commit('setMessage', "Succes! Reload page.")
-                            document.getElementById("modal").style.display = "block"
+                            document.getElementById("modal-button").innerHTML = "OK"
+                            document.getElementById("modal-button").style.pointerEvents = "auto"
                             return {
                                 priceId: priceId,
                                 subscription: subscription,
@@ -169,7 +188,8 @@
             }
             else if (paymentIntent.status === 'requires_payment_method'){
                 this.$store.commit('setMessage', "Your card was rejected! Try again.")
-                document.getElementById("modal").style.display = "block"
+                document.getElementById("modal-button").innerHTML = "OK"
+                document.getElementById("modal-button").style.pointerEvents = "auto"
                 this.cancelSubscription()
                 window.location.reload()
                 return "rejected"

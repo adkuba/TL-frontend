@@ -28,11 +28,11 @@
             <div v-for="(timeline, idx) in $store.state.timelines" :key="idx">
                 <div v-if="timeline.data == null" class="element" :class="$mq">
                     <div class="category" :class="$mq">{{ timeline.category }}</div>
-                    <router-link :to="{ path: 'timeline/' + timeline.id }" class="title" :class="$mq">{{ timeline.descriptionTitle }}</router-link>
-                    <router-link :to="{ path: 'timeline/' + timeline.id }" class="desc" :class="$mq">
+                    <router-link :to="{ path: 'timeline/' + timeline.id }" class="title" :class="$mq" @click.native="premium(timeline)">{{ timeline.descriptionTitle }}</router-link>
+                    <router-link :to="{ path: 'timeline/' + timeline.id }" class="desc" :class="$mq" @click.native="premium(timeline)">
                         {{ timeline.description.substring(0, 200) }}...
                     </router-link>
-                    <router-link :to="{ path: 'timeline/' + timeline.id }" class="image_container" :class="$mq" v-if="timeline.pictures.length > 0">
+                    <router-link :to="{ path: 'timeline/' + timeline.id }" class="image_container" :class="$mq" v-if="timeline.pictures.length > 0" @click.native="premium(timeline)">
                         <img :class="$mq" class="image" :src="timeline.pictures[0]">
                     </router-link>
                     <div class="author" :class="$mq">By {{ timeline.user.username }}</div>
@@ -116,6 +116,14 @@ export default {
         }
     },
     methods: {
+        premium(timeline){
+            if (timeline.category == 'PREMIUM'){
+                this.axios.post(this.baseApi + 'timelines/public/premium-view?id=' + timeline.id)
+                    .catch(error => {
+                        console.log(error)
+                    })
+            }
+        },
         openDetails(likes){
             this.details = likes
             document.getElementById('details').style.display = 'block'

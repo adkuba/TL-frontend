@@ -4,13 +4,14 @@
             <h1 v-if="user.fullName">{{ user.fullName }}</h1>
             <h1 v-else>New User</h1>
             <p class="username">@{{ user.username }} {{ user.email }}</p>
+            <p class="username" v-if="user.subscriptionEnd">TO JEST USER PREMIUM</p>
             <div class="follow" :class="$mq" v-if="$store.state.jwt">
                 <div class="follower-item" v-on:click="follow()" v-if="$store.state.jwt.user.followers.filter(e => e.follow === user.username).length == 0">Follow </div>
                 <div class="follower-item" v-on:click="follow()" v-else>Unfollow</div>
                 <div class="follower-item" v-on:click="openDetails(user.followers.filter(e => e.userId != null))">&middot; {{ user.followers.filter(e => e.userId != null).length }}</div>
             </div>
-            <div v-else class="follow">
-                <div class="follower-item">Login to follow &middot; {{ user.followers.filter(e => e.userId != null).length }}</div>
+            <div v-else class="follow" :class="$mq">
+                <div class="follower-item" :class="$mq">Login to follow &middot; {{ user.followers.filter(e => e.userId != null).length }}</div>
             </div>
         </div>
         <div class="controls" :class="$mq">
@@ -19,7 +20,7 @@
             <div class="menu-item" :class="$mq" v-on:click="openFollowing()">Following <div id="3" class="border" :class="$mq"></div></div>
         </div>
         <div class="timelines-container" v-if="selected && selected[0] && selected[0].id" :class="$mq">
-            <div class="timeline" v-for="(timeline, index) in selected" :key="index" :class="$mq">
+            <div class="timeline" v-for="(timeline, index) in selected" :key="index" v-bind:class="[{ shadow: !timeline.active}, $mq]" >
                 <router-link :to="{ path: '/timeline/' + timeline.id }" class="tl-router">
                     <div class="title">{{ timeline.descriptionTitle }}</div>
                     <div class="descr">{{ timeline.description.substring(0, 150) }}...</div>
@@ -32,7 +33,7 @@
                     <div class="views">{{timeline.creationDate}} &middot; &#8593;{{ timeline.trendingViews }}</div>
                 </div>
                 <div class="views-container user-edit">
-                    <div class="views">Premium +0</div>
+                    <div class="views" v-if="$store.state.jwt && $store.state.jwt.user.username == timeline.user.username">+{{ timeline.premiumViews }}</div>
                     <div class="views" v-if="$store.state.jwt && $store.state.jwt.user.username == timeline.user.username">
                         <router-link style="text-decoration: none" :to="{ path: '/editorLoader/' + timeline.id }" class="edit">Edit</router-link>
                         <div class="edit">&middot;</div>
@@ -185,6 +186,7 @@
                 if (index > -1){
                     this.timelines.splice(index, 1)
                 }
+                window.location.reload()
             })
             .catch(error =>{
                 console.log(error)

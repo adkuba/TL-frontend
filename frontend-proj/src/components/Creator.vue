@@ -583,7 +583,7 @@
     position: fixed
     font-family: OpenSans-Regular
     top: 25%
-    left: 20%
+    left: 35%
     width: 30%
     padding-bottom: 20px
     border-radius: 10px

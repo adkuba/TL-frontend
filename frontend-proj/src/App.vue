@@ -8,7 +8,7 @@
     </div>
     <div id="modal">
         <div class="message">{{ $store.state.message }}</div>
-        <div v-on:click="closeModal()" class="ok-button">OK</div>
+        <div id="modal-button" v-on:click="closeModal()" class="ok-button">OK</div>
     </div>
     <router-view></router-view>
   </div>
@@ -46,6 +46,10 @@ export default {
 <style lang="sass">
 @import './assets/saas-vars.sass'
 
+.shadow
+    opacity: 0.3
+    pointer-events: none
+
 .exit
     position: absolute
     top: 10px
@@ -53,6 +57,7 @@ export default {
     right: 20px
 
 #modal
+    user-select: none
     display: none
     position: fixed
     top: 25%
