@@ -15,6 +15,8 @@
         </div>
 
         <div id="timeline" :class="$mq">
+            <div class="moreG" v-on:click="openMore()">&#9866;</div>
+            <div id="more" v-on:click="report(timeline)">Report</div>
             <div id="text_fade_top" class="text_fade trans"></div>
 
             <div id="evt_container" :class="$mq">
@@ -127,7 +129,11 @@ export default {
     },
     created () {
         if (!this.mockEvents){
-            var timelineApi = this.baseApi + 'timelines/public?id=' + this.$route.params.id
+            var username = null
+            if (this.$store.state.jwt){
+                username = this.$store.state.jwt.user.username
+            }
+            var timelineApi = this.baseApi + 'timelines/public?username=' + username + '&id=' + this.$route.params.id
             this.axios.get(timelineApi).then(response => {
                 if (response.data != null){
                     this.timeline = response.data;
@@ -223,6 +229,26 @@ export default {
         }
     },
     methods: {
+        openMore(){
+            var more = document.getElementById('more')
+            if (more.style.display=='block'){
+                more.style.display="none"
+
+            } else {
+                more.style.display="block"
+            }
+        },
+        report(timeline){
+            this.axios.post(this.baseApi + 'timelines/public/report?id=' + timeline.id)
+                .then(() => {
+                    this.$store.commit('setMessage', "Our admins will review it, thank you!")
+                    document.getElementById("modal").style.display = "block"
+                    this.openMore()
+                })
+                .catch(error => {
+                    console.log(error)
+                })
+        },
         likeTimeline(){
             this.axios.post(this.baseApi + 'timelines/' + this.timeline.id + '/like', null, {
                 headers: {
@@ -427,6 +453,21 @@ export default {
 
 <style scoped lang="sass">
 @import '../assets/saas-vars.sass'
+#more
+    position: absolute
+    top: 160px
+    right: calc(10% + 20px)
+    font-size: 14px
+    display: none
+    cursor: pointer
+
+.moreG
+    position: absolute
+    right: calc(10% + 20px)
+    top: 130px
+    color: #7e7e7e
+    cursor: pointer
+
 .trending
     display: inline-block
     margin-left: 85px

@@ -27,6 +27,8 @@
             </div>
             <div v-for="(timeline, idx) in $store.state.timelines" :key="idx">
                 <div v-if="timeline.data == null" class="element" :class="$mq">
+                    <div class="more" v-on:click="openMore(idx)">&#9866;</div>
+                    <div class="moreOpened" :id="'more-' + idx" v-on:click="report(timeline, idx)">Report</div>
                     <div class="category" :class="$mq">{{ timeline.category }}</div>
                     <router-link :to="{ path: 'timeline/' + timeline.id }" class="title" :class="$mq" @click.native="premium(timeline)">{{ timeline.descriptionTitle }}</router-link>
                     <router-link :to="{ path: 'timeline/' + timeline.id }" class="desc" :class="$mq" @click.native="premium(timeline)">
@@ -124,6 +126,7 @@ export default {
                     })
             }
         },
+
         openDetails(likes){
             this.details = likes
             document.getElementById('details').style.display = 'block'
@@ -196,6 +199,26 @@ export default {
                 .catch(error => {
                     console.log(error)
                 })
+        },
+        openMore(idx){
+            var more = document.getElementById('more-' + idx)
+            if (more.style.display=='block'){
+                more.style.display="none"
+
+            } else {
+                more.style.display="block"
+            }
+        },
+        report(timeline, idx){
+            this.axios.post(this.baseApi + 'timelines/public/report?id=' + timeline.id)
+                .then(() => {
+                    this.$store.commit('setMessage', "Our admins will review it, thank you!")
+                    document.getElementById("modal").style.display = "block"
+                    this.openMore(idx)
+                })
+                .catch(error => {
+                    console.log(error)
+                })
         }
     },
     mounted() {
@@ -207,6 +230,24 @@ export default {
 
 <style scoped lang="sass">
 @import '../assets/saas-vars.sass'
+
+.moreOpened
+    position: absolute
+    font-family: OpenSans-Regular
+    font-size: 14px
+    left: calc(55% - 63px)
+    transform: translateY(+14px)
+    padding: 3px 10px
+    cursor: pointer
+    display: none
+
+.more
+    user-select: none
+    position: absolute
+    left: calc(55% - 37px)
+    color: #7e7e7e
+    transform: translateY(-9px)
+    cursor: pointer
 
 .search-h1
     margin-top: 60px

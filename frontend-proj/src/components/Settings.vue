@@ -3,7 +3,7 @@
         <div id="settings" :class="$mq">
             <div class="controler" :class="$mq">
                 <router-link :to="{ path: '/profile/' + $store.state.jwt.user.username}" class="menu-element" :class="$mq">Profile</router-link>
-                <router-link :to="{ name: 'creator' }" class="menu-element" v-bind:class="[{ shadow: (!$store.state.jwt.user.subscriptionEnd && timelinesNumber && timelinesNumber >= 2) ||  !$store.state.jwt.user.subscriptionEnd && !timelinesNumber}, $mq]">Create</router-link>
+                <router-link :to="{ name: 'creator' }" class="menu-element" v-bind:class="[{ shadow: (!$store.state.jwt.user.subscriptionEnd && timelinesNumber && timelinesNumber >= 2) ||  (!$store.state.jwt.user.subscriptionEnd && timelinesNumber == null)}, $mq]">Create</router-link>
                 <div class="menu-element" :class="$mq" v-on:click="logout()">Logout</div>
             </div>
             <div class="data-settings" :class="$mq">

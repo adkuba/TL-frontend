@@ -175,22 +175,24 @@
             document.getElementById("2").style.opacity = 0
         },
         deleteTimeline(timeline){
-            var timelinesApi = this.baseApi + 'timelines/' + timeline.id
-            this.axios.delete(timelinesApi, {
-                headers: {
-                    'Authorization': 'Bearer ' + this.$store.state.jwt.token
-                },
-            })
-            .then(() => {
-                var index = this.timelines.indexOf(timeline)
-                if (index > -1){
-                    this.timelines.splice(index, 1)
-                }
-                window.location.reload()
-            })
-            .catch(error =>{
-                console.log(error)
-            })
+            if (confirm("Delete " + timeline.id + '?')){
+                var timelinesApi = this.baseApi + 'timelines/' + timeline.id
+                this.axios.delete(timelinesApi, {
+                    headers: {
+                        'Authorization': 'Bearer ' + this.$store.state.jwt.token
+                    },
+                })
+                .then(() => {
+                    var index = this.timelines.indexOf(timeline)
+                    if (index > -1){
+                        this.timelines.splice(index, 1)
+                    }
+                    window.location.reload()
+                })
+                .catch(error =>{
+                    console.log(error)
+                })
+            }
         },
     }
 }
