@@ -13,10 +13,17 @@ import Creator from './Creator.vue'
     created() {
         var timelineApi = this.baseApi + 'timelines/public?id=' + this.$route.params.id
         this.axios.get(timelineApi).then(response => {
+                var tl = response.data
+                if (tl.user.username != this.$store.state.jwt.user.username){
+                    this.$router.push({ path: "/home" })
+                }
                 this.timeline = response.data
                 this.timeline.id = this.$route.params.id
             })
-            .catch(err => console.log(err))
+            .catch(err => {
+                console.log(err)
+                this.$router.push({ path: "/home" })
+            })
     },
     data () {
       return {
@@ -25,7 +32,7 @@ import Creator from './Creator.vue'
           events: null,
           subEvents: null,
           readyEvents: null,
-          readyTimeline: null
+          readyTimeline: {empty: true},
       }
     },
     watch: {

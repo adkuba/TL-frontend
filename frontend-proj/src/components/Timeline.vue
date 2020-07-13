@@ -15,8 +15,10 @@
         </div>
 
         <div id="timeline" :class="$mq">
-            <div class="moreG" v-on:click="openMore()">&#9866;</div>
-            <div id="more" v-on:click="report(timeline)">Report</div>
+            <div v-if="mockTimeline == null">
+                <div class="moreG" v-on:click="openMore()">&#9866;</div>
+                <div id="more" v-on:click="report(timeline)">Report</div>
+            </div>
             <div id="text_fade_top" class="text_fade trans"></div>
 
             <div id="evt_container" :class="$mq">
@@ -24,8 +26,10 @@
                     <div id="evt_desc_text" v-if="openedSub">
                         <div class="evt_button" v-on:click="moveRight()">Back</div>
                         <h1 class="evt_h"> {{ eventsSub[openedSub].title }} </h1>
-                        <p class="evt_desc_p"> {{ eventsSub[openedSub].description }} </p>
-                        <p class="evt_desc_p2" v-for="(value, name) in eventsSub[openedSub].links" :key="name"> {{ name }} </p>
+                        <p class="evt_desc_p"> {{ eventsSub[openedSub].description.replace(/ \[([^\]]+)\]\(([^\)]+)\)/g, '') }} </p>
+                        <div class="link-container" v-for="(value, lidx) in eventsSub[openedSub].description.match(/\[([^\]]+)\]\(([^\)]+)\)/g)" :key="lidx">
+                            <a :href="'http://' + value.split('(')[1].slice(0, -1)" class="evt_desc_p2" > {{ value.split('(')[0].slice(1, -1) }} </a>
+                        </div>
                     </div>
                     
                     <div style="text-align: center">
@@ -86,7 +90,10 @@
 
         <div id="descr" :class="$mq">
             <h1> {{ timeline.descriptionTitle }} </h1>
-            <p> {{ timeline.description }} </p>
+            <p> {{ timeline.description.replace(/ \[([^\]]+)\]\(([^\)]+)\)/g, '') }} </p>
+            <div class="link-container" v-for="(value, lidx) in timeline.description.match(/\[([^\]]+)\]\(([^\)]+)\)/g)" :key="lidx">
+                <a :href="'http://' + value.split('(')[1].slice(0, -1)" class="evt_desc_p2" > {{ value.split('(')[0].slice(1, -1) }} </a>
+            </div>
         </div>
         <div class="gallery-container" :class="$mq" v-if="timeline.pictures" >
             <div id="tl_gallery" class="gallery" :class="$mq">
@@ -709,13 +716,16 @@ div#sub_timeline::-webkit-scrollbar
     display: block
     text-align: justify
 
-.evt_desc_p2
-    margin-top: 10px
-    margin-right: 20px 
+.link-container
     display: inline-block
+
+.evt_desc_p2
+    text-decoration: none
+    font-family: OpenSans-Regular
+    margin-top: 10px
+    margin-right: 20px
     color: #14426B
     
-
 #evt_container
     position: absolute
     text-align: left
@@ -902,8 +912,11 @@ div#sub_timeline::-webkit-scrollbar
     white-space: pre-line
     height: 200px
     margin: 0 20%
-    margin-top: 100px 
+    margin-top: 100px
+    text-align: left
     font-family: 'Raleway-Regular'
+    h1
+        text-align: center
     p
         text-align: justify
     &.small

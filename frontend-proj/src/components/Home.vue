@@ -32,7 +32,7 @@
                     <div class="category" :class="$mq">{{ timeline.category }}</div>
                     <router-link :to="{ path: 'timeline/' + timeline.id }" class="title" :class="$mq" @click.native="premium(timeline)">{{ timeline.descriptionTitle }}</router-link>
                     <router-link :to="{ path: 'timeline/' + timeline.id }" class="desc" :class="$mq" @click.native="premium(timeline)">
-                        {{ timeline.description.substring(0, 200) }}...
+                        {{ timeline.description.replace(/ \[([^\]]+)\]\(([^\)]+)\)/g, '').substring(0, 200) }}...
                     </router-link>
                     <router-link :to="{ path: 'timeline/' + timeline.id }" class="image_container" :class="$mq" v-if="timeline.pictures.length > 0" @click.native="premium(timeline)">
                         <img :class="$mq" class="image" :src="timeline.pictures[0]">
@@ -68,12 +68,12 @@
             <h1 :class="$mq" class="search-h1" >Search results</h1>
             <div v-on:click="quit()" class="quit" :class="$mq">x</div>
             <div class="search-container" :class="$mq">
-                <div class="element search-element" v-for="(timeline, idx) in searchResults" :key="idx" :class="$mq">
-                    <div v-if="!timeline.none">
+                <div v-for="(timeline, idx) in searchResults" :key="idx" :class="$mq">
+                    <div v-if="!timeline.none" class="element search-element">
                         <div class="category" :class="$mq"></div>
                         <router-link :to="{ path: 'timeline/' + timeline.id }" class="title" :class="$mq">{{ timeline.descriptionTitle }}</router-link>
                         <router-link :to="{ path: 'timeline/' + timeline.id }" class="desc" :class="$mq">
-                            {{ timeline.description.substring(0, 100) }}...
+                            {{ timeline.description.replace(/ \[([^\]]+)\]\(([^\)]+)\)/g, '').substring(0, 100) }}...
                         </router-link>
                         <router-link :to="{ path: 'timeline/' + timeline.id }" class="image_container" :class="$mq" v-if="timeline.pictures.length > 0">
                             <img :class="$mq" class="image" :src="timeline.pictures[0]">
@@ -423,7 +423,6 @@ input::-webkit-search-cancel-button
 
 .creation
     text-align: right
-    transform: translateY(-19px)
     float: right
     margin-right: 8%
 

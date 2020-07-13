@@ -2,7 +2,7 @@
     <div>
         <div id="mainPicturesContainer" class="file-selector" :class="$mq">
             <div class="exit" v-on:click="close()">x</div>
-            <input class="file" @change="saveData()" type="file" id="mainPictures" multiple><br>
+            <input class="file" accept="image/*" @change="saveData()" type="file" id="mainPictures" multiple><br>
             <div class="image-master">
                 <div class="image-container" :class="$mq" v-for="(img, index) in currentPictures" :key="index">
                     <img class="image" :class="$mq" :src="img" v-on:click="deleteImg(index)">
@@ -15,7 +15,7 @@
                 <h1>Creator</h1>
                 <div class="errorID">{{ errorMessage }}</div>
                 <input class="ttitle tlid" :class="$mq" type="text" id="timelineId" placeholder="ID" maxlength="40" required pattern="[^/]*" title="Don't use /" :value="timeline.id">
-                <div class="opis">Create your timeline.</div>
+                <div class="opis">Create your timeline. <br> Important! If you want to add links to description type: <div class="desc-link">[Title](link)</div>. For example <div class="desc-link">[Tline](www.tline.site)</div>. See in preview how it looks.</div>
 
                 <div id="mainData">
                     <input class="ttitle main-tl" :class="$mq" type="text" id="mainTitle" required maxlength="60" placeholder="Title" :value="timeline.descriptionTitle">
@@ -83,6 +83,18 @@
     },
     components: {
         Timeline
+    },
+    created () {
+        var timelineApi = this.baseApi + 'timelines/public/' + this.$store.state.jwt.user.username
+        this.axios.get(timelineApi)
+            .then(response => {
+                if (response.data.length >= 2 && !this.$store.state.jwt.user.subscriprionEnd && this.editTimeline == null){
+                    this.$router.push({ path: "/home" })
+                }
+            }).catch(err => {
+                console.log(err)
+                this.$router.push({ path: "/home" })
+            })
     },
     data () {
       return {
@@ -297,53 +309,55 @@
             }            
         },
         submit(){
-            var timelinesApi = this.baseApi + 'timelines'
-            this.preview()
+            if (document.getElementById("tform").checkValidity()){
+                var timelinesApi = this.baseApi + 'timelines'
+                this.preview()
 
-            //main timeline
-            var myParams = {
-                findUser: true,
-                withDelete: true,
-                add: true
-            }
-            if (this.editTimeline){
-                myParams.add = false
-            }
-
-            var timelineCopy = JSON.parse(JSON.stringify(this.timeline))
-            delete timelineCopy["pictures"]
-            delete timelineCopy["picturesRaw"]
-            delete timelineCopy["user"]
-
-            this.axios.post(timelinesApi, timelineCopy, {
-                    headers: {
-                        'Authorization': 'Bearer ' + this.$store.state.jwt.token
-                    },
-                    params: myParams
-                })
-                .then(response => {
-                    this.sendPictures(timelinesApi + "/" + response.data.id, this.timeline.pictures, this.timeline.picturesRaw)
-                    //main timeline submitted now events
-                    this.mainTimelineSubmit = response.data
-                })
-                .catch(error => {
-                    console.log(error)
-                    if (error.toString().includes("409")){
-                        this.errorMessage = 'This ID is taken!'
-                        document.getElementById("timelineId").scrollIntoView({behavior: "smooth", block: "end", inline: "nearest"})
-                    }
-                })
-            if (this.deletedPictures.length > 0){
-                var formData = new FormData()
-                for (var i=0, len=this.deletedPictures.length; i<len; i++){
-                    formData.append("urls", this.deletedPictures[i])
+                //main timeline
+                var myParams = {
+                    findUser: true,
+                    withDelete: true,
+                    add: true
                 }
-                this.axios.delete(this.baseApi + 'files', {
-                    headers: {
-                        'Authorization': 'Bearer ' + this.$store.state.jwt.token
-                    },
-                    data: formData
-                })
+                if (this.editTimeline){
+                    myParams.add = false
+                }
+
+                var timelineCopy = JSON.parse(JSON.stringify(this.timeline))
+                delete timelineCopy["pictures"]
+                delete timelineCopy["picturesRaw"]
+                delete timelineCopy["user"]
+
+                this.axios.post(timelinesApi, timelineCopy, {
+                        headers: {
+                            'Authorization': 'Bearer ' + this.$store.state.jwt.token
+                        },
+                        params: myParams
+                    })
+                    .then(response => {
+                        this.sendPictures(timelinesApi + "/" + response.data.id, this.timeline.pictures, this.timeline.picturesRaw)
+                        //main timeline submitted now events
+                        this.mainTimelineSubmit = response.data
+                    })
+                    .catch(error => {
+                        console.log(error)
+                        if (error.toString().includes("409")){
+                            this.errorMessage = 'This ID is taken!'
+                            document.getElementById("timelineId").scrollIntoView({behavior: "smooth", block: "end", inline: "nearest"})
+                        }
+                    })
+                if (this.deletedPictures.length > 0){
+                    var formData = new FormData()
+                    for (var i=0, len=this.deletedPictures.length; i<len; i++){
+                        formData.append("urls", this.deletedPictures[i])
+                    }
+                    this.axios.delete(this.baseApi + 'files', {
+                        headers: {
+                            'Authorization': 'Bearer ' + this.$store.state.jwt.token
+                        },
+                        data: formData
+                    })
+                }
             }
         },
         sendPictures(url, array, arrayRaw){
@@ -384,24 +398,26 @@
             })
         },
         preview() {
-            this.saveData(true)
-            //mainEvents
-            this.eventsParsed = this.events.slice()
-            for (var i=0, len=this.eventsParsed.length; i<len; i++){
-                this.eventsParsed[i].type = "circle"
-            }
-            //subEvents
-            this.subEventsParsed = []
-            for (i=0, len=this.eventsParsed.length; i<len; i++){
-                for (var j=0, len2=this.eventsParsed[i].sub.length; j<len2; j++){
-                    this.eventsParsed[i].sub[j].type = "circle"
+            if (document.getElementById("tform").checkValidity()){
+                this.saveData(true)
+                //mainEvents
+                this.eventsParsed = this.events.slice()
+                for (var i=0, len=this.eventsParsed.length; i<len; i++){
+                    this.eventsParsed[i].type = "circle"
                 }
-                var object = {
-                    id: this.eventsParsed[i].id,
-                    subEvents: this.eventsParsed[i].sub
+                //subEvents
+                this.subEventsParsed = []
+                for (i=0, len=this.eventsParsed.length; i<len; i++){
+                    for (var j=0, len2=this.eventsParsed[i].sub.length; j<len2; j++){
+                        this.eventsParsed[i].sub[j].type = "circle"
+                    }
+                    var object = {
+                        id: this.eventsParsed[i].id,
+                        subEvents: this.eventsParsed[i].sub
+                    }
+                    //delete this.eventsParsed[i]["sub"]
+                    this.subEventsParsed.push(object)
                 }
-                //delete this.eventsParsed[i]["sub"]
-                this.subEventsParsed.push(object)
             }
         },
         addEvent(index){
@@ -619,6 +635,11 @@
         .sub &
             transform: translateY(-75px)
             right: 10%
+
+.desc-link
+    display: inline
+    color: #a4a4a4
+    margin: 0 10px
 
 .errorID
     position: absolute

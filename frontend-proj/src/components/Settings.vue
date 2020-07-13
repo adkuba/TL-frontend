@@ -70,12 +70,12 @@
                 }
         })
         var timelineApi = this.baseApi + 'timelines/public/' + this.$store.state.jwt.user.username
-            this.axios.get(timelineApi)
-                .then(response => {
-                    this.timelinesNumber = response.data.length
-                }).catch(err => {
-                    console.log(err)
-                })
+        this.axios.get(timelineApi)
+            .then(response => {
+                this.timelinesNumber = response.data.length
+            }).catch(err => {
+                console.log(err)
+            })
     },
     data () {
       return {

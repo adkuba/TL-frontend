@@ -3,7 +3,8 @@
         <div v-if="user" class="user" :class="$mq">
             <h1 v-if="user.fullName">{{ user.fullName }}</h1>
             <h1 v-else>New User</h1>
-            <p class="username">@{{ user.username }} {{ user.email }}</p>
+            <p class="email"> {{ user.email }} </p>
+            <p class="username">@{{ user.username }} </p>
             <p class="username" v-if="user.subscriptionEnd">TO JEST USER PREMIUM</p>
             <div class="follow" :class="$mq" v-if="$store.state.jwt">
                 <div class="follower-item" v-on:click="follow()" v-if="$store.state.jwt.user.followers.filter(e => e.follow === user.username).length == 0">Follow </div>
@@ -23,7 +24,7 @@
             <div class="timeline" v-for="(timeline, index) in selected" :key="index" v-bind:class="[{ shadow: !timeline.active}, $mq]" >
                 <router-link :to="{ path: '/timeline/' + timeline.id }" class="tl-router">
                     <div class="title">{{ timeline.descriptionTitle }}</div>
-                    <div class="descr">{{ timeline.description.substring(0, 150) }}...</div>
+                    <div class="descr">{{ timeline.description.replace(/ \[([^\]]+)\]\(([^\)]+)\)/g, '').substring(0, 150) }}...</div>
                     <div class="image-container" v-if="timeline.pictures.length > 0">
                         <img class="image" :src="timeline.pictures[0]">
                     </div>
@@ -201,6 +202,10 @@
 </script>
 
 <style scoped lang="sass">
+.email
+    margin-top: 10px !important
+    color: #14426B
+
 .fuser-desc
     font-family: OpenSans-Regular
     font-size: 14px
@@ -234,7 +239,7 @@
 
 .controls
     font-family: Raleway-Regular
-    margin-top: 140px
+    margin-top: 120px
     margin-bottom: 40px
     font-size: 24px
     font-weight: bold
@@ -312,8 +317,8 @@
     font-family: OpenSans-Regular
     &.large
         position: absolute
-        right: 20%
-        top: 165px
+        right: 15%
+        top: 205px
     &.medium
         position: absolute
         right: 5%
@@ -360,8 +365,8 @@ h1
 
 .username
     color: #7e7e7e
-    margin-bottom: 0
-    margin-top: 5px
+    margin-top: 0px
+    font-size: 14px
 
 #profile
     width: 70%
