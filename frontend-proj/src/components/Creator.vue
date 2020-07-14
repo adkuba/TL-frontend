@@ -15,7 +15,7 @@
                 <h1>Creator</h1>
                 <div class="errorID">{{ errorMessage }}</div>
                 <input class="ttitle tlid" :class="$mq" type="text" id="timelineId" placeholder="ID" maxlength="40" required pattern="[^/]*" title="Don't use /" :value="timeline.id">
-                <div class="opis">Create your timeline. <br> Important! If you want to add links to description type: <div class="desc-link">[Title](link)</div>. For example <div class="desc-link">[Tline](www.tline.site)</div>. See in preview how it looks.</div>
+                <div class="opis">Create your timeline. <br> Important! If you want to add links to description type: <div class="desc-link">[Title](link)</div> for example <div class="desc-link">[Tline](www.tline.site)</div><br> See in preview how it looks.</div>
 
                 <div id="mainData">
                     <input class="ttitle main-tl" :class="$mq" type="text" id="mainTitle" required maxlength="60" placeholder="Title" :value="timeline.descriptionTitle">

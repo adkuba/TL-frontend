@@ -74,6 +74,7 @@ export default {
     margin: 30px 35px
 
 .ok-button
+    cursor: pointer
     width: 50%
     background: #B8352D
     color: white

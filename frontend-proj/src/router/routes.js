@@ -12,6 +12,7 @@ import Subscription from '../components/Subscription.vue'
 import Profile from '../components/Profile.vue'
 import Review from '../components/Review.vue'
 import About from '../components/About.vue'
+import PasswordReset from '../components/PasswordReset.vue'
 
 // the routes are simply an array of objects
 const routes = [
@@ -116,6 +117,11 @@ const routes = [
         path: '/about',
         name: 'about',
         component: About,
+    },
+    {
+        path: '/passwordReset/:id',
+        name: 'passwordReset',
+        component: PasswordReset,
     },
 ];
 

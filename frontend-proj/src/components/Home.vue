@@ -235,7 +235,7 @@ export default {
     position: absolute
     font-family: OpenSans-Regular
     font-size: 14px
-    left: calc(55% - 63px)
+    left: calc(55% - 75px)
     transform: translateY(+14px)
     padding: 3px 10px
     cursor: pointer

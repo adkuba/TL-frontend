@@ -38,14 +38,14 @@
 
             if(document.getElementById("password").value == document.getElementById("repeat-password").value){
                 if (document.getElementById("password").value.length > 6 && document.getElementById("password").value.length < 40){
-                    this.axios.put(passwordApi, null, {
+                    this.axios.put(passwordApi, {
+                        oldPassword: document.getElementById("old-password").value,
+                        newPassword: document.getElementById("password").value
+
+                    }, {
                         headers: {
                             'Authorization': 'Bearer ' + this.$store.state.jwt.token
                         },
-                        params: {
-                            oldPassword: document.getElementById("old-password").value,
-                            newPassword: document.getElementById("password").value
-                        }
                     })
                     .then(()=>{
                         this.refreshToken()

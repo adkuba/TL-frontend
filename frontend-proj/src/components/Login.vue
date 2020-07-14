@@ -12,12 +12,14 @@
                     <input class="fin" :class="$mq" type="password" id="repeat-password" placeholder="Repeat password"><br>
                 </div>
                 <br v-if="!errMessage">
-                <div class="fsignup error" :class="$mq" v-if="errMessage">{{ errMessage }}</div>
+                <div class="fsignup error" :class="$mq" v-if="errMessage">{{ errMessage }}</div><br>
                 <input v-if="action=='Sign in'" type="submit" value="Submit" class="fsubmit" :class="$mq" v-on:click="signin()">
                 <vue-recaptcha v-else sitekey="6LcwcqwZAAAAAGHazabCBGXKndRustjOflfOFQSX" ref="recaptcha" @verify="onCaptchaVerified" @expired="onCaptchaExpired" size="invisible">
                     <input :disabled="status==='submitting'" type="submit" value="Submit" class="fsubmit" :class="$mq" v-on:click="signUp()">
                 </vue-recaptcha>
+                <br>
                 <div class="fsignup" :class="$mq" v-on:click="signupShow()">{{signupText}}</div>
+                <router-link class="p-reset" :class="$mq" :to="{ path: '/passwordReset/true' }">Forgot password?</router-link>
             </form>
             <div class="login-desc" :class="$mq">
                 <h1>About</h1>
@@ -117,6 +119,10 @@ import VueRecaptcha from 'vue-recaptcha'
                 }
 
                 if (this.validEmail(document.getElementById("email").value)){
+                    document.getElementById("modal-button").innerHTML = "..."
+                    document.getElementById("modal-button").style.pointerEvents = "none"
+                    document.getElementById("modal").style.display = "block"
+                    this.$store.commit('setMessage', "Please wait...")
                     this.axios.post(signupApi, {
                         username: document.getElementById("username").value,
                         password: passwordValue,
@@ -128,7 +134,8 @@ import VueRecaptcha from 'vue-recaptcha'
                     .then(() => {
                         //self.errMessage = "Created!"
                         this.$store.commit('setMessage', "Created!")
-                        document.getElementById("modal").style.display = "block"
+                        document.getElementById("modal-button").innerHTML = "OK"
+                        document.getElementById("modal-button").style.pointerEvents = "auto"
                         self.signupShow()
                         self.clearData()
                     })
@@ -191,7 +198,7 @@ import VueRecaptcha from 'vue-recaptcha'
 <style lang="sass">
 @import '../assets/saas-vars.sass'
 .login-desc
-    margin: 100px auto
+    margin: 80px auto
     text-align: justify
     width: calc(60% + 20px)
     &.medium
@@ -199,10 +206,6 @@ import VueRecaptcha from 'vue-recaptcha'
     &.small
         width: calc(70% + 20px)
         margin: 80px auto
-
-.error
-    padding-left: 5px
-    color: #B8352D !important
 
 #login
     box-shadow: 0px 2px 15px 4px rgba(0,0,0,0.09)
@@ -257,6 +260,7 @@ import VueRecaptcha from 'vue-recaptcha'
         width: 70%
 
 .fsubmit
+    cursor: pointer
     border-radius: 3px
     text-align: center
     width: calc(60% + 20px)
@@ -276,15 +280,41 @@ import VueRecaptcha from 'vue-recaptcha'
         width: calc(70% + 20px)
 
 .fsignup
+    cursor: pointer
     color: #14426B
     font-size: 14px
     text-align: left
-    margin: 20px auto
-    width: calc(60% + 20px)
+    display: inline-block
+    width: calc(30% + 10px)
     letter-spacing: 0px
+    &.medium
+        width: calc(20% + 10px)
+    &.small
+        width: calc(35% + 10px)
+
+.error
+    padding-left: 5px
+    color: #B8352D !important
+    margin-bottom: 15px
+    text-align: left
+    width: calc(60% + 20px)
     &.medium
         width: calc(40% + 20px)
     &.small
         width: calc(70% + 20px)
+
+.p-reset
+    margin-top: 20px
+    text-decoration: none
+    color: #14426B
+    font-size: 14px
+    display: inline-block
+    text-align: right
+    width: calc(30% + 10px)
+    letter-spacing: 0px
+    &.medium
+        width: calc(20% + 10px)
+    &.small
+        width: calc(35% + 10px)
 
 </style>
