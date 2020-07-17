@@ -17,6 +17,8 @@
         <p>Following Regulations describes the way user uses Tline. This service is created by Jakub Adamski.</p>
         <p>In Tline user can choose between two accounts - free or paid. In free version user allows to display ads from external ad networks. Tline does not transfer any additional data to advertisers and does not take responsibility for content displayed on ads. We are making everything to create smooth user experience and in case of possible violation of content rules (below) ad can be reported by user and blocked by our administrators after analyze. In free version users allow to display ads next to their content.</p>
         <p>...</p>
+        <p>This product includes GeoLite2 data created by MaxMind, available from</p>
+        <a href="https://www.maxmind.com">https://www.maxmind.com</a>.
     </div>
 </template>
 
@@ -38,6 +40,9 @@
 </script>
 
 <style scoped lang="sass">
+a
+    font-family: OpenSans-Regular
+
 ul
     font-family: OpenSans-Regular
 

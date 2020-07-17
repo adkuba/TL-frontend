@@ -27,8 +27,8 @@
             </div>
             <div v-for="(timeline, idx) in $store.state.timelines" :key="idx">
                 <div v-if="timeline.data == null" class="element" :class="$mq">
-                    <div class="more" v-on:click="openMore(idx)">&#9866;</div>
-                    <div class="moreOpened" :id="'more-' + idx" v-on:click="report(timeline, idx)">Report</div>
+                    <div class="more" :class="$mq" v-on:click="openMore(idx)">&#9866;</div>
+                    <div class="moreOpened" :class="$mq" :id="'more-' + idx" v-on:click="report(timeline, idx)">Report</div>
                     <div class="category" :class="$mq">{{ timeline.category }}</div>
                     <router-link :to="{ path: 'timeline/' + timeline.id }" class="title" :class="$mq" @click.native="premium(timeline)">{{ timeline.descriptionTitle }}</router-link>
                     <router-link :to="{ path: 'timeline/' + timeline.id }" class="desc" :class="$mq" @click.native="premium(timeline)">
@@ -235,19 +235,30 @@ export default {
     position: absolute
     font-family: OpenSans-Regular
     font-size: 14px
-    left: calc(55% - 75px)
+    &.large
+        left: calc(55% - 75px)
     transform: translateY(+14px)
     padding: 3px 10px
     cursor: pointer
     display: none
+    &.medium
+        left: calc(65% - 75px)
+    &.small
+        right: 5%
+        padding-right: 0
 
 .more
     user-select: none
     position: absolute
-    left: calc(55% - 37px)
+    &.large
+        left: calc(55% - 37px)
     color: #7e7e7e
     transform: translateY(-9px)
     cursor: pointer
+    &.medium
+        left: calc(65% - 40px)
+    &.small
+        right: 5%
 
 .search-h1
     margin-top: 60px
@@ -351,6 +362,7 @@ export default {
     margin-left: 5%
 
 .quit
+    cursor: pointer
     position: absolute
     right: 25%
     top: 97px

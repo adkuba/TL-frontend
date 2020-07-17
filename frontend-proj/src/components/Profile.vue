@@ -5,7 +5,6 @@
             <h1 v-else>New User</h1>
             <p class="email"> {{ user.email }} </p>
             <p class="username">@{{ user.username }} </p>
-            <p class="username" v-if="user.subscriptionEnd">TO JEST USER PREMIUM</p>
             <div class="follow" :class="$mq" v-if="$store.state.jwt">
                 <div class="follower-item" v-on:click="follow()" v-if="$store.state.jwt.user.followers.filter(e => e.follow === user.username).length == 0">Follow </div>
                 <div class="follower-item" v-on:click="follow()" v-else>Unfollow</div>
@@ -14,6 +13,7 @@
             <div v-else class="follow" :class="$mq">
                 <div class="follower-item" :class="$mq">Login to follow &middot; {{ user.followers.filter(e => e.userId != null).length }}</div>
             </div>
+            <p class="premium-sign" :class="$mq" v-if="user.subscriptionEnd"></p>
         </div>
         <div class="controls" :class="$mq">
             <div class="menu-item" :class="$mq" v-on:click="openTimelines()">Timelines <div id="1" class="border" :class="$mq"></div></div>
@@ -318,15 +318,35 @@
     &.large
         position: absolute
         right: 15%
-        top: 205px
+        top: 200px
     &.medium
         position: absolute
         right: 5%
-        top: 165px
+        top: 200px
     &.small
         position: relative
-        margin-top: 20px
-        margin-left: -2px
+        display: inline-block
+        vertical-align: top
+        margin-top: 10px
+
+.premium-sign
+    width: 120px
+    height: 20px
+    border: 1px solid black
+    &.large
+        position: absolute
+        right: 15%
+        top: 150px
+    &.medium
+        position: absolute
+        right: 5%
+        top: 150px
+    &.small
+        position: relative
+        float: right
+        margin-right: 5%
+        margin-top: 10px
+
 
 .followers-item
     display: inline-block
@@ -367,6 +387,7 @@ h1
     color: #7e7e7e
     margin-top: 0px
     font-size: 14px
+    margin-left: 5px
 
 #profile
     width: 70%
@@ -384,6 +405,7 @@ h1
     margin-top: 5px
     margin-bottom: 5px
     color: #14426B
+    margin-left: 5px
 
 .s_line
     width: 70%

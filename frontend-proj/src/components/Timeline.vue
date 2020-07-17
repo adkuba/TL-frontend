@@ -16,8 +16,8 @@
 
         <div id="timeline" :class="$mq">
             <div v-if="mockTimeline == null">
-                <div class="moreG" v-on:click="openMore()">&#9866;</div>
-                <div id="more" v-on:click="report(timeline)">Report</div>
+                <div class="moreG" :class="$mq" v-on:click="openMore()">&#9866;</div>
+                <div id="more" :class="$mq" v-on:click="report(timeline)">Report</div>
             </div>
             <div id="text_fade_top" class="text_fade trans"></div>
 
@@ -467,6 +467,10 @@ export default {
     font-size: 14px
     display: none
     cursor: pointer
+    &.medium
+        right: 2%
+    &.small
+        right: 5%
 
 .moreG
     position: absolute
@@ -474,6 +478,10 @@ export default {
     top: 130px
     color: #7e7e7e
     cursor: pointer
+    &.medium
+        right: 2%
+    &.small
+        right: 5%
 
 .trending
     display: inline-block

@@ -32,11 +32,17 @@
                 <div class="s_item" :class="$mq">
                     <div class="s_left" :class="$mq">Subscription</div>
                     <div class="s_right" :class="$mq">
-                        <div v-if="$store.state.jwt.user.card && $store.state.jwt.user.subscriptionEnd && $store.state.jwt.user.subscriptionID">{{ $store.state.jwt.user.card }}</div>
-                        <div class="daneh" :class="$mq">Status:</div>
-                        <div class="danev" :class="$mq" v-if="$store.state.jwt.user.subscriptionEnd && $store.state.jwt.user.subscriptionID">Active, next billing: {{ $store.state.jwt.user.subscriptionEnd }}</div>
-                        <div class="danev" :class="$mq" v-if="$store.state.jwt.user.subscriptionEnd && !$store.state.jwt.user.subscriptionID">Canceled, ends: {{ $store.state.jwt.user.subscriptionEnd }}</div>
-                        <div class="danev" :class="$mq" v-if="!$store.state.jwt.user.subscriptionEnd && !$store.state.jwt.user.subscriptionID">Free</div>
+                        <div class="danev subs" :class="$mq">
+                            <div v-if="$store.state.jwt.user.subscriptionEnd && $store.state.jwt.user.subscriptionID">Status: <div class="toright" :class="$mq">Active</div></div>
+                            <div v-if="$store.state.jwt.user.subscriptionEnd && !$store.state.jwt.user.subscriptionID">Status: <div class="toright" :class="$mq">Canceled</div></div>
+                            <div v-if="!$store.state.jwt.user.subscriptionEnd && !$store.state.jwt.user.subscriptionID">Status: <div class="toright" :class="$mq">Free</div></div>
+                        
+                            <div v-if="$store.state.jwt.user.subscriptionEnd && $store.state.jwt.user.subscriptionID">Card: <div class="toright" :class="$mq">{{ $store.state.jwt.user.card[0].toUpperCase() + $store.state.jwt.user.card.slice(1) }}</div></div>
+                            <div v-if="$store.state.jwt.user.subscriptionEnd && !$store.state.jwt.user.subscriptionID">Card: <div class="toright" :class="$mq">{{ $store.state.jwt.user.card[0].toUpperCase() + $store.state.jwt.user.card.slice(1) }}</div></div>
+
+                            <div v-if="$store.state.jwt.user.subscriptionEnd && $store.state.jwt.user.subscriptionID">Payment: <div class="toright" :class="$mq">{{ $store.state.jwt.user.subscriptionEnd }}</div></div>
+                            <div v-if="$store.state.jwt.user.subscriptionEnd && !$store.state.jwt.user.subscriptionID">Ends: <div class="toright" :class="$mq">{{ $store.state.jwt.user.subscriptionEnd }}</div></div>
+                        </div>
                         <div class="danea" style="text-decoration: underline; cursor: pointer" :class="$mq" v-if="$store.state.jwt.user.subscriptionID" v-on:click="cancel()">Cancel</div>
                         <router-link :to="{ name: 'subscription'}" class="danea" :class="$mq" v-else>Activate</router-link>
                     </div>
@@ -199,6 +205,12 @@ h1
         width: 100%
         margin-bottom: 40px
 
+.toright
+    float: right
+    margin-right: 25%
+    &.small
+        margin-right: 5%
+
 .top-item
     font-weight: bold
     float: left
@@ -208,6 +220,7 @@ h1
     font-size: 20px
 
 .daneh
+    vertical-align: top
     display: inline-block
     width: 20%
     margin-bottom: 10px
@@ -218,12 +231,18 @@ h1
         margin-bottom: 5px
 
 .danev
+    vertical-align: top
     width: 40%
     display: inline-block
     color: #14426B
     &.small
         width: 100%
         margin-bottom: 5px
+
+.subs
+    width: 60%
+    &.medium
+        width: 70%
 
 .s_line
     width: 100%
