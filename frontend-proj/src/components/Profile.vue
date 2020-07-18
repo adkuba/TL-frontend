@@ -30,16 +30,16 @@
                     </div>
                 </router-link>
                 <div class="views-container">
-                    <div class="views" v-on:click="openDetails(timeline.likes)">{{ timeline.views }} views &middot; {{ timeline.likes.length }} likes</div>
-                    <div class="views">{{timeline.creationDate}} &middot; &#8593;{{ timeline.trendingViews }}</div>
+                    <router-link :to="{ path: '/statistics/' + user.username }" class="stats" v-if="$store.state.jwt && $store.state.jwt.user.username == timeline.user.username">Statistics</router-link>
+                    <div class="views" v-else>{{ timeline.views }} views &middot; {{ timeline.likes.length }} likes</div>
                 </div>
                 <div class="views-container user-edit">
-                    <div class="views" v-if="$store.state.jwt && $store.state.jwt.user.username == timeline.user.username">+{{ timeline.premiumViews }}</div>
                     <div class="views" v-if="$store.state.jwt && $store.state.jwt.user.username == timeline.user.username">
                         <router-link style="text-decoration: none" :to="{ path: '/editorLoader/' + timeline.id }" class="edit">Edit</router-link>
                         <div class="edit">&middot;</div>
                         <div class="edit" v-on:click="deleteTimeline(timeline)">Delete</div>
                     </div>
+                    <div v-else class="views">{{ timeline.creationDate }}</div>
                 </div>
             </div>
         </div>
@@ -49,13 +49,6 @@
                 <div v-else class="fuser-name">New User</div>
                 <div class="fuser-desc">@{{ fuser.username }} &middot; {{ fuser.followers.filter(e => e.userId != null).length }} followers</div>
             </router-link>
-        </div>
-        <div id="details">
-            Users:
-            <div class="exit" v-on:click="closeDetails()">x</div>
-            <div v-for="(detail, index) in details" :key="index">
-                @{{ detail.userId }}
-            </div>
         </div>
     </div>
 </template>
@@ -139,14 +132,6 @@
                     console.log(error)
                 })
         },
-        openDetails(array){
-            this.details = array
-            document.getElementById('details').style.display = "block"
-        },
-        closeDetails(){
-            this.details = null
-            document.getElementById('details').style.display = "none"
-        },
         openLikes(){
             this.selected = this.likes
             document.getElementById("1").style.opacity = 0
@@ -202,6 +187,12 @@
 </script>
 
 <style scoped lang="sass">
+.stats
+    font-family: OpenSans-Regular
+    text-decoration: none
+    font-size: 14px
+    color: #14426B
+
 .email
     margin-top: 10px !important
     color: #14426B
@@ -282,20 +273,6 @@
     margin-left: 5%
     margin-top: 15px
     display: inline-block
-
-#details
-    position: fixed
-    top: 20%
-    left: 40%
-    width: 20%
-    padding: 20px
-    box-sizing: border-box
-    font-family: OpenSans-Regular
-    border-radius: 10px
-    text-align: left
-    background: white
-    display: none
-    box-shadow: 0 0 0 1600px rgba(0,0,0,0.65)
 
 .timeline
     box-shadow: 0px 2px 15px 4px rgba(0,0,0,0.09)

@@ -1,74 +1,78 @@
 <template lang="html">
     <div>
-        <div id="mainPicturesContainer" class="file-selector" :class="$mq">
-            <div class="exit" v-on:click="close()">x</div>
-            <input class="file" accept="image/*" @change="saveData()" type="file" id="mainPictures" multiple><br>
-            <div class="image-master">
-                <div class="image-container" :class="$mq" v-for="(img, index) in currentPictures" :key="index">
-                    <img class="image" :class="$mq" :src="img" v-on:click="deleteImg(index)">
+        <div class="message" v-if="numberOfTimelines && numberOfTimelines >= 2 && !$store.state.jwt.user.subscriprionEnd && editTimeline == null">
+            You have reached your limit!<br><br> Buy subscription to create more than 2 timelines.
+        </div>
+        <div v-else>
+            <div id="mainPicturesContainer" class="file-selector" :class="$mq">
+                <div class="exit" v-on:click="close()">x</div>
+                <input class="file" accept="image/*" @change="saveData()" type="file" id="mainPictures" multiple><br>
+                <div class="image-master">
+                    <div class="image-container" :class="$mq" v-for="(img, index) in currentPictures" :key="index">
+                        <img class="image" :class="$mq" :src="img" v-on:click="deleteImg(index)">
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div id="creator" :class="$mq" v-if="$store.state.jwt">
-            <form action="javascript:void(0);" id="tform" :class="$mq">
-                <h1>Creator</h1>
-                <div class="errorID">{{ errorMessage }}</div>
-                <input class="ttitle tlid" :class="$mq" type="text" id="timelineId" placeholder="ID" maxlength="40" required pattern="[^/]*" title="Don't use /" :value="timeline.id">
-                <div class="opis">Create your timeline. <br> If you want to add links to description type: <div class="desc-link">[Title](link)</div> for example <div class="desc-link">[Tline](www.tline.site)</div><br> See in preview how it looks.</div>
+            <div id="creator" :class="$mq" v-if="$store.state.jwt">
+                <form action="javascript:void(0);" id="tform" :class="$mq">
+                    <h1>Creator</h1>
+                    <div class="errorID">{{ errorMessage }}</div>
+                    <input class="ttitle tlid" :class="$mq" type="text" id="timelineId" placeholder="ID" maxlength="40" required pattern="[^/]*" title="Don't use /" :value="timeline.id">
+                    <div class="opis">Create your timeline. <br> If you want to add links to description type: <div class="desc-link">[Title](link)</div> for example <div class="desc-link">[Tline](www.tline.site)</div><br> See in preview how it looks.</div>
 
-                <div id="mainData">
-                    <input class="ttitle main-tl" :class="$mq" type="text" id="mainTitle" required maxlength="60" placeholder="Title" :value="timeline.descriptionTitle">
-                    <div v-if="timeline.pictures" class="file-container" :class="$mq" v-on:click="open(-1)">Files {{timeline.pictures.length}}</div>
-                    <textarea class="ttitle tlong main-long" :class="$mq" id="mainLong" required placeholder="Description" maxlength="3000" :value="timeline.description"></textarea>
-                </div>
+                    <div id="mainData">
+                        <input class="ttitle main-tl" :class="$mq" type="text" id="mainTitle" required maxlength="60" placeholder="Title" :value="timeline.descriptionTitle">
+                        <div v-if="timeline.pictures" class="file-container" :class="$mq" v-on:click="open(-1)">Files {{timeline.pictures.length}}</div>
+                        <textarea class="ttitle tlong main-long" :class="$mq" id="mainLong" required placeholder="Description" maxlength="3000" :value="timeline.description"></textarea>
+                    </div>
 
-                <h2>Events</h2>
-                <div class="opis">Add events to your timeline.</div>
+                    <h2>Events</h2>
+                    <div class="opis">Add events to your timeline.</div>
 
-                <transition-group name="fade">
-                    <div v-for="(evt, index) in events" v-bind:key="evt.id">
-                        <div class="normal">
-                            <div class="controls">
-                                <div class="control_item" v-on:click="addEvent('normal', index)" v-if="index==0">&#43;</div>
-                                <div class="control_item" v-on:click="deleteEvent(index)">&ndash;</div>
-                                <div class="control_item up" v-on:click="changeIndex(index, index-1)" v-if="index!=0">&lang;</div>
-                                <div class="control_item down" v-on:click="changeIndex(index, index+1)" v-if="index!=events.length-1">&lang;</div>
-                            </div>
-                            <div class="s_left">
-                                <input class="ttitle" :class="$mq" type="text" :id="'title'+index" required maxlength="40" placeholder="Title" :value="evt.title">
-                                <input class="ttitle tdate" :class="$mq" type="date" required :id="'date'+index" placeholder="mm/dd/yyyy" :value="evt.date">
-                                <div v-if="timeline.pictures" :class="$mq" class="file-container" v-on:click="open(index)">Files {{evt.pictures.length}}</div>
-                                <textarea class="ttitle tlong" :class="$mq" :id="'long'+index" required maxlength="1500" placeholder="Description" :value="evt.description"></textarea>
-                                <div class="control_item add_sub" v-on:click="addSubEvent(index)">&#43;</div>
-                            </div>
-                        </div>
-                        <transition-group name="fade">
-                            <div class="sub" v-for="(subevt, subindex) in evt.sub" v-bind:key="subevt.id">
+                    <transition-group name="fade">
+                        <div v-for="(evt, index) in events" v-bind:key="evt.id">
+                            <div class="normal">
                                 <div class="controls">
-                                    <div class="control_item del" v-on:click="deleteSubEvent(index, subindex)">&ndash;</div>
-                                    <div class="control_item up" v-on:click="changeSubIndex(index, subindex, subindex-1)" v-if="subindex!=0">&lang;</div>
-                                    <div class="control_item down" v-on:click="changeSubIndex(index, subindex, subindex+1)" v-if="subindex!=evt.sub.length-1">&lang;</div>
+                                    <div class="control_item" v-on:click="addEvent('normal', index)" v-if="index==0">&#43;</div>
+                                    <div class="control_item" v-on:click="deleteEvent(index)">&ndash;</div>
+                                    <div class="control_item up" v-on:click="changeIndex(index, index-1)" v-if="index!=0">&lang;</div>
+                                    <div class="control_item down" v-on:click="changeIndex(index, index+1)" v-if="index!=events.length-1">&lang;</div>
                                 </div>
                                 <div class="s_left">
-                                    <input class="ttitle" :class="$mq" :id="'sub'+index+'title'+subindex" required maxlength="40" type="text" placeholder="Title" :value="subevt.title">
-                                    <input class="ttitle tdate" :class="$mq" type="date" required :id="'sub'+index+'date'+subindex" placeholder="mm/dd/yyyy" :value="subevt.date">
-                                    <div v-if="timeline.pictures" :class="$mq" class="file-container" v-on:click="open(index, subindex)">Files {{subevt.pictures.length}}</div>
-                                    <textarea class="ttitle tlong" :class="$mq" :id="'sub'+index+'long'+subindex" required maxlength="1500" placeholder="Description" :value="subevt.description"></textarea>
+                                    <input class="ttitle" :class="$mq" type="text" :id="'title'+index" required maxlength="40" placeholder="Title" :value="evt.title">
+                                    <input class="ttitle tdate" :class="$mq" type="date" required :id="'date'+index" placeholder="mm/dd/yyyy" :value="evt.date">
+                                    <div v-if="timeline.pictures" :class="$mq" class="file-container" v-on:click="open(index)">Files {{evt.pictures.length}}</div>
+                                    <textarea class="ttitle tlong" :class="$mq" :id="'long'+index" required maxlength="1500" placeholder="Description" :value="evt.description"></textarea>
+                                    <div class="control_item add_sub" v-on:click="addSubEvent(index)">&#43;</div>
                                 </div>
                             </div>
-                        </transition-group>
-                    </div>
-                </transition-group>
-                <input type="submit" :class="$mq" class="masterC" v-on:click="preview()" value="Preview">
-                <input type="submit" :class="$mq" class="masterC" v-on:click="submit()" value="Submit">
-            </form>
-            
+                            <transition-group name="fade">
+                                <div class="sub" v-for="(subevt, subindex) in evt.sub" v-bind:key="subevt.id">
+                                    <div class="controls">
+                                        <div class="control_item del" v-on:click="deleteSubEvent(index, subindex)">&ndash;</div>
+                                        <div class="control_item up" v-on:click="changeSubIndex(index, subindex, subindex-1)" v-if="subindex!=0">&lang;</div>
+                                        <div class="control_item down" v-on:click="changeSubIndex(index, subindex, subindex+1)" v-if="subindex!=evt.sub.length-1">&lang;</div>
+                                    </div>
+                                    <div class="s_left">
+                                        <input class="ttitle" :class="$mq" :id="'sub'+index+'title'+subindex" required maxlength="40" type="text" placeholder="Title" :value="subevt.title">
+                                        <input class="ttitle tdate" :class="$mq" type="date" required :id="'sub'+index+'date'+subindex" placeholder="mm/dd/yyyy" :value="subevt.date">
+                                        <div v-if="timeline.pictures" :class="$mq" class="file-container" v-on:click="open(index, subindex)">Files {{subevt.pictures.length}}</div>
+                                        <textarea class="ttitle tlong" :class="$mq" :id="'sub'+index+'long'+subindex" required maxlength="1500" placeholder="Description" :value="subevt.description"></textarea>
+                                    </div>
+                                </div>
+                            </transition-group>
+                        </div>
+                    </transition-group>
+                    <input type="submit" :class="$mq" class="masterC" v-on:click="preview()" value="Preview">
+                    <input type="submit" :class="$mq" class="masterC" v-on:click="submit()" value="Submit">
+                </form>
+                
+            </div>
+            <div style="margin-top: 100px" v-else>Login!!</div>
+
+            <Timeline v-bind:mockEvents="eventsParsed" v-bind:mockTimeline="timeline" v-bind:mockSubEvents="subEventsParsed"></Timeline>
         </div>
-        <div style="margin-top: 100px" v-else>Login!!</div>
-
-        <Timeline v-bind:mockEvents="eventsParsed" v-bind:mockTimeline="timeline" v-bind:mockSubEvents="subEventsParsed"></Timeline>
-
     </div>
 </template>
 
@@ -88,9 +92,10 @@
         var timelineApi = this.baseApi + 'timelines/public/' + this.$store.state.jwt.user.username
         this.axios.get(timelineApi)
             .then(response => {
-                if (response.data.length >= 2 && !this.$store.state.jwt.user.subscriprionEnd && this.editTimeline == null){
-                    this.$router.push({ path: "/home" })
-                }
+                this.numberOfTimelines = response.data.length
+                //if (response.data.length >= 2 && !this.$store.state.jwt.user.subscriprionEnd && this.editTimeline == null){
+                    //this.$router.push({ path: "/home" })
+                //}
             }).catch(err => {
                 console.log(err)
                 this.$router.push({ path: "/home" })
@@ -104,6 +109,7 @@
           timeline: {pictures: [], picturesRaw: []},
           subEventsParsed: [],
           errorMessage: '',
+          numberOfTimelines: null,
 
           mainTimelineSubmit: {},
           subTimelinesSubmitted: [],
@@ -571,6 +577,10 @@
 
 <style scoped lang="sass">
 @import '../assets/saas-vars.sass'
+
+.message
+    margin-top: 120px
+    text-align: center
 
 .image-master
     margin-top: 47px

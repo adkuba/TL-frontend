@@ -38,7 +38,7 @@
                         <img :class="$mq" class="image" :src="timeline.pictures[0]">
                     </router-link>
                     <div class="author" :class="$mq">By {{ timeline.user.username }}</div>
-                    <div class="views" v-on:click="openDetails(timeline.likes)">{{ timeline.views }} views &middot; {{ timeline.likes.length }} likes</div>
+                    <div class="views">{{ timeline.views }} views &middot; {{ timeline.likes.length }} likes</div>
                     <div class="views creation">{{ timeline.creationDate }} </div>
                 </div>
                 <div v-else>
@@ -79,19 +79,12 @@
                             <img :class="$mq" class="image" :src="timeline.pictures[0]">
                         </router-link>
                         <div class="author" :class="$mq">By {{ timeline.user.username }}</div>
-                        <div class="views" v-on:click="openDetails(timeline.likes)">{{ timeline.views }} views &middot; {{ timeline.likes.length }} likes</div>
+                        <div class="views">{{ timeline.views }} views &middot; {{ timeline.likes.length }} likes</div>
                         <div class="views creation">{{ timeline.creationDate }} </div>
                     </div>
                     <div v-else class="empty">Can't find.</div>
                 </div>
             </div>
-        </div>
-    </div>
-    <div id="details">
-        Users:
-        <div class="exit" v-on:click="closeDetails()">x</div>
-        <div v-for="(detail, index) in details" :key="index">
-            @{{ detail.userId }}
         </div>
     </div>
 </div>
@@ -125,15 +118,6 @@ export default {
                         console.log(error)
                     })
             }
-        },
-
-        openDetails(likes){
-            this.details = likes
-            document.getElementById('details').style.display = 'block'
-        },
-        closeDetails(){
-            this.details = null
-            document.getElementById('details').style.display = 'none'
         },
         scroll() {
             window.onscroll = () => {
@@ -338,20 +322,6 @@ export default {
     padding-top: 15px
     &.medium
         width: 23%
-
-#details
-    position: fixed
-    top: 20%
-    left: 40%
-    padding: 20px
-    box-sizing: border-box
-    font-family: OpenSans-Regular
-    border-radius: 10px
-    text-align: left
-    width: 20%
-    background: white
-    display: none
-    box-shadow: 0 0 0 1600px rgba(0,0,0,0.65)
 
 .empty
     font-family: OpenSans-Regular

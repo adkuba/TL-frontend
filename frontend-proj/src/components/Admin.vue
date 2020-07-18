@@ -6,7 +6,7 @@
                 <h1>Stats</h1>
                 <p class="download" v-on:click="download(allStats, 'stats.csv')">Download</p>
                 <div v-for="(stat, idx) in allStats" :key="idx">
-                    Day: {{ stat.day }} mainPageViews: {{ stat.mainPageViews }} newUsers: {{ stat.numberOfUsers }} totalTimelinesViews: {{ stat.totalTimelinesViews }}
+                    Day: {{ stat.day }} mainPageViews: {{ stat.mainPageViews }} newUsers: {{ stat.numberOfUsers }} totalTimelinesViews: {{ stat.totalTimelinesViews }} activeUsers(updates next day): {{ stat.activeUsers }}
                     <div class="reviews">
                         <div v-for="(review, index) in stat.reviews" :key="index">
                             Username {{ review.username }} Opinion: {{ review.opinion }}
@@ -32,7 +32,8 @@
                         Username: {{ user.username }} Email: {{ user.email }} Creation: {{ user.creationTime }} Followers: {{ user.followers.filter(e => e.userId != null).length }}
                     </router-link>
                     <div class="del" v-on:click="deleteUser(user)">DELETE</div>
-                    <div class="del" v-on:click="blockUser(user)">BLOCK</div>
+                    <div class="del" v-on:click="blockUser(user)" v-if="!user.blocked">BLOCK</div>
+                    <div class="del" v-on:click="unBlockUser(user)" v-if="user.blocked">UNBLOCK</div>
                 </div>
             </div>
             <div class="timelines">
@@ -50,7 +51,7 @@
                 <h1>Devices</h1>
                 <p class="download" v-on:click="download(allDevices, 'devices.csv')">Download</p>
                 <div v-for="(device, idx) in allDevices" :key="idx">
-                     Device details: {{ device.deviceDetails }} Location: {{ device.location }} Username: {{ device.username }} LastLogin: {{ device.lastLoggedIn }}
+                     Device details: {{ device.deviceDetails }} Location: {{ device.location }} Username: {{ device.username }} LastLogin: {{ device.lastLogged }}
                 </div>
             </div>
         </div>
@@ -213,6 +214,21 @@
                 this.deleteUserTimelines(user)
                 var reason = window.prompt("Why you are blocking user?")
                 this.axios.post(this.baseApi + "users/block?username=" + user.username + "&reason=" + reason, null, {
+                    headers: {
+                        'Authorization': 'Bearer ' + this.$store.state.jwt.token
+                    },
+                })
+                .then(() => {
+                    window.location.reload()
+                })
+                .catch(error => {
+                    console.log(error)
+                })
+            }
+        },
+        unBlockUser(user){
+            if (confirm("Unblock " + user.username + '?')){
+                this.axios.post(this.baseApi + "users/unblock?username=" + user.username, null, {
                     headers: {
                         'Authorization': 'Bearer ' + this.$store.state.jwt.token
                     },

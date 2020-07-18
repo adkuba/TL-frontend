@@ -13,6 +13,7 @@ import Profile from '../components/Profile.vue'
 import Review from '../components/Review.vue'
 import About from '../components/About.vue'
 import PasswordReset from '../components/PasswordReset.vue'
+import Statistics from '../components/Statistics.vue'
 
 // the routes are simply an array of objects
 const routes = [
@@ -122,6 +123,14 @@ const routes = [
         path: '/passwordReset/:id',
         name: 'passwordReset',
         component: PasswordReset,
+    },
+    {
+        path: '/statistics/:id',
+        name: 'statistics',
+        component: Statistics,
+        meta: {
+            requiresAuth: true
+          }
     },
 ];
 

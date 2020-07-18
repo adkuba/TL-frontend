@@ -12,7 +12,7 @@
                     <input class="fin" :class="$mq" type="password" id="repeat-password" placeholder="Repeat password"><br>
                 </div>
                 <br v-if="!errMessage">
-                <div class="fsignup error" :class="$mq" v-if="errMessage">{{ errMessage }}</div><br>
+                <div class="fsignup error" :class="$mq" v-if="errMessage">{{ errMessage }}</div>
                 <input v-if="action=='Sign in'" type="submit" value="Submit" class="fsubmit" :class="$mq" v-on:click="signin()">
                 <vue-recaptcha v-else sitekey="6LcwcqwZAAAAAGHazabCBGXKndRustjOflfOFQSX" ref="recaptcha" @verify="onCaptchaVerified" @expired="onCaptchaExpired" size="invisible">
                     <input :disabled="status==='submitting'" type="submit" value="Submit" class="fsubmit" :class="$mq" v-on:click="signUp()">
@@ -87,12 +87,8 @@ import VueRecaptcha from 'vue-recaptcha'
                     {withCredentials: true})
                     .then(response => {this.$store.commit('set', response.data); self.$router.push({ path: this.routerPath })})
                     .catch(error => {
-                        if (error.toString().includes("401")){
-                            this.errMessage = "Can't login! Bad credentials"
-
-                        } else {
-                            this.errMessage = error
-                        }
+                        this.errMessage = error.response.data.message
+                        console.log(error)
                     })
                 this.clearData()
 
