@@ -9,10 +9,11 @@
                     Day: {{ stat.day }} mainPageViews: {{ stat.mainPageViews }} newUsers: {{ stat.numberOfUsers }} totalTimelinesViews: {{ stat.totalTimelinesViews }} activeUsers(updates next day): {{ stat.activeUsers }}
                     <div class="reviews">
                         <div v-for="(review, index) in stat.reviews" :key="index">
-                            Username {{ review.username }} Opinion: {{ review.opinion }}
+                            Day: {{ stat.day }} Username {{ review.username }} Opinion: {{ review.opinion }}
                         </div>
                     </div>
                 </div>
+                <LineChart v-if="allStatObject" :chartdata="allStatObject" :options="viewsOptions" class="stat-chart"/>
             </div>
             <div class="timelines">
                 <h1>Timelines</h1>
@@ -49,10 +50,13 @@
             </div>
             <div class="devices">
                 <h1>Devices</h1>
+                <p>No duplicates - there can be multiple views by the same device.</p>
+                <p>Detailed info about all views and related devices in "statistics.devices" or chart below!</p>
                 <p class="download" v-on:click="download(allDevices, 'devices.csv')">Download</p>
                 <div v-for="(device, idx) in allDevices" :key="idx">
                      Device details: {{ device.deviceDetails }} Location: {{ device.location }} Username: {{ device.username }} LastLogin: {{ device.lastLogged }}
                 </div>
+                <BarChart v-if="locationStat" :chartdata="locationStat" :options="viewsOptions" class="stat-chart"/>
             </div>
         </div>
         <div v-else>
@@ -62,9 +66,15 @@
 </template>
 
 <script lang="js">
+import LineChart from './LineChart.vue'
+import BarChart from './BarChart.vue'
 
   export default  {
     name: 'Admin',
+    components: {
+        LineChart,
+        BarChart
+    },
     created () {
         this.axios.get(this.baseApi + 'statistics/all', {
             headers: {
@@ -73,6 +83,62 @@
         })
         .then(response => {
             this.allStats = response.data
+
+            var labels = []
+            for (var i=0, len=response.data.length; i<len; i++){
+                labels.push(response.data[i].day)
+            }
+            var mainPageViews = []
+            for (i=0, len=response.data.length; i<len; i++){
+                mainPageViews.push(response.data[i].mainPageViews)
+            }
+            var newUsers = []
+            for (i=0, len=response.data.length; i<len; i++){
+                newUsers.push(response.data[i].numberOfUsers)
+            }
+            var timelineViews = []
+            for (i=0, len=response.data.length; i<len; i++){
+                timelineViews.push(response.data[i].totalTimelinesViews)
+            }
+            var activeUsers = []
+            for (i=0, len=response.data.length; i<len; i++){
+                activeUsers.push(response.data[i].activeUsers)
+            }
+
+            var object = {
+                labels: labels,
+                datasets: [
+                    {
+                        label: "Main-Page-Views",
+                        data: mainPageViews,
+                        backgroundColor: "transparent",
+                        borderColor: "rgba(1, 116, 188, 0.8)",
+                        pointBackgroundColor: "rgba(1, 116, 188, 1)"
+                    },
+                    {
+                        label: "New-Users",
+                        data: newUsers,
+                        backgroundColor: "transparent",
+                        borderColor: "rgba(100, 116, 188, 0.8)",
+                        pointBackgroundColor: "rgba(100, 116, 188, 1)"
+                    },
+                    {
+                        label: "Timeline-Views",
+                        data: timelineViews,
+                        backgroundColor: "transparent",
+                        borderColor: "rgba(200, 116, 188, 0.8)",
+                        pointBackgroundColor: "rgba(200, 116, 188, 1)"
+                    },
+                    {
+                        label: "Active-Users",
+                        data: activeUsers,
+                        backgroundColor: "transparent",
+                        borderColor: "rgba(1, 200, 188, 0.8)",
+                        pointBackgroundColor: "rgba(1, 200, 188, 1)"
+                    }
+                ]
+            }
+            this.allStatObject = object
         })
         .catch(error => {
             console.log(error)
@@ -85,6 +151,7 @@
         })
         .then(response => {
             this.allDevices = response.data
+            this.createLocations()
         })
         .catch(error => {
             console.log(error)
@@ -128,15 +195,56 @@
     },
     data () {
       return {
-          baseApi: 'http://localhost:8081/api/',
-          allTimelines: [],
-          allStats: [],
-          allUsers: [],
-          allDevices: [],
-          reportedTimelines: []
+        baseApi: 'http://localhost:8081/api/',
+        allTimelines: [],
+        allStats: [],
+        allStatObject: null,
+        allUsers: [],
+        allDevices: [],
+        reportedTimelines: [],
+        locationStat: null,
+        viewsOptions: {
+            responsive: true,
+            maintainAspectRatio: false,
+            legend: {
+                display: false,
+            },
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    },
+                }],
+            } 
+        }
       }
     },
     methods: {
+        createLocations(){
+            var allDevicesArray = []
+            for (var i=0, len=this.allStats.length; i<len; i++){
+                allDevicesArray = allDevicesArray.concat(this.allStats[i].devices)
+            }
+            var allDevicesSet = [...new Set(allDevicesArray)]
+            var labels = []
+            var data = []
+            for(i=0, len=allDevicesSet.length; i<len; i++){
+                labels.push(this.allDevices.filter(e => e.id === allDevicesSet[i])[0].location)
+                const countOccurrences = (arr, val) => arr.reduce((a, v) => (v === val ? a + 1 : a), 0)
+                data.push(countOccurrences(allDevicesArray, allDevicesSet[i]))
+            }
+            var object = {
+                labels: labels,
+                datasets: [
+                    {
+                        label: "Views",
+                        data: data,
+                        backgroundColor: "rgba(1, 116, 188, 0.7)",
+                    }
+                ]
+            }
+            this.locationStat = object
+        },
         download(array, name){
             var parsedArray = []
             for (var i=0, len=array.length; i<len; i++){
@@ -263,6 +371,9 @@
 </script>
 
 <style scoped lang="sass">
+.stat-chart
+    margin-top: 50px
+    margin-bottom: 80px
 
 .download
     cursor: pointer

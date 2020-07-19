@@ -38,7 +38,8 @@
                         <img :class="$mq" class="image" :src="timeline.pictures[0]">
                     </router-link>
                     <div class="author" :class="$mq">By {{ timeline.user.username }}</div>
-                    <div class="views">{{ timeline.views }} views &middot; {{ timeline.likes.length }} likes</div>
+                    <div class="views" v-if="timeline.category != 'TRENDING'">{{ timeline.views }} views &middot; {{ timeline.likes.length }} likes</div>
+                    <div class="views" v-else>&#8593;{{ timeline.trendingViews }} views &middot; {{ timeline.likes.length }} likes</div>
                     <div class="views creation">{{ timeline.creationDate }} </div>
                 </div>
                 <div v-else>
