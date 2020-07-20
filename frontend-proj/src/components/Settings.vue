@@ -43,14 +43,14 @@
                             <div v-if="!$store.state.jwt.user.subscriptionEnd && !$store.state.jwt.user.subscriptionID" class="danev" :class="$mq">Free</div>
                             <br v-if="$store.state.jwt.user.subscriptionEnd">
 
-                            <div v-if="$store.state.jwt.user.subscriptionEnd && $store.state.jwt.user.subscriptionID" class="daneh">Card:</div>
-                            <div v-if="$store.state.jwt.user.subscriptionEnd && $store.state.jwt.user.subscriptionID" class="danev" :class="$mq">{{ $store.state.jwt.user.card[0].toUpperCase() + $store.state.jwt.user.card.slice(1) }}</div>
+                            <div v-if="$store.state.jwt.user.subscriptionEnd && $store.state.jwt.user.subscriptionID && $store.state.jwt.user.card" class="daneh">Card:</div>
+                            <div v-if="$store.state.jwt.user.subscriptionEnd && $store.state.jwt.user.subscriptionID && $store.state.jwt.user.card" class="danev" :class="$mq">{{ $store.state.jwt.user.card[0].toUpperCase() + $store.state.jwt.user.card.slice(1) }}</div>
 
-                            <div v-if="$store.state.jwt.user.subscriptionEnd && !$store.state.jwt.user.subscriptionID" class="daneh">Card:</div> 
-                            <div v-if="$store.state.jwt.user.subscriptionEnd && !$store.state.jwt.user.subscriptionID" class="danev" :class="$mq">{{ $store.state.jwt.user.card[0].toUpperCase() + $store.state.jwt.user.card.slice(1) }}</div>
-                            <br v-if="$store.state.jwt.user.subscriptionEnd">
+                            <div v-if="$store.state.jwt.user.subscriptionEnd && !$store.state.jwt.user.subscriptionID && $store.state.jwt.user.card" class="daneh">Card:</div> 
+                            <div v-if="$store.state.jwt.user.subscriptionEnd && !$store.state.jwt.user.subscriptionID && $store.state.jwt.user.card" class="danev" :class="$mq">{{ $store.state.jwt.user.card[0].toUpperCase() + $store.state.jwt.user.card.slice(1) }}</div>
+                            <br v-if="$store.state.jwt.user.subscriptionEnd && $store.state.jwt.user.card">
 
-                            <div v-if="$store.state.jwt.user.subscriptionEnd && $store.state.jwt.user.subscriptionID" class="daneh">Payment:</div> 
+                            <div v-if="$store.state.jwt.user.subscriptionEnd && $store.state.jwt.user.subscriptionID" class="daneh">Next payment:</div> 
                             <div v-if="$store.state.jwt.user.subscriptionEnd && $store.state.jwt.user.subscriptionID" class="danev" :class="$mq">{{ $store.state.jwt.user.subscriptionEnd }}</div>
 
                             <div v-if="$store.state.jwt.user.subscriptionEnd && !$store.state.jwt.user.subscriptionID" class="daneh">Ends:</div> 

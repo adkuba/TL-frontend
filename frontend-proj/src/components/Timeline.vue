@@ -24,7 +24,7 @@
             <div id="evt_container" :class="$mq">
                 <div id="evt_desc" class="fade evt_trans">
                     <div id="evt_desc_text" v-if="openedSub">
-                        <div class="evt_button" v-on:click="moveRight()">Back</div>
+                        <div class="evt_button" :style="'background: ' + mainColor" v-on:click="moveRight()">Back</div>
                         <h1 class="evt_h"> {{ eventsSub[openedSub].title }} </h1>
                         <p class="evt_desc_p"> {{ eventsSub[openedSub].description.replace(/ \[([^\]]+)\]\(([^\)]+)\)/g, '') }} </p>
                         <div class="link-container" v-for="(value, lidx) in eventsSub[openedSub].description.match(/\[([^\]]+)\]\(([^\)]+)\)/g)" :key="lidx">
@@ -57,7 +57,7 @@
                     </div>
 
                     <div class="gallery-container" :class="$mq" v-if="openedSub">
-                        <div id="sub_gallery" class="gallery" :class="$mq" v-if="eventsSub[openedSub].pictures">
+                        <div id="sub_gallery" class="gallery" :class="$mq" v-if="eventsSub[openedSub].pictures.length > 0">
                             <div class="image-container" v-for="(img, index) in eventsSub[openedSub].pictures" :key="index">
                                 <img class="image" :class="$mq" :src="img" v-on:click="openImage(eventsSub[openedSub].pictures, index)">
                             </div>
@@ -72,7 +72,7 @@
                 <div class="line trans" :class="$mq" v-if="evt.type == 'line'"></div>
                 <div class="evt" v-else-if="evt.type == 'circle'" :id="'circle'+index">
                     <div class="evt_date trans" :class="$mq" v-on:click="moveLeft(index)"> {{ evt.date.slice(0,7) }} </div>
-                    <div class="circle trans" :class="$mq" v-on:click="move(index)"></div>
+                    <div class="circle trans" :style="'background: ' + mainColor" :class="$mq" v-on:click="move(index)"></div>
                     <div class="evt_text trans" :class="$mq" v-on:click="moveLeft(index)">
                         <h1 class="evt_h"> {{ evt.title }} </h1>
                         <p class="evt_p"> {{ evt.description.substring(0, 35) }}... </p>
@@ -95,7 +95,7 @@
                 <a :href="'http://' + value.split('(')[1].slice(0, -1)" class="evt_desc_p2" > {{ value.split('(')[0].slice(1, -1) }} </a>
             </div>
         </div>
-        <div class="gallery-container" :class="$mq" v-if="timeline.pictures" >
+        <div class="gallery-container" :class="$mq" v-if="timeline.pictures.length > 0" >
             <div id="tl_gallery" class="gallery" :class="$mq">
                 <div class="image-container" v-for="(img, index) in timeline.pictures" :key="index">
                     <img class="image" :class="$mq" :src="img" v-on:click="openImage(timeline.pictures, index)" >
@@ -105,18 +105,18 @@
         <div class="like" :class="$mq">
             <div v-if="$store.state.jwt">
                 <div v-if="$store.state.jwt.user.likes.includes(timeline.id)">
-                    <div v-if="timeline.likes != null" style="display: inline-block" v-on:click="dislikeTimeline()">Dislike &middot; {{ timeline.likes.length }} &middot; views {{ timeline.views }}</div>
+                    <div v-if="timeline.likes != null" style="display: inline-block; cursor: pointer; user-select: none" v-on:click="dislikeTimeline()">Dislike &middot; {{ timeline.likes.length }} &middot; views {{ timeline.views }}</div>
                     <div class="trending" :class="$mq">{{ timeline.creationDate }} &middot; &#8593;{{ timeline.trendingViews }}</div>
                     <div v-if="timeline.user" class="email" :class="$mq">{{ timeline.user.email }}</div>
                 </div>
                 <div v-else>
-                    <div v-if="timeline.likes != null" style="display: inline-block" v-on:click="likeTimeline()">Like &middot; {{ timeline.likes.length }} &middot; views {{ timeline.views }}</div> 
+                    <div v-if="timeline.likes != null" style="display: inline-block; cursor: pointer; user-select: none" v-on:click="likeTimeline()">Like &middot; {{ timeline.likes.length }} &middot; views {{ timeline.views }}</div> 
                     <div class="trending" :class="$mq">{{ timeline.creationDate }} &middot; &#8593;{{ timeline.trendingViews }}</div>
                     <div v-if="timeline.user" class="email" :class="$mq">{{ timeline.user.email }}</div>
                 </div>
             </div>
             <div v-else>
-                <router-link v-if="timeline.likes != null" style="display: inline-block" class="login-like" :to="{ name: 'login', params: {path: {path: '/timeline/' + timeline.id}}}">Login to like &middot; {{ timeline.likes.length }} &middot; views {{ timeline.views }}</router-link>
+                <router-link v-if="timeline.likes != null" style="display: inline-block; cursor: pointer; user-select: none" class="login-like" :to="{ name: 'login', params: {path: {path: '/timeline/' + timeline.id}}}">Login to like &middot; {{ timeline.likes.length }} &middot; views {{ timeline.views }}</router-link>
                 <div class="trending" :class="$mq">{{ timeline.creationDate }} &middot; &#8593;{{ timeline.trendingViews }}</div>
                 <div v-if="timeline.user" class="email" :class="$mq">{{ timeline.user.email }}</div>
             </div>
@@ -135,6 +135,7 @@ export default {
         mockSubEvents: Array
     },
     created () {
+        this.mainColor = this.circleColors[Math.floor(Math.random() * this.circleColors.length)]
         if (!this.mockEvents){
             var username = null
             if (this.$store.state.jwt){
@@ -160,6 +161,8 @@ export default {
         newPos: null,
         galleryScrolling: false,
         sub: false,
+        circleColors: ['#B8352D', '#ff9b54', '#4a7c59', '#247ba0'],
+        mainColor: '#B8352D',
 
         mainImages: null,
         mainImageIndex: null,
@@ -508,12 +511,10 @@ export default {
 .like
     color: #14426B
     font-family: RaleWay-Regular
-    user-select: none
+    margin-top: 20px
     &.small
         width: 90%
         margin-left: 5%
-    &:hover
-        cursor: pointer
 
 .left
     position: absolute
@@ -579,7 +580,7 @@ export default {
     background: #262626
 
 #image-viewer
-    top: 100px
+    top: 80px
     user-select: none
     position: fixed
     z-index: 4
@@ -602,6 +603,7 @@ export default {
     margin-bottom: 5px
 
 .image
+    cursor: pointer
     height: 100px
     width: 120px
     object-fit: cover
@@ -622,7 +624,7 @@ export default {
         margin: 50px 10%
     #evt_container &
         width: 100%
-        margin: 100px 0
+        margin: 60px 0
 
 
 div#sub_timeline::-webkit-scrollbar
@@ -647,6 +649,7 @@ div#sub_timeline::-webkit-scrollbar
         right: 12%
 
 .sub_evt_p
+    cursor: pointer
     margin: 10px 30px
     padding: 0
 
@@ -669,12 +672,14 @@ div#sub_timeline::-webkit-scrollbar
     letter-spacing: 2px
 
 .sub_nav_h
+    cursor: pointer
     font-family: Raleway-Regular
     font-size: 20px
     letter-spacing: 1px
     margin: 10px 20px
 
 .sub_evt_date
+    cursor: pointer
     text-align: center
     margin: 0 30px
     font-size: 15px
@@ -752,12 +757,11 @@ div#sub_timeline::-webkit-scrollbar
     transition: all 0.7s, top 1ms
 
 .evt_button
+    cursor: pointer
     user-select: none
     z-index: 2
     position: absolute
     right: 0
-    background-color: #303030
-    border: 0px solid #303030
     border-radius: 10px
     color: white
     padding: 3px 17px
@@ -767,6 +771,7 @@ div#sub_timeline::-webkit-scrollbar
 
 
 .user_d
+    user-select: none
     text-decoration: none
     z-index: 4
     position: fixed
@@ -775,8 +780,7 @@ div#sub_timeline::-webkit-scrollbar
     font-family: Raleway-Regular
     font-size: 16px
     top: 19px
-    left: 50%
-    transform: translateX(-50%) scale(1.005)
+    transform: translateX(-50%) scale(1.001)
 
 .fade
   opacity: 0
@@ -802,6 +806,7 @@ div#sub_timeline::-webkit-scrollbar
     transition: all 0.7s
 
 .evt_h
+    cursor: pointer
     font-size: 35px
     margin: 0
     padding: 0
@@ -809,6 +814,7 @@ div#sub_timeline::-webkit-scrollbar
     width: 70%
 
 .evt_p
+    cursor: pointer
     margin-top: 0
     padding-top: 10px
 
@@ -816,6 +822,7 @@ div#sub_timeline::-webkit-scrollbar
     margin: 40px auto
 
 .evt_date
+    cursor: pointer
     user-select: none
     position: relative
     float: left
@@ -863,11 +870,11 @@ div#sub_timeline::-webkit-scrollbar
         margin: 0 0% !important
 
 .circle
+    cursor: pointer
     margin: 0 50%
     transform: translateX(-50%)
     width: 25px
     height: 25px
-    background: #B8352D
     border-radius: 50%
     &.small
         margin: 0 15%

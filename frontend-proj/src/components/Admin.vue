@@ -7,11 +7,6 @@
                 <p class="download" v-on:click="download(allStats, 'stats.csv')">Download</p>
                 <div v-for="(stat, idx) in allStats" :key="idx">
                     Day: {{ stat.day }} mainPageViews: {{ stat.mainPageViews }} newUsers: {{ stat.numberOfUsers }} totalTimelinesViews: {{ stat.totalTimelinesViews }} activeUsers(updates next day): {{ stat.activeUsers }}
-                    <div class="reviews">
-                        <div v-for="(review, index) in stat.reviews" :key="index">
-                            Day: {{ stat.day }} Username {{ review.username }} Opinion: {{ review.opinion }}
-                        </div>
-                    </div>
                 </div>
                 <LineChart v-if="allStatObject" :chartdata="allStatObject" :options="viewsOptions" class="stat-chart"/>
             </div>
@@ -20,7 +15,7 @@
                 <p class="download" v-on:click="download(allTimelines, 'timelines.csv')">Download</p>
                 <div v-for="(timeline, idx) in allTimelines" :key="idx">
                     <router-link :to="{ path: 'timeline/' + timeline.id }" class="router">
-                        Title: {{ timeline.id }} Views: {{ timeline.views }} Likes: {{ timeline.likes.length }} Trending: {{ timeline.trendingViews }} User: {{ timeline.user.email }}
+                        Title: {{ timeline.id }} Views: {{ timeline.views }} Likes: {{ timeline.likes.length }} Trending: {{ timeline.trendingViews }} User: {{ timeline.user.email }} Reports: {{ timeline.numberOfReports }}
                     </router-link>
                     <div v-on:click="deleteTimeline(timeline)" class="del">DELETE</div>
                 </div>
@@ -42,7 +37,7 @@
                 <p class="download" v-on:click="download(reportedTimelines, 'reported-timelines.csv')">Download</p>
                 <div v-for="(timeline, idx) in reportedTimelines" :key="idx">
                     <router-link :to="{ path: 'timeline/' + timeline.id }" class="router">
-                        Title: {{ timeline.id }} Views: {{ timeline.views }} Likes: {{ timeline.likes.length }} Trending: {{ timeline.trendingViews }} User: {{ timeline.user.email }} 
+                        Title: {{ timeline.id }} Views: {{ timeline.views }} Likes: {{ timeline.likes.length }} Trending: {{ timeline.trendingViews }} User: {{ timeline.user.email }} Reports: {{ timeline.numberOfReports }}
                     </router-link>
                     <div v-on:click="deleteTimeline(timeline)" class="del">DELETE</div>
                     <div v-on:click="unReportTimeline(timeline)" class="del">UNREPORT</div>
@@ -51,12 +46,12 @@
             <div class="devices">
                 <h1>Devices</h1>
                 <p>No duplicates - there can be multiple views by the same device.</p>
-                <p>Detailed info about all views and related devices in "statistics.devices" or chart below!</p>
                 <p class="download" v-on:click="download(allDevices, 'devices.csv')">Download</p>
                 <div v-for="(device, idx) in allDevices" :key="idx">
                      Device details: {{ device.deviceDetails }} Location: {{ device.location }} Username: {{ device.username }} LastLogin: {{ device.lastLogged }}
                 </div>
                 <BarChart v-if="locationStat" :chartdata="locationStat" :options="viewsOptions" class="stat-chart"/>
+                <BarChart v-if="devicesInfoChart" :chartdata="devicesInfoChart" :options="viewsOptions" class="stat-chart"/>
             </div>
         </div>
         <div v-else>
@@ -151,7 +146,6 @@ import BarChart from './BarChart.vue'
         })
         .then(response => {
             this.allDevices = response.data
-            this.createLocations()
         })
         .catch(error => {
             console.log(error)
@@ -203,6 +197,7 @@ import BarChart from './BarChart.vue'
         allDevices: [],
         reportedTimelines: [],
         locationStat: null,
+        devicesInfoChart: null,
         viewsOptions: {
             responsive: true,
             maintainAspectRatio: false,
@@ -219,19 +214,84 @@ import BarChart from './BarChart.vue'
         }
       }
     },
-    methods: {
-        createLocations(){
-            var allDevicesArray = []
-            for (var i=0, len=this.allStats.length; i<len; i++){
-                allDevicesArray = allDevicesArray.concat(this.allStats[i].devices)
+    watch: {
+        allDevices: function(){
+            if (this.allStats.length > 0){
+                this.createLocations()
+                this.createDevicesInfo()
             }
-            var allDevicesSet = [...new Set(allDevicesArray)]
-            var labels = []
+        },
+        allStats: function(){
+            if (this.allDevices.length > 0){
+                this.createLocations()
+                this.createDevicesInfo()
+            }
+        }
+    },
+    methods: {
+        createDevicesInfo(){
+            var devicesId = []
             var data = []
-            for(i=0, len=allDevicesSet.length; i<len; i++){
-                labels.push(this.allDevices.filter(e => e.id === allDevicesSet[i])[0].location)
-                const countOccurrences = (arr, val) => arr.reduce((a, v) => (v === val ? a + 1 : a), 0)
-                data.push(countOccurrences(allDevicesArray, allDevicesSet[i]))
+            for (var i=0, len=this.allStats.length; i<len; i++){
+                Object.keys(this.allStats[i].devices).forEach( (key) => {
+                    if (devicesId.filter(e => e === key.toString()).length > 0){
+                        var index = devicesId.indexOf(key.toString())
+                        data[index] += this.allStats[i].devices[key]
+                    } else {
+                        devicesId.push(key.toString())
+                        data.push(this.allStats[i].devices[key])
+                    }
+                } )
+            }
+            var labels = []
+            var dataParsed = []
+            for (i=0, len=devicesId.length; i<len; i++){
+                var details = this.allDevices.filter(e => e.id === devicesId[i])[0].deviceDetails
+                if (labels.filter(e => e === details).length > 0){
+                    var index = labels.indexOf(details)
+                    dataParsed[index] += data[i]
+                } else {
+                    labels.push(details)
+                    dataParsed.push(data[i])
+                }
+            }
+            var object = {
+                labels: labels,
+                datasets: [
+                    {
+                        label: "Views",
+                        data: data,
+                        backgroundColor: "rgba(1, 116, 188, 0.7)",
+                    }
+                ]
+            }
+            this.devicesInfoChart = object
+        },
+        createLocations(){
+            var devicesId = []
+            var data = []
+            for (var i=0, len=this.allStats.length; i<len; i++){
+                Object.keys(this.allStats[i].devices).forEach( (key) => {
+                    if (devicesId.filter(e => e === key.toString()).length > 0){
+                        var index = devicesId.indexOf(key.toString())
+                        data[index] += this.allStats[i].devices[key]
+                    } else {
+                        devicesId.push(key.toString())
+                        data.push(this.allStats[i].devices[key])
+                    }
+                } )
+            }
+            var labels = []
+            var dataParsed = []
+            for (i=0, len=devicesId.length; i<len; i++){
+                var details = this.allDevices.filter(e => e.id === devicesId[i])[0].location
+                if (labels.filter(e => e === details).length > 0){
+                    var index = labels.indexOf(details)
+                    dataParsed[index] += data[i]
+                } else {
+                    labels.push(details)
+                    dataParsed.push(data[i])
+                }
             }
             var object = {
                 labels: labels,

@@ -13,7 +13,8 @@
             <div v-else class="follow" :class="$mq">
                 <div class="follower-item" :class="$mq">Login to follow &middot; {{ user.followers.filter(e => e.userId != null).length }}</div>
             </div>
-            <p class="premium-sign" :class="$mq" v-if="user.subscriptionEnd"></p>
+            <div class="premium-sign" :class="$mq" v-if="user.subscriptionEnd">PREMIUM</div>
+            <div v-else class="premium-sign free" :class="$mq">FREE</div>
         </div>
         <div class="controls" :class="$mq">
             <div class="menu-item" :class="$mq" v-on:click="openTimelines()">Timelines <div id="1" class="border" :class="$mq"></div></div>
@@ -25,8 +26,9 @@
                 <router-link :to="{ path: '/timeline/' + timeline.id }" class="tl-router">
                     <div class="title">{{ timeline.descriptionTitle }}</div>
                     <div class="descr">{{ timeline.description.replace(/ \[([^\]]+)\]\(([^\)]+)\)/g, '').substring(0, 150) }}...</div>
-                    <div class="image-container" v-if="timeline.pictures.length > 0">
-                        <img class="image" :src="timeline.pictures[0]">
+                    <div class="image-container">
+                        <img class="image" v-if="timeline.pictures.length > 0" :src="timeline.pictures[0]">
+                        <img :class="$mq" v-else class="image" :src="require('../assets/images/default/Default' + (Math.floor(Math.random() * 10) + 1) + '.png')">
                     </div>
                 </router-link>
                 <div class="views-container">
@@ -307,9 +309,14 @@
         margin-top: 10px
 
 .premium-sign
-    width: 120px
-    height: 20px
-    border: 1px solid black
+    border-radius: 5px
+    font-family: Raleway-Regular
+    text-align: center
+    padding: 5px 40px
+    letter-spacing: 1px
+    font-size: 14px
+    background: #ff7f51
+    color: white
     &.large
         position: absolute
         right: 15%
@@ -324,6 +331,9 @@
         margin-right: 5%
         margin-top: 10px
 
+.free
+    padding: 5px 50px
+    background: #9cafb7
 
 .followers-item
     display: inline-block
@@ -340,6 +350,7 @@
     margin-left: 5%
     font-family: OpenSans-Regular
     margin-top: 10px
+    height: 66px
 
 .image-container
     width: 90%
@@ -349,7 +360,7 @@
 .image
     border-radius: 5px
     width: 100%
-    max-height: 350px
+    height: 350px
 
 .user
     text-align: left

@@ -11,8 +11,12 @@ import Creator from './Creator.vue'
         Creator
     },
     created() {
-        var timelineApi = this.baseApi + 'timelines/public?id=' + this.$route.params.id
-        this.axios.get(timelineApi).then(response => {
+        var timelineApi = this.baseApi + 'timelines/editor?id=' + this.$route.params.id
+        this.axios.get(timelineApi, {
+            headers: {
+                'Authorization': 'Bearer ' + this.$store.state.jwt.token
+            }
+        }).then(response => {
                 var tl = response.data
                 if (tl.user.username != this.$store.state.jwt.user.username){
                     this.$router.push({ path: "/home" })

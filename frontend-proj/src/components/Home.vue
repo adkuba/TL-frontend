@@ -29,13 +29,15 @@
                 <div v-if="timeline.data == null" class="element" :class="$mq">
                     <div class="more" :class="$mq" v-on:click="openMore(idx)">&#9866;</div>
                     <div class="moreOpened" :class="$mq" :id="'more-' + idx" v-on:click="report(timeline, idx)">Report</div>
-                    <div class="category" :class="$mq">{{ timeline.category }}</div>
+                    <div class="category premium" :class="$mq" v-if="timeline.category==='PREMIUM'">{{ timeline.category }}</div>
+                    <div class="category" v-else :class="$mq">{{ timeline.category }}</div>
                     <router-link :to="{ path: 'timeline/' + timeline.id }" class="title" :class="$mq" @click.native="premium(timeline)">{{ timeline.descriptionTitle }}</router-link>
                     <router-link :to="{ path: 'timeline/' + timeline.id }" class="desc" :class="$mq" @click.native="premium(timeline)">
                         {{ timeline.description.replace(/ \[([^\]]+)\]\(([^\)]+)\)/g, '').substring(0, 200) }}...
                     </router-link>
-                    <router-link :to="{ path: 'timeline/' + timeline.id }" class="image_container" :class="$mq" v-if="timeline.pictures.length > 0" @click.native="premium(timeline)">
-                        <img :class="$mq" class="image" :src="timeline.pictures[0]">
+                    <router-link :to="{ path: 'timeline/' + timeline.id }" class="image_container" :class="$mq" @click.native="premium(timeline)">
+                        <img :class="$mq" v-if="timeline.pictures.length > 0" class="image" :src="timeline.pictures[0]">
+                        <img :class="$mq" v-else class="image" :src="require('../assets/images/default/Default' + (Math.floor(Math.random() * 10) + 1) + '.png')">
                     </router-link>
                     <div class="author" :class="$mq">By {{ timeline.user.username }}</div>
                     <div class="views" v-if="timeline.category != 'TRENDING'">{{ timeline.views }} views &middot; {{ timeline.likes.length }} likes</div>
@@ -76,8 +78,9 @@
                         <router-link :to="{ path: 'timeline/' + timeline.id }" class="desc" :class="$mq">
                             {{ timeline.description.replace(/ \[([^\]]+)\]\(([^\)]+)\)/g, '').substring(0, 100) }}...
                         </router-link>
-                        <router-link :to="{ path: 'timeline/' + timeline.id }" class="image_container" :class="$mq" v-if="timeline.pictures.length > 0">
-                            <img :class="$mq" class="image" :src="timeline.pictures[0]">
+                        <router-link :to="{ path: 'timeline/' + timeline.id }" class="image_container" :class="$mq">
+                            <img :class="$mq" v-if="timeline.pictures.length > 0" class="image" :src="timeline.pictures[0]">
+                            <img :class="$mq" v-else class="image" :src="require('../assets/images/default/Default' + (Math.floor(Math.random() * 10) + 1) + '.png')">
                         </router-link>
                         <div class="author" :class="$mq">By {{ timeline.user.username }}</div>
                         <div class="views">{{ timeline.views }} views &middot; {{ timeline.likes.length }} likes</div>
@@ -420,6 +423,17 @@ input::-webkit-search-cancel-button
         margin-left: 5%
         width: 90%
 
+.premium
+    padding: 5px 20px
+    width: 70px
+    border-radius: 5px
+    letter-spacing: 1px
+    font-family: Raleway-Regular
+    font-size: 14px
+    color: white
+    transform: translateY(-5px)
+    background: #ff7f51
+
 .author
     font-weight: normal
     font-family: OpenSans-Regular
@@ -444,7 +458,7 @@ input::-webkit-search-cancel-button
 .image
     border-radius: 5px
     width: 100%
-    max-height: 400px
+    height: 350px
     object-fit: cover
 
 .desc
@@ -457,6 +471,7 @@ input::-webkit-search-cancel-button
     width: 84%
     text-align: justify 
     margin-left: 8%
+    height: 66px
     &.small
         margin-left: 5%
         width: 90%
