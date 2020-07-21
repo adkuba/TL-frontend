@@ -33,30 +33,33 @@
                     <div class="s_left" :class="$mq">Subscription</div>
                     <div class="s_right" :class="$mq">
 
-                            <div v-if="$store.state.jwt.user.subscriptionEnd && $store.state.jwt.user.subscriptionID" class="daneh">Status:</div>
+                            <div v-if="$store.state.jwt.user.subscriptionEnd && $store.state.jwt.user.subscriptionID" class="daneh" :class="$mq">Status:</div>
                             <div v-if="$store.state.jwt.user.subscriptionEnd && $store.state.jwt.user.subscriptionID" class="danev" :class="$mq">Active</div>
 
-                            <div v-if="$store.state.jwt.user.subscriptionEnd && !$store.state.jwt.user.subscriptionID" class="daneh">Status:</div> 
+                            <div v-if="$store.state.jwt.user.subscriptionEnd && !$store.state.jwt.user.subscriptionID" class="daneh" :class="$mq">Status:</div> 
                             <div v-if="$store.state.jwt.user.subscriptionEnd && !$store.state.jwt.user.subscriptionID" class="danev" :class="$mq">Canceled</div>
 
-                            <div v-if="!$store.state.jwt.user.subscriptionEnd && !$store.state.jwt.user.subscriptionID" class="daneh">Status:</div>
+                            <div v-if="!$store.state.jwt.user.subscriptionEnd && !$store.state.jwt.user.subscriptionID" class="daneh" :class="$mq">Status:</div>
                             <div v-if="!$store.state.jwt.user.subscriptionEnd && !$store.state.jwt.user.subscriptionID" class="danev" :class="$mq">Free</div>
                             <br v-if="$store.state.jwt.user.subscriptionEnd">
 
-                            <div v-if="$store.state.jwt.user.subscriptionEnd && $store.state.jwt.user.subscriptionID && $store.state.jwt.user.card" class="daneh">Card:</div>
+                            <div v-if="$store.state.jwt.user.subscriptionEnd && $store.state.jwt.user.subscriptionID && $store.state.jwt.user.card" class="daneh" :class="$mq">Card:</div>
                             <div v-if="$store.state.jwt.user.subscriptionEnd && $store.state.jwt.user.subscriptionID && $store.state.jwt.user.card" class="danev" :class="$mq">{{ $store.state.jwt.user.card[0].toUpperCase() + $store.state.jwt.user.card.slice(1) }}</div>
 
-                            <div v-if="$store.state.jwt.user.subscriptionEnd && !$store.state.jwt.user.subscriptionID && $store.state.jwt.user.card" class="daneh">Card:</div> 
+                            <div v-if="$store.state.jwt.user.subscriptionEnd && !$store.state.jwt.user.subscriptionID && $store.state.jwt.user.card" class="daneh" :class="$mq">Card:</div> 
                             <div v-if="$store.state.jwt.user.subscriptionEnd && !$store.state.jwt.user.subscriptionID && $store.state.jwt.user.card" class="danev" :class="$mq">{{ $store.state.jwt.user.card[0].toUpperCase() + $store.state.jwt.user.card.slice(1) }}</div>
                             <br v-if="$store.state.jwt.user.subscriptionEnd && $store.state.jwt.user.card">
 
-                            <div v-if="$store.state.jwt.user.subscriptionEnd && $store.state.jwt.user.subscriptionID" class="daneh">Next payment:</div> 
+                            <div v-if="$store.state.jwt.user.subscriptionEnd && $store.state.jwt.user.subscriptionID" class="daneh" :class="$mq">Next payment:</div> 
                             <div v-if="$store.state.jwt.user.subscriptionEnd && $store.state.jwt.user.subscriptionID" class="danev" :class="$mq">{{ $store.state.jwt.user.subscriptionEnd }}</div>
 
-                            <div v-if="$store.state.jwt.user.subscriptionEnd && !$store.state.jwt.user.subscriptionID" class="daneh">Ends:</div> 
+                            <div v-if="$store.state.jwt.user.subscriptionEnd && !$store.state.jwt.user.subscriptionID" class="daneh" :class="$mq">Ends:</div> 
                             <div v-if="$store.state.jwt.user.subscriptionEnd && !$store.state.jwt.user.subscriptionID" class="danev" :class="$mq">{{ $store.state.jwt.user.subscriptionEnd }}</div>
                         
-                        <div class="danea" style="text-decoration: underline; cursor: pointer" :class="$mq" v-if="$store.state.jwt.user.subscriptionID" v-on:click="cancel()">Cancel</div>
+                        <div class="danea" style="text-decoration: underline; cursor: pointer" :class="$mq" v-if="$store.state.jwt.user.subscriptionID" v-on:click="cancel()">
+                            Cancel
+                            <div class="loader" id="ls"></div>
+                        </div>
                         <router-link :to="{ name: 'subscription'}" class="danea" :class="$mq" v-else>Activate</router-link>
                     </div>
                     <div class="s_line"></div>
@@ -111,10 +114,7 @@
             this.$router.push({ path: '/home' })
         },
         cancel(){
-            document.getElementById("modal-button").innerHTML = "..."
-            document.getElementById("modal-button").style.pointerEvents = "none"
-            document.getElementById("modal").style.display = "block"
-            this.$store.commit('setMessage', "Please wait...")
+            document.getElementById("ls").style.display = "inline-block"
             this.axios.post(this.baseApi + 'users/cancel-subscription', null, {
                 headers: {
                     'Authorization': 'Bearer ' + this.$store.state.jwt.token
@@ -125,8 +125,7 @@
                 jwt.user.subscriptionID = null
                 this.$store.commit('set', jwt)
                 this.$store.commit('setMessage', "Sucess!")
-                document.getElementById("modal-button").innerHTML = "OK"
-                document.getElementById("modal-button").style.pointerEvents = "auto"
+                document.getElementById("modal").style.display = "block"
             })
             .catch(error => {
                 console.log(error)
@@ -140,6 +139,12 @@
 
 <style scoped lang="sass">
 @import '../assets/saas-vars.sass'
+
+#ls
+    display: none
+    vertical-align: top
+    margin-left: 20px
+
 .data-settings
     padding-top: 100px
     padding-bottom: 1px

@@ -12,7 +12,8 @@
 
             <!-- We'll put the error messages in this element -->
             <div id="card-errors" role="alert"></div>
-            <button class="fsubmit" :class="$mq" v-on:click="createPaymentMethod(2)" type="submit">Subscribe</button>
+            <button id="submit-button" class="fsubmit" :class="$mq" v-on:click="createPaymentMethod(2)" type="submit">Subscribe</button>
+            <div class="loader" id="ls"></div>
         </form>
     </div>
 </template>
@@ -88,10 +89,8 @@
             }
         },
         createPaymentMethod(priceId) {
-            document.getElementById("modal-button").innerHTML = "..."
-            document.getElementById("modal-button").style.pointerEvents = "none"
-            document.getElementById("modal").style.display = "block"
-            this.$store.commit('setMessage', "Please wait...")
+            document.getElementById("submit-button").style.background = "#932a24"
+            document.getElementById("ls").style.display = "block"
             return stripe
                 .createPaymentMethod({
                     type: 'card',
@@ -100,8 +99,7 @@
                 .then((result) => {
                     if (result.error) {
                         this.$store.commit('setMessage', error.message)
-                        document.getElementById("modal-button").innerHTML = "OK"
-                        document.getElementById("modal-button").style.pointerEvents = "auto"
+                        document.getElementById("modal").style.display = "block"
                     } else {
                         this.createSubscription({
                         paymentMethodId: result.paymentMethod.id,
@@ -135,8 +133,7 @@
             })
             .catch(error =>{
                 this.$store.commit('setMessage', error.message)
-                document.getElementById("modal-button").innerHTML = "OK"
-                document.getElementById("modal-button").style.pointerEvents = "auto"
+                document.getElementById("modal").style.display = "block"
             })
         },
         handleCustomerActionRequired({ subscription, priceId, paymentMethodId, isRetry}){
@@ -148,8 +145,7 @@
                 today.setMonth(today.getMonth() + 1)
                 jwt.user.subscriptionEnd = today.getFullYear() + '-' + (today.getMonth()+1) + '-' + today.getDate()
                 this.$store.commit('set', jwt)
-                document.getElementById("modal-button").innerHTML = "OK"
-                document.getElementById("modal-button").style.pointerEvents = "auto"
+                document.getElementById("modal").style.display = "block"
                 return { subscription, priceId, paymentMethodId };
             }
 
@@ -172,8 +168,7 @@
                             jwt.user.subscriptionID = subscription.id
                             this.$store.commit('set', jwt)
                             this.$store.commit('setMessage', "Succes! Reload page.")
-                            document.getElementById("modal-button").innerHTML = "OK"
-                            document.getElementById("modal-button").style.pointerEvents = "auto"
+                            document.getElementById("modal").style.display = "block"
                             return {
                                 priceId: priceId,
                                 subscription: subscription,
@@ -188,8 +183,7 @@
             }
             else if (paymentIntent.status === 'requires_payment_method'){
                 this.$store.commit('setMessage', "Your card was rejected! Try again.")
-                document.getElementById("modal-button").innerHTML = "OK"
-                document.getElementById("modal-button").style.pointerEvents = "auto"
+                document.getElementById("modal").style.display = "block"
                 this.cancelSubscription()
                 window.location.reload()
                 return "rejected"
@@ -217,6 +211,10 @@
 
 <style scoped lang="sass">
 @import '../assets/saas-vars.sass'
+
+#ls
+    display: none
+    margin-top: 20px
 
 #subscription
     text-align: left
@@ -292,6 +290,10 @@ p
 .fsubmit
     width: 100%
     margin-top: 25px
+    &:active
+        background: #B8352D
+    &:focus
+        background: #B8352D
 
 .fin
     box-sizing: border-box

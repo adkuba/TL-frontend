@@ -3,10 +3,11 @@
         <div id="login" :class="$mq">
             <form action="javascript:void(0);" class="login_form" :class="$mq">
                 <h1 :class="$mq">Change email</h1>
-                <input class="fin" :class="$mq" type="text" id="email" placeholder="New email">
+                <input class="fin" :class="$mq" type="text" id="email" autocorrect="off" spellcheck="false" placeholder="New email">
                 <br v-if="!errMessage">
                 <div class="fsignup error" :class="$mq" v-if="errMessage">{{ errMessage }}</div>
-                <input type="submit" :class="$mq" value="Submit" class="fsubmit" v-on:click="changeEmail()">
+                <input type="submit" :class="$mq" value="Submit" id="submit-button" class="fsubmit" v-on:click="changeEmail()">
+                <div class="loader" id="ls"></div>
             </form>
             <div class="login-desc" :class="$mq">
                 <h1>About</h1>
@@ -36,6 +37,8 @@
             var emailApi = this.baseApi + 'users/email'
 
             if(this.validEmail(document.getElementById("email").value)){
+                document.getElementById("ls").style.opacity = "1"
+                document.getElementById("submit-button").style.background = "#932a24"
                 this.axios.put(emailApi, null, {
                     headers: {
                         'Authorization': 'Bearer ' + this.$store.state.jwt.token
@@ -74,5 +77,13 @@
 </script>
 
 <style scoped lang="sass">
+
+#ls
+    display: block
+    margin-left: calc(20% - 10px)
+    &.medium
+        margin-left: calc(30% - 10px)
+    &.small
+        margin-left: calc(15% - 10px)
 
 </style>

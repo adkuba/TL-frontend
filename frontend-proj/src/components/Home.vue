@@ -26,11 +26,10 @@
                 <router-link :to="{ name: 'about' }" class="special-about">About</router-link>
             </div>
             <div v-for="(timeline, idx) in $store.state.timelines" :key="idx">
-                <div v-if="timeline.data == null" class="element" :class="$mq">
+                <div v-if="timeline.data == null" class="element" v-bind:class="[timeline.category == 'PREMIUM' ? 'premium': '', $mq]">
                     <div class="more" :class="$mq" v-on:click="openMore(idx)">&#9866;</div>
                     <div class="moreOpened" :class="$mq" :id="'more-' + idx" v-on:click="report(timeline, idx)">Report</div>
-                    <div class="category premium" :class="$mq" v-if="timeline.category==='PREMIUM'">{{ timeline.category }}</div>
-                    <div class="category" v-else :class="$mq">{{ timeline.category }}</div>
+                    <div class="category" :class="$mq">{{ timeline.category }}</div>
                     <router-link :to="{ path: 'timeline/' + timeline.id }" class="title" :class="$mq" @click.native="premium(timeline)">{{ timeline.descriptionTitle }}</router-link>
                     <router-link :to="{ path: 'timeline/' + timeline.id }" class="desc" :class="$mq" @click.native="premium(timeline)">
                         {{ timeline.description.replace(/ \[([^\]]+)\]\(([^\)]+)\)/g, '').substring(0, 200) }}...
@@ -40,8 +39,8 @@
                         <img :class="$mq" v-else class="image" :src="require('../assets/images/default/Default' + (Math.floor(Math.random() * 10) + 1) + '.png')">
                     </router-link>
                     <div class="author" :class="$mq">By {{ timeline.user.username }}</div>
-                    <div class="views" v-if="timeline.category != 'TRENDING'">{{ timeline.views }} views &middot; {{ timeline.likes.length }} likes</div>
-                    <div class="views" v-else>&#8593;{{ timeline.trendingViews }} views &middot; {{ timeline.likes.length }} likes</div>
+                    <div class="views" v-if="timeline.category != 'TRENDING'" :class="$mq">{{ timeline.views }} views &middot; {{ timeline.likes.length }} likes</div>
+                    <div class="views" v-else >&#8593;{{ timeline.trendingViews }} views &middot; {{ timeline.likes.length }} likes</div>
                     <div class="views creation">{{ timeline.creationDate }} </div>
                 </div>
                 <div v-else>
@@ -71,19 +70,19 @@
             <h1 :class="$mq" class="search-h1" >Search results</h1>
             <div v-on:click="quit()" class="quit" :class="$mq">x</div>
             <div class="search-container" :class="$mq">
-                <div v-for="(timeline, idx) in searchResults" :key="idx" :class="$mq">
-                    <div v-if="!timeline.none" class="element search-element">
+                <div v-for="(timeline, idx) in searchResults" :key="idx" class="element search-element" :class="$mq">
+                    <div v-if="!timeline.none">
                         <div class="category" :class="$mq"></div>
                         <router-link :to="{ path: 'timeline/' + timeline.id }" class="title" :class="$mq">{{ timeline.descriptionTitle }}</router-link>
                         <router-link :to="{ path: 'timeline/' + timeline.id }" class="desc" :class="$mq">
-                            {{ timeline.description.replace(/ \[([^\]]+)\]\(([^\)]+)\)/g, '').substring(0, 100) }}...
+                            {{ timeline.description.replace(/ \[([^\]]+)\]\(([^\)]+)\)/g, '').substring(0, 200) }}...
                         </router-link>
                         <router-link :to="{ path: 'timeline/' + timeline.id }" class="image_container" :class="$mq">
                             <img :class="$mq" v-if="timeline.pictures.length > 0" class="image" :src="timeline.pictures[0]">
                             <img :class="$mq" v-else class="image" :src="require('../assets/images/default/Default' + (Math.floor(Math.random() * 10) + 1) + '.png')">
                         </router-link>
                         <div class="author" :class="$mq">By {{ timeline.user.username }}</div>
-                        <div class="views">{{ timeline.views }} views &middot; {{ timeline.likes.length }} likes</div>
+                        <div class="views" :class="$mq">{{ timeline.views }} views &middot; {{ timeline.likes.length }} likes</div>
                         <div class="views creation">{{ timeline.creationDate }} </div>
                     </div>
                     <div v-else class="empty">Can't find.</div>
@@ -331,9 +330,8 @@ export default {
     font-family: OpenSans-Regular
     padding-top: 50px
     padding-bottom: 50px
-    text-align: left
+    text-align: center
     font-size: 20px
-    margin-left: 5%
 
 .quit
     cursor: pointer
@@ -406,6 +404,8 @@ input::-webkit-search-cancel-button
     cursor: pointer
     margin-top: 5px
     color: #7e7e7e
+    &.small
+        margin-left: 5%
 
 .creation
     text-align: right
@@ -422,17 +422,6 @@ input::-webkit-search-cancel-button
     &.small
         margin-left: 5%
         width: 90%
-
-.premium
-    padding: 5px 20px
-    width: 70px
-    border-radius: 5px
-    letter-spacing: 1px
-    font-family: Raleway-Regular
-    font-size: 14px
-    color: white
-    transform: translateY(-5px)
-    background: #ff7f51
 
 .author
     font-weight: normal
@@ -451,6 +440,7 @@ input::-webkit-search-cancel-button
     width: 84%
     margin-left: 8%
     margin-top: 30px
+    margin-bottom: 30px
     &.small
         margin-left: 5%
         width: 90%
@@ -460,6 +450,10 @@ input::-webkit-search-cancel-button
     width: 100%
     height: 350px
     object-fit: cover
+    &.medium
+        height: 300px
+    &.small
+        height: 300px
 
 .desc
     text-decoration: none
@@ -471,8 +465,11 @@ input::-webkit-search-cancel-button
     width: 84%
     text-align: justify 
     margin-left: 8%
-    height: 66px
+    height: 60px
+    &.medium
+        height: 62px
     &.small
+        height: 83px
         margin-left: 5%
         width: 90%
 
@@ -508,17 +505,26 @@ input::-webkit-search-cancel-button
         margin-top: 20px
         margin-left: 0
 
+.premium
+    border: 1px solid #ffa585
+
 .search-element
     width: 45%
     padding-bottom: 30px
     display: inline-block
     margin: 2%
+    &.medium
+        width: 45%
+        margin: 2%
 
 .search-container
     width: 70%
-    text-align: left
     margin-left: 15%
     margin-top: 80px
+    &.medium
+        width: 98%
+        margin-left: 1%
+        margin-top: 50px
     &.small
         width: 100%
         margin-left: 0

@@ -19,7 +19,7 @@
                     <h1>Creator</h1>
                     <div class="errorID">{{ errorMessage }}</div>
                     <input class="ttitle tlid" :class="$mq" type="text" id="timelineId" placeholder="ID" maxlength="40" required pattern="[^/]*" title="Don't use /" :value="timeline.id">
-                    <div class="opis">Create your timeline. <br> If you want to add links to description type: <div class="desc-link">[Title](link)</div> for example <div class="desc-link">[Tline](www.tline.site)</div><br> See in preview how it looks.</div>
+                    <div class="opis">Create your timeline. <br> If you want to add links, type: <div class="desc-link">[Title](link)</div> for example <div class="desc-link">[Tline](www.tline.site)</div><br> See in preview how it looks.</div>
 
                     <div id="mainData">
                         <input class="ttitle main-tl" :class="$mq" type="text" id="mainTitle" required maxlength="60" placeholder="Title" :value="timeline.descriptionTitle">
@@ -66,6 +66,7 @@
                     </transition-group>
                     <input type="submit" :class="$mq" class="masterC" v-on:click="preview()" value="Preview">
                     <input type="submit" :class="$mq" class="masterC" v-on:click="submit()" value="Submit">
+                    <div class="loader" id="ls" :class="$mq"></div>
                 </form>
                 
             </div>
@@ -93,9 +94,6 @@
         this.axios.get(timelineApi)
             .then(response => {
                 this.numberOfTimelines = response.data.length
-                //if (response.data.length >= 2 && !this.$store.state.jwt.user.subscriprionEnd && this.editTimeline == null){
-                    //this.$router.push({ path: "/home" })
-                //}
             }).catch(err => {
                 console.log(err)
                 this.$router.push({ path: "/home" })
@@ -166,6 +164,7 @@
                     this.eventsParsedSubmit = response.data
                 })
                 .catch(error => {
+                    document.getElementById("ls").style.opacity = "0"
                     console.log(error)
                 })
             }
@@ -190,7 +189,7 @@
                 if (subTimelines.length == 0){
                     this.$store.commit('setMessage', "Submitted!")
                     document.getElementById("modal").style.display = "block"
-                    this.$router.push({ path: '/settings' })
+                    this.$router.push({ path: '/profile/' + this.$store.state.jwt.user.username })
 
                 } else {
                     this.axios.post(timelinesApi, subTimelines, {
@@ -202,6 +201,7 @@
                         this.subTimelinesSubmitted = response.data
                     })
                     .catch(error => {
+                        document.getElementById("ls").style.opacity = "0"
                         console.log(error)
                     })
                 }
@@ -237,13 +237,14 @@
                                 }
                             })
                             .catch(error =>{
+                                document.getElementById("ls").style.opacity = "0"
                                 console.log(error)
                             })
                     }
                 }
                 this.$store.commit('setMessage', "Submitted!")
                 document.getElementById("modal").style.display = "block"
-                this.$router.push({ path: '/settings' })
+                this.$router.push({ path: '/profile/' + this.$store.state.jwt.user.username })
             }
         }
     },
@@ -316,6 +317,7 @@
         },
         submit(){
             if (document.getElementById("tform").checkValidity()){
+                document.getElementById("ls").style.opacity = "1"
                 var timelinesApi = this.baseApi + 'timelines'
                 this.preview()
 
@@ -346,6 +348,7 @@
                         this.mainTimelineSubmit = response.data
                     })
                     .catch(error => {
+                        document.getElementById("ls").style.opacity = "0"
                         console.log(error)
                         if (error.toString().includes("409")){
                             this.errorMessage = 'This ID is taken!'
@@ -396,6 +399,7 @@
                     }
                 })
                 .catch(error => {
+                    document.getElementById("ls").style.opacity = "0"
                     console.log(error)
                 })
             })
@@ -578,8 +582,14 @@
 <style scoped lang="sass">
 @import '../assets/saas-vars.sass'
 
+#ls
+    opacity: 0
+    margin-top: 130px
+    &.small
+        margin-top: 140px
+
 .message
-    margin-top: 120px
+    margin-top: 100px
     text-align: center
 
 .image-master

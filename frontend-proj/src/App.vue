@@ -6,9 +6,9 @@
       </router-link>
       <router-link :to="{ name: 'settings' }" class="login_b" :class="$mq">&#9868;</router-link>
     </div>
-    <div id="modal">
-        <div class="message">{{ $store.state.message }}</div>
-        <div id="modal-button" v-on:click="closeModal()" class="ok-button">OK</div>
+    <div id="modal" :class="$mq">
+        <div class="message" :class="$mq">{{ $store.state.message }}</div>
+        <div id="modal-button" v-on:click="closeModal()" class="ok-button" :class="$mq">OK</div>
     </div>
     <router-view></router-view>
   </div>
@@ -46,6 +46,20 @@ export default {
 <style lang="sass">
 @import './assets/saas-vars.sass'
 
+.loader
+    border: 4px solid #c2c2c2
+    border-top: 4px solid #303030
+    border-radius: 50%
+    width: 17px
+    height: 17px
+    animation: spin 1s linear infinite
+
+@keyframes spin
+    0%
+        transform: rotate(0deg)
+    100%
+        transform: rotate(360deg)
+
 .shadow
     opacity: 0.3
     pointer-events: none
@@ -62,11 +76,17 @@ export default {
     position: fixed
     top: 25%
     z-index: 5
-    width: 20%
-    margin-left: 40%
+    width: 25%
+    margin-left: 37%
     box-shadow: 0 0 0 1600px rgba(0,0,0,0.65)
     border-radius: 10px
     background: $bg2-color
+    &.medium
+        width: 40%
+        margin-left: 30%
+    &.small
+        width: 70%
+        margin-left: 15%
 
 .message
     font-family: OpenSans-Regular

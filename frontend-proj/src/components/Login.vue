@@ -3,22 +3,23 @@
         <div v-if="!$store.state.jwt" id="login" :class="$mq">
             <form action="javascript:void(0);" class="login_form" :class="$mq">
                 <h1 :class="$mq">{{action}}</h1>
-                <input class="fin" :class="$mq" type="text" id="username" placeholder="Username"><br>
+                <input class="fin" :class="$mq" type="text" id="username" autocorrect="off" spellcheck="false" placeholder="Username"><br>
                 <div v-if="action=='Sign up'">
-                    <input class="fin" :class="$mq" type="text" id="email" placeholder="Email"><br>
+                    <input class="fin" :class="$mq" type="text" id="email" autocorrect="off" spellcheck="false" placeholder="Email"><br>
                 </div>
-                <input class="fin" :class="$mq" type="password" id="password" placeholder="Password"><br>
+                <input class="fin" :class="$mq" type="password" id="password" autocorrect="off" spellcheck="false" placeholder="Password"><br>
                 <div v-if="action=='Sign up'">
-                    <input class="fin" :class="$mq" type="password" id="repeat-password" placeholder="Repeat password"><br>
+                    <input class="fin" :class="$mq" type="password" id="repeat-password" autocorrect="off" spellcheck="false" placeholder="Repeat password"><br>
                 </div>
                 <br v-if="!errMessage">
                 <div class="fsignup error" :class="$mq" v-if="errMessage">{{ errMessage }}</div>
-                <input v-if="action=='Sign in'" type="submit" value="Submit" class="fsubmit" :class="$mq" v-on:click="signin()">
+                <input v-if="action=='Sign in'" id="submit-button" type="submit" value="Submit" class="fsubmit" :class="$mq" v-on:click="signin()">
                 <vue-recaptcha v-else sitekey="6LcwcqwZAAAAAGHazabCBGXKndRustjOflfOFQSX" ref="recaptcha" @verify="onCaptchaVerified" @expired="onCaptchaExpired" size="invisible">
-                    <input :disabled="status==='submitting'" type="submit" value="Submit" class="fsubmit" :class="$mq" v-on:click="signUp()">
+                    <input :disabled="status==='submitting'" type="submit" value="Submit" id="submit-button" class="fsubmit" :class="$mq" v-on:click="signUp()">
                 </vue-recaptcha>
                 <br>
                 <div class="fsignup" :class="$mq" v-on:click="signupShow()">{{signupText}}</div>
+                <div class="loader" id="ls"></div>
                 <router-link class="p-reset" :class="$mq" :to="{ path: '/passwordReset/true' }">Forgot password?</router-link>
             </form>
             <div class="login-desc" :class="$mq">
@@ -80,17 +81,25 @@ import VueRecaptcha from 'vue-recaptcha'
 
             if(this.action == "Sign in"){
                 var loginApi = this.baseApi + 'auth/signin'
+                document.getElementById("ls").style.opacity = "1"
+                document.getElementById("submit-button").style.background = "#932a24"
                 this.axios.post(loginApi, {
                     username: document.getElementById("username").value, 
                     password: document.getElementById("password").value
                     },
                     {withCredentials: true})
-                    .then(response => {this.$store.commit('set', response.data); self.$router.push({ path: this.routerPath })})
+                    .then(response => {
+                        this.$store.commit('set', response.data)
+                        this.clearData()
+                        self.$router.push({ path: this.routerPath })
+                    })
                     .catch(error => {
                         this.errMessage = error.response.data.message
+                        document.getElementById("ls").style.opacity = "0"
+                        document.getElementById("submit-button").style.background = "#B8352D"
+                        this.clearData()
                         console.log(error)
                     })
-                this.clearData()
 
             } else {
                 var signupApi = this.baseApi + 'auth/signup'
@@ -115,10 +124,9 @@ import VueRecaptcha from 'vue-recaptcha'
                 }
 
                 if (this.validEmail(document.getElementById("email").value)){
-                    document.getElementById("modal-button").innerHTML = "..."
-                    document.getElementById("modal-button").style.pointerEvents = "none"
-                    document.getElementById("modal").style.display = "block"
-                    this.$store.commit('setMessage', "Please wait...")
+                    document.getElementById("ls").style.opacity = "1"
+                    document.getElementById("submit-button").style.background = "#932a24"
+
                     this.axios.post(signupApi, {
                         username: document.getElementById("username").value,
                         password: passwordValue,
@@ -128,16 +136,17 @@ import VueRecaptcha from 'vue-recaptcha'
                         withCredentials: true
                     })
                     .then(() => {
-                        //self.errMessage = "Created!"
+                        document.getElementById("ls").style.opacity = "0"
                         this.$store.commit('setMessage', "Created!")
-                        document.getElementById("modal-button").innerHTML = "OK"
-                        document.getElementById("modal-button").style.pointerEvents = "auto"
+                        document.getElementById("modal").style.display = "block"
                         self.signupShow()
                         self.clearData()
                     })
                     .catch(error => {
                         console.log(error)
                         self.errMessage = error.response.data.message
+                        document.getElementById("ls").style.opacity = "0"
+                        document.getElementById("submit-button").style.background = "#B8352D"
                         self.clearData()
                     })
                 } else{
@@ -193,8 +202,15 @@ import VueRecaptcha from 'vue-recaptcha'
 
 <style lang="sass">
 @import '../assets/saas-vars.sass'
+
+#ls
+    display: inline-block
+    opacity: 0
+    vertical-align: top
+    margin-top: 15px
+
 .login-desc
-    margin: 80px auto
+    margin: 65px auto
     text-align: justify
     width: calc(60% + 20px)
     &.medium
@@ -267,9 +283,11 @@ import VueRecaptcha from 'vue-recaptcha'
     border: 0
     background: #B8352D
     color: white
+    &:active
+        background: #B8352D
     &:focus
+        background: #B8352D
         outline: none
-        background: #a42e28
     &.medium
         width: calc(40% + 20px)
     &.small
@@ -281,23 +299,26 @@ import VueRecaptcha from 'vue-recaptcha'
     font-size: 14px
     text-align: left
     display: inline-block
-    width: calc(30% + 10px)
+    width: calc(30% - 7px)
     letter-spacing: 0px
     &.medium
-        width: calc(20% + 10px)
+        width: calc(20% - 7px)
     &.small
-        width: calc(35% + 10px)
+        width: calc(35% - 7px)
 
 .error
+    display: block
     padding-left: 5px
     color: #B8352D !important
     margin-bottom: 15px
-    text-align: left
+    margin-left: calc(20% - 10px)
     width: calc(60% + 20px)
     &.medium
-        width: calc(40% + 20px)
+        margin-left: calc(30% - 10px)
+        width: calc(40% + 10px)
     &.small
-        width: calc(70% + 20px)
+        margin-left: calc(15% - 10px)
+        width: calc(70% + 10px)
 
 .p-reset
     margin-top: 20px

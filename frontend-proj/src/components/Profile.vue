@@ -25,7 +25,7 @@
             <div class="timeline" v-for="(timeline, index) in selected" :key="index" v-bind:class="[{ shadow: !timeline.active}, $mq]" >
                 <router-link :to="{ path: '/timeline/' + timeline.id }" class="tl-router">
                     <div class="title">{{ timeline.descriptionTitle }}</div>
-                    <div class="descr">{{ timeline.description.replace(/ \[([^\]]+)\]\(([^\)]+)\)/g, '').substring(0, 150) }}...</div>
+                    <div class="descr" :class="$mq">{{ timeline.description.replace(/ \[([^\]]+)\]\(([^\)]+)\)/g, '').substring(0, 100) }}...</div>
                     <div class="image-container">
                         <img class="image" v-if="timeline.pictures.length > 0" :src="timeline.pictures[0]">
                         <img :class="$mq" v-else class="image" :src="require('../assets/images/default/Default' + (Math.floor(Math.random() * 10) + 1) + '.png')">
@@ -286,6 +286,9 @@
     width: 45%
     margin: 2%
     text-align: left
+    &.medium
+        width: 46%
+        margin: 1%
     &.small
         margin-left: 0
         margin-right: 0
@@ -350,7 +353,11 @@
     margin-left: 5%
     font-family: OpenSans-Regular
     margin-top: 10px
-    height: 66px
+    height: 55px
+    &.medium
+        height: 60px
+    &.small
+        height: 70px
 
 .image-container
     width: 90%
@@ -360,7 +367,11 @@
 .image
     border-radius: 5px
     width: 100%
-    height: 350px
+    height: 330px
+    &.medium
+        height: 270px
+    &.small
+        height: 250px
 
 .user
     text-align: left
@@ -382,8 +393,8 @@ h1
     margin-left: 15%
     padding-bottom: 500px
     &.medium
-        margin-left: 5%
-        width: 90%
+        margin-left: 3%
+        width: 94%
     &.small
         margin-left: 5%
         width: 90%

@@ -3,12 +3,13 @@
         <div id="login" :class="$mq">
             <form action="javascript:void(0);" class="login_form" :class="$mq">
                 <h1 :class="$mq">Change password</h1>
-                <input class="fin" :class="$mq" type="password" id="old-password" placeholder="Old password"><br>
-                <input class="fin" :class="$mq" type="password" id="password" placeholder="New password"><br>
-                <input class="fin" :class="$mq" type="password" id="repeat-password" placeholder="Repeat password"><br>
+                <input class="fin" :class="$mq" type="password" autocorrect="off" spellcheck="false" id="old-password" placeholder="Old password"><br>
+                <input class="fin" :class="$mq" type="password" autocorrect="off" spellcheck="false" id="password" placeholder="New password"><br>
+                <input class="fin" :class="$mq" type="password" autocorrect="off" spellcheck="false" id="repeat-password" placeholder="Repeat password"><br>
                 <br v-if="!errMessage">
                 <div class="fsignup error" :class="$mq" v-if="errMessage">{{ errMessage }}</div>
-                <input type="submit" :class="$mq" value="Submit" class="fsubmit" v-on:click="changePassword()">
+                <input type="submit" :class="$mq" value="Submit" class="fsubmit" id="submit-button" v-on:click="changePassword()">
+                <div class="loader" id="ls"></div>
             </form>
             <div class="login-desc" :class="$mq">
                 <h1>About</h1>
@@ -38,6 +39,8 @@
 
             if(document.getElementById("password").value == document.getElementById("repeat-password").value){
                 if (document.getElementById("password").value.length > 6 && document.getElementById("password").value.length < 40){
+                    document.getElementById("ls").style.opacity = "1"
+                    document.getElementById("submit-button").style.background = "#932a24"
                     this.axios.put(passwordApi, {
                         oldPassword: document.getElementById("old-password").value,
                         newPassword: document.getElementById("password").value
@@ -52,6 +55,8 @@
                         self.$router.push({ name: 'settings' })
                     })
                     .catch(error => {
+                        document.getElementById("ls").style.opacity = "0"
+                        document.getElementById("submit-button").style.background = "#B8352D"
                         if (error.toString().includes("401")){
                             this.errMessage = "Wrong old password!"
 
@@ -89,5 +94,13 @@
 </script>
 
 <style scoped lang="sass">
+
+#ls
+    display: block
+    margin-left: calc(20% - 10px)
+    &.medium
+        margin-left: calc(30% - 10px)
+    &.small
+        margin-left: calc(15% - 10px)
 
 </style>

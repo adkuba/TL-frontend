@@ -3,10 +3,11 @@
         <div id="login" :class="$mq">
             <form action="javascript:void(0);" class="login_form" :class="$mq">
                 <h1 :class="$mq">Change name</h1>
-                <input class="fin" :class="$mq" type="text" id="name" placeholder="New name">
+                <input class="fin" :class="$mq" type="text" id="name" autocorrect="off" spellcheck="false" placeholder="New name">
                 <br v-if="!errMessage">
                 <div class="fsignup error" :class="$mq" v-if="errMessage">{{ errMessage }}</div>
-                <input type="submit" :class="$mq" value="Submit" class="fsubmit" v-on:click="changeName()">
+                <input type="submit" :class="$mq" value="Submit" id="submit-button" class="fsubmit" v-on:click="changeName()">
+                <div class="loader" id="ls"></div>
             </form>
             <div class="login-desc" :class="$mq">
                 <h1>About</h1>
@@ -33,6 +34,8 @@
         changeName(){
             let self = this
             var nameApi = this.baseApi + 'users/name'
+            document.getElementById("ls").style.opacity = "1"
+            document.getElementById("submit-button").style.background = "#932a24"
 
             this.axios.put(nameApi, null, {
                 headers: {
@@ -47,6 +50,8 @@
                 self.$router.push({ name: 'settings' })
             })
             .catch(error => {
+                document.getElementById("ls").style.opacity = "0"
+                document.getElementById("submit-button").style.background = "#B8352D"
                 console.log(error)
                 this.errMessage = error
             })
@@ -64,5 +69,13 @@
 </script>
 
 <style scoped lang="sass">
+
+#ls
+    display: block
+    margin-left: calc(20% - 10px)
+    &.medium
+        margin-left: calc(30% - 10px)
+    &.small
+        margin-left: calc(15% - 10px)
 
 </style>

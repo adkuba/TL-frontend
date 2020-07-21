@@ -2,28 +2,28 @@
     <div class="admin">
         <div v-if="$store.state.jwt.user.roles.includes('ROLE_ADMIN')">
             JESTES ADMINEM
-            <div class="stats">
+            <div class="stats" :class="$mq">
                 <h1>Stats</h1>
                 <p class="download" v-on:click="download(allStats, 'stats.csv')">Download</p>
-                <div v-for="(stat, idx) in allStats" :key="idx">
+                <div class="data" v-for="(stat, idx) in allStats" :key="idx">
                     Day: {{ stat.day }} mainPageViews: {{ stat.mainPageViews }} newUsers: {{ stat.numberOfUsers }} totalTimelinesViews: {{ stat.totalTimelinesViews }} activeUsers(updates next day): {{ stat.activeUsers }}
                 </div>
                 <LineChart v-if="allStatObject" :chartdata="allStatObject" :options="viewsOptions" class="stat-chart"/>
             </div>
-            <div class="timelines">
+            <div class="timelines" :class="$mq">
                 <h1>Timelines</h1>
                 <p class="download" v-on:click="download(allTimelines, 'timelines.csv')">Download</p>
-                <div v-for="(timeline, idx) in allTimelines" :key="idx">
+                <div class="data" v-for="(timeline, idx) in allTimelines" :key="idx">
                     <router-link :to="{ path: 'timeline/' + timeline.id }" class="router">
                         Title: {{ timeline.id }} Views: {{ timeline.views }} Likes: {{ timeline.likes.length }} Trending: {{ timeline.trendingViews }} User: {{ timeline.user.email }} Reports: {{ timeline.numberOfReports }}
                     </router-link>
                     <div v-on:click="deleteTimeline(timeline)" class="del">DELETE</div>
                 </div>
             </div>
-            <div class="users">
+            <div class="users" :class="$mq">
                 <h1>Users</h1>
                 <p class="download" v-on:click="download(allUsers, 'users.csv')">Download</p>
-                <div v-bind:class="{blocked: user.blocked}" v-for="(user, idx) in allUsers" :key="idx">
+                <div class="data" v-bind:class="{blocked: user.blocked}" v-for="(user, idx) in allUsers" :key="idx">
                     <router-link :to="{ path: 'profile/' + user.username }" class="router">
                         Username: {{ user.username }} Email: {{ user.email }} Creation: {{ user.creationTime }} Followers: {{ user.followers.filter(e => e.userId != null).length }}
                     </router-link>
@@ -32,10 +32,10 @@
                     <div class="del" v-on:click="unBlockUser(user)" v-if="user.blocked">UNBLOCK</div>
                 </div>
             </div>
-            <div class="timelines">
+            <div class="timelines" :class="$mq">
                 <h1>Reported timelines</h1>
                 <p class="download" v-on:click="download(reportedTimelines, 'reported-timelines.csv')">Download</p>
-                <div v-for="(timeline, idx) in reportedTimelines" :key="idx">
+                <div class="data" v-for="(timeline, idx) in reportedTimelines" :key="idx">
                     <router-link :to="{ path: 'timeline/' + timeline.id }" class="router">
                         Title: {{ timeline.id }} Views: {{ timeline.views }} Likes: {{ timeline.likes.length }} Trending: {{ timeline.trendingViews }} User: {{ timeline.user.email }} Reports: {{ timeline.numberOfReports }}
                     </router-link>
@@ -43,15 +43,15 @@
                     <div v-on:click="unReportTimeline(timeline)" class="del">UNREPORT</div>
                 </div>
             </div>
-            <div class="devices">
+            <div class="devices" :class="$mq">
                 <h1>Devices</h1>
                 <p>No duplicates - there can be multiple views by the same device.</p>
                 <p class="download" v-on:click="download(allDevices, 'devices.csv')">Download</p>
-                <div v-for="(device, idx) in allDevices" :key="idx">
+                <div class="data" v-for="(device, idx) in allDevices" :key="idx">
                      Device details: {{ device.deviceDetails }} Location: {{ device.location }} Username: {{ device.username }} LastLogin: {{ device.lastLogged }}
                 </div>
-                <BarChart v-if="locationStat" :chartdata="locationStat" :options="viewsOptions" class="stat-chart"/>
-                <BarChart v-if="devicesInfoChart" :chartdata="devicesInfoChart" :options="viewsOptions" class="stat-chart"/>
+                <BarChart v-if="locationStat" :chartdata="locationStat" :options="viewsOptions" class="stat-chart" :class="$mq"/>
+                <BarChart v-if="devicesInfoChart" :chartdata="devicesInfoChart" :options="viewsOptions" class="stat-chart" :class="$mq"/>
             </div>
         </div>
         <div v-else>
@@ -431,6 +431,10 @@ import BarChart from './BarChart.vue'
 </script>
 
 <style scoped lang="sass">
+
+.data
+    margin-bottom: 20px
+
 .stat-chart
     margin-top: 50px
     margin-bottom: 80px
@@ -450,24 +454,29 @@ import BarChart from './BarChart.vue'
     width: 80%
     text-align: left
     margin: 50px auto
+    &.small
+        width: 95%
 
 .devices
     width: 80%
     text-align: left
     margin: 50px auto
-
-.reviews
-    margin-left: 30px
+    &.small
+        width: 95%
 
 .timelines
     width: 80%
     text-align: left
     margin: 50px auto
+    &.small
+        width: 95%
 
 .users
     width: 80%
     text-align: left
     margin: 50px auto
+    &.small
+        width: 95%
 
 .admin
     font-family: OpenSans-Regular
