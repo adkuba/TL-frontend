@@ -101,7 +101,7 @@
     },
     data () {
       return {
-          baseApi: 'http://localhost:8081/api/',
+          baseApi: 'https://tline-283413.ew.r.appspot.com/api/',
           timelinesNumber: null,
       }
     },
@@ -114,7 +114,7 @@
             this.$router.push({ path: '/home' })
         },
         cancel(){
-            document.getElementById("ls").style.display = "inline-block"
+            document.getElementById("ls").style.opacity = "1"
             this.axios.post(this.baseApi + 'users/cancel-subscription', null, {
                 headers: {
                     'Authorization': 'Bearer ' + this.$store.state.jwt.token
@@ -126,6 +126,7 @@
                 this.$store.commit('set', jwt)
                 this.$store.commit('setMessage', "Sucess!")
                 document.getElementById("modal").style.display = "block"
+                document.getElementById("ls").style.opacity = "0"
             })
             .catch(error => {
                 console.log(error)
@@ -141,8 +142,8 @@
 @import '../assets/saas-vars.sass'
 
 #ls
-    display: none
-    vertical-align: top
+    display: inline-block
+    vertical-align: bottom
     margin-left: 20px
 
 .data-settings

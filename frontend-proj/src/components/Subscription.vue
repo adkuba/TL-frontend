@@ -76,7 +76,7 @@
             cardElement: null,
             cardCvc: null,
             cardExpiry: null,
-            baseApi: 'http://localhost:8081/api/',
+            baseApi: 'https://tline-283413.ew.r.appspot.com/api/',
         }
     },
     methods: {
@@ -90,7 +90,7 @@
         },
         createPaymentMethod(priceId) {
             document.getElementById("submit-button").style.background = "#932a24"
-            document.getElementById("ls").style.display = "block"
+            document.getElementById("ls").style.opacity = "1"
             return stripe
                 .createPaymentMethod({
                     type: 'card',
@@ -133,6 +133,8 @@
             })
             .catch(error =>{
                 this.$store.commit('setMessage', error.message)
+                document.getElementById("ls").style.opacity = "0"
+                document.getElementById("submit-button").style.background = "#B8352D"
                 document.getElementById("modal").style.display = "block"
             })
         },
@@ -146,6 +148,8 @@
                 jwt.user.subscriptionEnd = today.getFullYear() + '-' + (today.getMonth()+1) + '-' + today.getDate()
                 this.$store.commit('set', jwt)
                 document.getElementById("modal").style.display = "block"
+                document.getElementById("ls").style.opacity = "0"
+                document.getElementById("submit-button").style.background = "#B8352D"
                 return { subscription, priceId, paymentMethodId };
             }
 
@@ -184,6 +188,8 @@
             else if (paymentIntent.status === 'requires_payment_method'){
                 this.$store.commit('setMessage', "Your card was rejected! Try again.")
                 document.getElementById("modal").style.display = "block"
+                document.getElementById("ls").style.opacity = "0"
+                document.getElementById("submit-button").style.background = "#B8352D"
                 this.cancelSubscription()
                 window.location.reload()
                 return "rejected"
@@ -213,7 +219,7 @@
 @import '../assets/saas-vars.sass'
 
 #ls
-    display: none
+    display: block
     margin-top: 20px
 
 #subscription

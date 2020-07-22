@@ -154,14 +154,14 @@ export default {
     },
     data() {
         return {
-        baseApi: 'http://localhost:8081/api/',
+        baseApi: 'https://tline-283413.ew.r.appspot.com/api/',
         open: false,
         timeline: null,
         events: null,
         newPos: null,
         galleryScrolling: false,
         sub: false,
-        circleColors: ['#B8352D', '#ff9b54', '#4a7c59', '#247ba0'],
+        circleColors: ['#B8352D', '#dd5c00', '#4a7c59', '#14426b'],
         mainColor: '#B8352D',
 
         mainImages: null,
@@ -518,84 +518,81 @@ export default {
 
 .left
     position: absolute
-    left: 20px
+    left: 35%
     &.medium
-        left: 10px
+        left: 25%
     &.small
-        left: 5px
+        left: 5%
 
 .vm-item
     padding: 0 15px
-    margin-top: 5px
+    margin-top: 4px
     border-radius: 5px
     font-size: 17px
     position: absolute
-    right: 15px
+    cursor: pointer
+    right: 35%
     &.medium
-        right: 10px
+        right: 25%
     &.small
-        right: 5px
-    &:focus
-        background: #3a3a3a
-    &:hover
-        background: #3a3a3a
+        right: 5%
 
 .center
-    color: #cccccc
+    color: #303030
     position: absolute
     left: 50%
     top: 5px
     transform: translateX(-50%)
 
 .arrow
+    cursor: pointer
     font-size: 20px
-    border-radius: 5px
     margin-top: 2px
     padding: 0 20px
-    margin-right: 30px
+    margin-right: 10px
     display: inline-block
     &.small
         margin-right: 5px
-    &:focus
-        background: #3a3a3a
-    &:hover
-        background: #3a3a3a
 
 .viewer-menu
-    color: white
+    color: #303030
     font-size: 15px
     font-family: OpenSans-Regular
-    width: 100%
+    width: 30%
+    margin-left: 35%
+    border-radius: 10px
     height: 35px
-    border-top-left-radius: 5px
-    border-top-right-radius: 5px
-    background: #262626
+    margin-bottom: 15px
+    background: #c3c3c3
+    &.medium
+        width: 50%
+        margin-left: 25%
+    &.small
+        width: 90%
+        margin-left: 5%
 
 #main-image
-    border-bottom-left-radius: 5px
-    border-bottom-right-radius: 5px
     width: 100%
     max-height: calc( 100vh - 150px )
     object-fit: contain
-    background: #262626
 
 #image-viewer
-    top: 80px
+    top: 40px
     user-select: none
     position: fixed
-    z-index: 4
-    width: 70%
+    z-index: 5
+    width: 80%
     height: 0
-    left: 15%
-    box-shadow: 0px 0px 0px 1600px rgba(0,0,0,0.65)
+    left: 10%
+    box-shadow: 0px 0px 0px 1600px rgba(0,0,0,0.8)
     border-radius: 5px
     display: none
     &.small
         width: 100%
         left: 0
     &.medium
-        width: 80%
-        left: 10%
+        width: 90%
+        left: 5%
 
 .image-container
     display: inline-block
@@ -631,7 +628,7 @@ div#sub_timeline::-webkit-scrollbar
     display: none
 
 .sub_fade
-    z-index: 2
+    z-index: 4
     position: absolute
     width: 30px
     height: 60px

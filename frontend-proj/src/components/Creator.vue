@@ -19,7 +19,7 @@
                     <h1>Creator</h1>
                     <div class="errorID">{{ errorMessage }}</div>
                     <input class="ttitle tlid" :class="$mq" type="text" id="timelineId" placeholder="ID" maxlength="40" required pattern="[^/]*" title="Don't use /" :value="timeline.id">
-                    <div class="opis">Create your timeline. <br> If you want to add links, type: <div class="desc-link">[Title](link)</div> for example <div class="desc-link">[Tline](www.tline.site)</div><br> See in preview how it looks.</div>
+                    <div class="opis">Create your timeline. See in preview how it looks.<br> If you want to add links, type: <div class="desc-link">[Tline](www.tline.site)</div> </div>
 
                     <div id="mainData">
                         <input class="ttitle main-tl" :class="$mq" type="text" id="mainTitle" required maxlength="60" placeholder="Title" :value="timeline.descriptionTitle">
@@ -117,7 +117,7 @@
           currentPictures: [],
           deletedPictures: [],
 
-          baseApi: 'http://localhost:8081/api/',
+          baseApi: 'https://tline-283413.ew.r.appspot.com/api/',
           }
     },
     updated() {

@@ -23,7 +23,8 @@
                         <div class="special-desc">by @{{ timeline.user.username }} &middot; {{ timeline.likes.length }} likes </div>
                     </router-link>
                 </div>
-                <router-link :to="{ name: 'about' }" class="special-about">About</router-link>
+                <router-link :to="{ path: '/about' }" class="special-about">About</router-link>
+                <router-link :to="{ path: '/business' }" class="special-about-next">Business</router-link>
             </div>
             <div v-for="(timeline, idx) in $store.state.timelines" :key="idx">
                 <div v-if="timeline.data == null" class="element" v-bind:class="[timeline.category == 'PREMIUM' ? 'premium': '', $mq]">
@@ -62,6 +63,7 @@
                             </router-link>
                         </div>
                         <router-link :to="{ name: 'about' }" class="special-about" :class="$mq">About</router-link>
+                        <router-link :to="{ path: '/business' }" class="special-about-next">Business</router-link>
                     </div>
                 </div>
             </div>
@@ -106,7 +108,7 @@ export default {
     },
     data() {
         return {
-            baseApi: 'http://localhost:8081/api/',
+            baseApi: 'https://tline-283413.ew.r.appspot.com/api/',
             searchResults: [ ],
             details: null,
             counter: 0,
@@ -282,13 +284,21 @@ export default {
         margin-left: 0
         margin-bottom: 20px
 
+.special-about-next
+    font-family: OpenSans-Regular
+    color: #14426B
+    text-decoration: none
+    margin-left: 20px
+    font-size: 14px
+
 .special-about
     color: #14426B
     text-decoration: none
     margin-top: 80px
-    display: block
+    display: inline-block
     margin-left: 8%
     font-family: OpenSans-Regular
+    font-size: 14px
     &.small
         margin-top: 40px
         margin-left: 5%

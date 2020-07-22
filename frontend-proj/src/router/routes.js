@@ -14,6 +14,7 @@ import Review from '../components/Review.vue'
 import About from '../components/About.vue'
 import PasswordReset from '../components/PasswordReset.vue'
 import Statistics from '../components/Statistics.vue'
+import Business from '../components/Business.vue'
 
 // the routes are simply an array of objects
 const routes = [
@@ -131,6 +132,11 @@ const routes = [
         meta: {
             requiresAuth: true
           }
+    },
+    {
+        path: '/business',
+        name: 'business',
+        component: Business
     },
 ];
 

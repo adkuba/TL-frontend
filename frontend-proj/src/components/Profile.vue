@@ -82,7 +82,7 @@
     },
     data () {
       return {
-          baseApi: 'http://localhost:8081/api/',
+          baseApi: 'https://tline-283413.ew.r.appspot.com/api/',
           timelines: null,
           user: null,
           likes: [],

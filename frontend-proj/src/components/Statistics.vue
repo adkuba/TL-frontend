@@ -93,7 +93,7 @@ import BarChart from './BarChart'
     },
     data () {
       return {
-            baseApi: 'http://localhost:8081/api/',
+            baseApi: 'https://tline-283413.ew.r.appspot.com/api/',
             user: null,
             timelines: [],
             chart: 1,

@@ -31,7 +31,7 @@ import Creator from './Creator.vue'
     },
     data () {
       return {
-          baseApi: 'http://localhost:8081/api/',
+          baseApi: 'https://tline-283413.ew.r.appspot.com/api/',
           timeline: null,
           events: null,
           subEvents: null,
