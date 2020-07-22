@@ -373,7 +373,7 @@ h1
     outline: none
     border: none
     color: white
-    width: 80%
+    width: 70%
     height: 36px
     border-radius: 10px
     font-size: 17px
@@ -479,7 +479,7 @@ input::-webkit-search-cancel-button
     &.medium
         height: 62px
     &.small
-        height: 83px
+        height: 90px
         margin-left: 5%
         width: 90%
 

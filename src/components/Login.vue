@@ -272,6 +272,7 @@ import VueRecaptcha from 'vue-recaptcha'
         width: 70%
 
 .fsubmit
+    -webkit-appearance: none
     cursor: pointer
     border-radius: 3px
     text-align: center
