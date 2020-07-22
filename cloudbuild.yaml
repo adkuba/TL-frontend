@@ -4,7 +4,7 @@ steps:
   args: ["install"]
 - name: node:10.15.1
   entrypoint: npm
-  args: ["install --save vue-mq vue-router"]
+  args: ["install", "--save", "vue-mq", "vue-router"]
 - name: node:10.15.1
   entrypoint: npm
   args: ["run", "build"]
