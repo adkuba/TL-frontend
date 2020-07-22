@@ -114,7 +114,8 @@ html
     font-family: 'OpenSans-Regular'
     src: url('./assets/fonts/OpenSans/OpenSans-Regular.ttf')
 
-#app 
+#app
+    -webkit-appearance: none
     -webkit-font-smoothing: antialiased
     -moz-osx-font-smoothing: grayscale
     text-align: center
