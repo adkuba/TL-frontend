@@ -430,12 +430,12 @@ h1
     outline: none
     border: none
     color: white
-    width: 86%
+    width: 88%
     height: 36px
     border-radius: 10px
     font-size: 17px
     &.small
-        width: 83%
+        width: 80%
 
 .search-b
     display: inline-block
@@ -459,7 +459,8 @@ input::-webkit-search-cancel-button
     font-family: OpenSans-Regular
     position: fixed
     z-index: 4
-    top: 11px
+    top: 0
+    padding-top: 10px
     left: 30%
     &.medium
         width: 50%
