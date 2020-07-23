@@ -66,6 +66,7 @@
     margin-top: 180px
 
 .image
+    image-rendering: crisp-edges
     margin-top: 20px
     width: 100%
     border-radius: 10px

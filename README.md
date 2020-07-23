@@ -27,7 +27,11 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 ```
 npm install --dev vue-template-compiler
 ```
-Musze to instalowac manulanie lub dodac do package.json
+Musze to instalowac manulanie lub dodac do package.json <br>
+Jak sie nie chce przeladowac po zapisie to wazne jest w konsoli
+```
+export NODE_ENV=development
+```
 
 
 ### Co to jest?

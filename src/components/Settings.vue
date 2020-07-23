@@ -85,7 +85,7 @@
   export default  {
     name: 'Settings',
     created() {
-        window.scrollTo({ top: 0, behavior: 'smooth' })
+        window.scroll({ top: 0})
         this.axios.get(this.baseApi + 'users/check-subscription', {
             headers: {
                     'Authorization': 'Bearer ' + this.$store.state.jwt.token
@@ -166,7 +166,7 @@
     width: 33%
     letter-spacing: 1px
     &.small
-        
+        font-size: 27px
     
 .controler
     user-select: none

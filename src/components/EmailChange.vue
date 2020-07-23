@@ -23,7 +23,7 @@
   export default  {
     name: 'EmailChange',
     created() {
-        window.scrollTo({ top: 0, behavior: 'smooth' })
+        window.scroll({ top: 0})
     },
     data () {
       return {

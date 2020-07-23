@@ -1,5 +1,8 @@
 <template lang="html">
-    <Creator v-bind:editTimeline="readyTimeline" v-bind:editEvents="readyEvents"></Creator>
+    <div>
+        <div id="loader"></div>
+        <Creator v-bind:editTimeline="readyTimeline" v-bind:editEvents="readyEvents"></Creator>
+    </div>
 </template>
 
 <script lang="js">
@@ -10,7 +13,8 @@ import Creator from './Creator.vue'
     components: {
         Creator
     },
-    created() {
+    mounted() {
+        document.getElementById("loader").style.display = "block"
         var timelineApi = this.baseApi + 'timelines/editor?id=' + this.$route.params.id
         this.axios.get(timelineApi, {
             headers: {
@@ -83,6 +87,7 @@ import Creator from './Creator.vue'
                     this.events[i].sub = this.subEvents[i]
                 }
                 this.readyEvents = JSON.parse(JSON.stringify(this.events))
+                document.getElementById("loader").style.display = "none"
             }
         }
     }
@@ -92,5 +97,15 @@ import Creator from './Creator.vue'
 </script>
 
 <style scoped lang="sass">
+
+#loader
+    position: fixed
+    background: rgba(0, 0, 0, 0.5)
+    width: 100%
+    top: 0
+    height: 100%
+    display: none
+    z-index: 2
+    animation: pulse 1.5s linear infinite
 
 </style>

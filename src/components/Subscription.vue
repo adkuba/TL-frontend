@@ -1,7 +1,7 @@
 <template lang="html">
     <div id="subscription" :class="$mq">
         <h1 :class="$mq">Subscription</h1>
-        <p :class="$mq">Unlock premium plan, submit your details.</p>
+        <p :class="$mq">Unlock premium plan only 3$ monthly, submit your details.</p>
         <form id="subscription-form" action="javascript:void(0);" :class="$mq">
             <input autocorrect="off" spellcheck="false" type="text" placeholder="Your name" id="name" class="fin">
             <div id="card-element" class="MyCardElement">
@@ -27,7 +27,7 @@
     export default  {
     name: 'Subscription',
     created() {
-        window.scrollTo({ top: 0, behavior: 'smooth' })
+        window.scroll({ top: 0})
     },
     mounted() {
         var elements = stripe.elements({

@@ -75,7 +75,7 @@ import BarChart from './BarChart'
         BarChart
     },
     created() {
-        window.scrollTo({ top: 0, behavior: 'smooth' })
+        window.scroll({ top: 0})
         if (this.$store.state.jwt.user.username != this.$route.params.id){
             this.$router.push({ name: "home" })
         }

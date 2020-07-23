@@ -20,7 +20,7 @@
   export default  {
     name: 'Review',
     created() {
-        window.scrollTo({ top: 0, behavior: 'smooth' })
+        window.scroll({ top: 0})
     },
     data () {
       return {

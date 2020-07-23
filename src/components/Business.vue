@@ -27,6 +27,7 @@
 <style scoped lang="sass">
 
 .image
+    image-rendering: crisp-edges
     margin-top: 70px
     width: 100%
     border-radius: 10px

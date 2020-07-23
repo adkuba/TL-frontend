@@ -19,7 +19,6 @@
                 <div class="moreG" :class="$mq" v-on:click="openMore()">&#9866;</div>
                 <div id="more" :class="$mq" v-on:click="report(timeline)">Report</div>
             </div>
-            <div id="text_fade_top" class="text_fade trans"></div>
 
             <div id="evt_container" :class="$mq">
                 <div id="evt_desc" class="fade evt_trans">
@@ -83,8 +82,6 @@
             </div>
             <div id="l_line" class="line trans" :class="$mq"></div>
 
-
-            <div id="text_fade_bottom" class="text_fade trans"></div>
         </div>
 
 
@@ -105,21 +102,26 @@
         <div class="like" :class="$mq">
             <div v-if="$store.state.jwt">
                 <div v-if="$store.state.jwt.user.likes.includes(timeline.id)">
-                    <div v-if="timeline.likes != null" style="display: inline-block; cursor: pointer; user-select: none" v-on:click="dislikeTimeline()">Dislike &middot; {{ timeline.likes.length }} &middot; views {{ timeline.views }}</div>
+                    <div v-if="timeline.likes != null" class="like-action" v-on:click="dislikeTimeline()" :class="$mq">Dislike &middot; {{ timeline.likes.length }} &middot; views {{ timeline.views }}</div>
                     <div class="trending" :class="$mq">{{ timeline.creationDate }} &middot; &#8593;{{ timeline.trendingViews }}</div>
                     <div v-if="timeline.user" class="email" :class="$mq">{{ timeline.user.email }}</div>
                 </div>
                 <div v-else>
-                    <div v-if="timeline.likes != null" style="display: inline-block; cursor: pointer; user-select: none" v-on:click="likeTimeline()">Like &middot; {{ timeline.likes.length }} &middot; views {{ timeline.views }}</div> 
+                    <div v-if="timeline.likes != null" class="like-action" v-on:click="likeTimeline()" :class="$mq">Like &middot; {{ timeline.likes.length }} &middot; views {{ timeline.views }}</div> 
                     <div class="trending" :class="$mq">{{ timeline.creationDate }} &middot; &#8593;{{ timeline.trendingViews }}</div>
                     <div v-if="timeline.user" class="email" :class="$mq">{{ timeline.user.email }}</div>
                 </div>
             </div>
             <div v-else>
-                <router-link v-if="timeline.likes != null" style="display: inline-block; cursor: pointer; user-select: none" class="login-like" :to="{ name: 'login', params: {path: {path: '/timeline/' + timeline.id}}}">Login to like &middot; {{ timeline.likes.length }} &middot; views {{ timeline.views }}</router-link>
+                <router-link v-if="timeline.likes != null" class="login-like like-action" :to="{ name: 'login', params: {path: {path: '/timeline/' + timeline.id}}}" :class="$mq">Login to like &middot; {{ timeline.likes.length }} &middot; views {{ timeline.views }}</router-link>
                 <div class="trending" :class="$mq">{{ timeline.creationDate }} &middot; &#8593;{{ timeline.trendingViews }}</div>
                 <div v-if="timeline.user" class="email" :class="$mq">{{ timeline.user.email }}</div>
             </div>
+        </div>
+    </div>
+    <div v-else>
+        <div class="empty-element" :class="$mq">
+            <div class="empty-loading" :class="$mq"></div>
         </div>
     </div>
 </template>
@@ -161,7 +163,7 @@ export default {
         newPos: null,
         galleryScrolling: false,
         sub: false,
-        circleColors: ['#B8352D', '#dd5c00', '#4a7c59', '#14426b'],
+        circleColors: ['#B8352D', '#14426b'],
         mainColor: '#B8352D',
 
         mainImages: null,
@@ -401,8 +403,6 @@ export default {
                 document.getElementsByClassName("evt_date").forEach(function moveDates(date){date.classList.add("fade");});
                 document.getElementsByClassName("evt_text").forEach(function moveTexts(text){text.classList.add("fade");});
                 
-                document.getElementById("text_fade_top").classList.add("fade");
-                document.getElementById("text_fade_bottom").classList.add("fade");
                 document.getElementById("evt_desc").classList.remove("fade");
                 this.open = !this.open;
                 this.openedEvent = index;
@@ -427,8 +427,6 @@ export default {
                 document.getElementsByClassName("evt_text").forEach(function centerTexts(text){text.classList.remove("fade");});
                 document.getElementsByClassName("evt_text").forEach(function centerTexts(text){text.classList.remove("fade");});
                 
-                document.getElementById("text_fade_top").classList.remove("fade");
-                document.getElementById("text_fade_bottom").classList.remove("fade");
                 document.getElementById("evt_desc").classList.add("fade");
 
                 this.open = !this.open;
@@ -463,6 +461,48 @@ export default {
 
 <style scoped lang="sass">
 @import '../assets/saas-vars.sass'
+
+.like-action
+    display: inline-block
+    cursor: pointer
+    user-select: none
+    &.small
+        text-align: left
+        margin-left: 5%
+        margin-bottom: 10px
+        display: block
+
+.empty-element
+    margin-top: 120px
+    box-shadow: 0px 2px 15px 4px rgba(0,0,0,0.09)
+    border-radius: 20px
+    position: relative
+    overflow: hidden
+    width: 80%
+    margin-left: 10%
+    background: $bg-color
+    &.medium
+        width: 100%
+        margin-left: 0
+    &.small
+        width: 100%
+        margin-left: 0
+
+.empty-loading
+    display: block
+    margin-left: -400px
+    height: 1000px
+    width: 400px
+    background: linear-gradient(to right, transparent 0%, #eeeeee 50%, transparent 100%)
+    animation: loading 1.5s cubic-bezier(0.4, 0.0, 0.2, 1)
+    animation-iteration-count: infinite
+
+@keyframes loading
+    0%
+        margin-left: -400px
+    100%
+        margin-left: 100%
+
 #more
     position: absolute
     top: 160px
@@ -491,7 +531,9 @@ export default {
     margin-left: 85px
     color: #7e7e7e
     &.small
-        margin-left: 40px
+        display: block
+        text-align: left
+        margin-left: 5%
 
 .email
     display: inline-block
@@ -502,13 +544,17 @@ export default {
         cursor: default
     &.small
         display: block
-        margin: 15px 0
+        margin-left: 5%
+        margin-top: 10px
+        text-align: left
 
 .login-like
     text-decoration: none
     color: #14426B
     
 .like
+    animation-timing-function: ease-in
+    animation: fadein 1s
     color: #14426B
     font-family: RaleWay-Regular
     margin-top: 20px
@@ -768,6 +814,8 @@ div#sub_timeline::-webkit-scrollbar
 
 
 .user_d
+    animation-timing-function: ease-in
+    animation: fadein 1s
     user-select: none
     text-decoration: none
     z-index: 4
@@ -901,6 +949,8 @@ div#sub_timeline::-webkit-scrollbar
     background: linear-gradient(0deg, rgba(48,48,48,0) 0%, rgba(48,48,48,1) 100%)
 
 #timeline
+    animation-timing-function: ease-in
+    animation: fadein 1s
     box-shadow: 0px 2px 15px 4px rgba(0,0,0,0.09)
     border-radius: 30px
     background: $bg-color
@@ -921,10 +971,12 @@ div#sub_timeline::-webkit-scrollbar
         padding-bottom: 570px
 
 #descr
+    animation-timing-function: ease-in
+    animation: fadein 1s
     white-space: pre-line
-    height: 200px
     margin: 0 20%
     margin-top: 100px
+    margin-bottom: 50px
     text-align: left
     font-family: 'Raleway-Regular'
     h1
@@ -933,7 +985,6 @@ div#sub_timeline::-webkit-scrollbar
         text-align: justify
     &.small
         margin: 60px 10%
-        height: 500px
     &.medium
         margin: 50px 15%
 

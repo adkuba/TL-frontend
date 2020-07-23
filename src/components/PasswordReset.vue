@@ -29,7 +29,7 @@
         if (this.$route.params.id != 'true'){
             this.firstStage = false
         }
-        window.scrollTo({ top: 0, behavior: 'smooth' })
+        window.scroll({ top: 0})
     },
     data () {
       return {

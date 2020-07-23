@@ -1,7 +1,7 @@
 <template>
 <div>
     <form action="javascript:void(0);" class="search" :class="$mq">
-        <input autocorrect="off" spellcheck="false" placeholder="Search" type="search" class="search-input" onfocus="window.scrollTo({ top: 0, behavior: 'smooth' })" id="search-input">
+        <input autocorrect="off" spellcheck="false" placeholder="Search" type="search" class="search-input" onfocus="window.scroll({ top: 0})" id="search-input" :class="$mq">
         <button type="submit" v-on:click="search()" class="search-b" :class="$mq">&#9906;</button>
     </form>
     <div id="homepage" :class="$mq">
@@ -26,45 +26,57 @@
                 <router-link :to="{ path: '/about' }" class="special-about">About</router-link>
                 <router-link :to="{ path: '/business' }" class="special-about-next">Business</router-link>
             </div>
-            <div v-for="(timeline, idx) in $store.state.timelines" :key="idx">
-                <div v-if="timeline.data == null" class="element" v-bind:class="[timeline.category == 'PREMIUM' ? 'premium': '', $mq]">
-                    <div class="more" :class="$mq" v-on:click="openMore(idx)">&#9866;</div>
-                    <div class="moreOpened" :class="$mq" :id="'more-' + idx" v-on:click="report(timeline, idx)">Report</div>
-                    <div class="category" :class="$mq">{{ timeline.category }}</div>
-                    <router-link :to="{ path: 'timeline/' + timeline.id }" class="title" :class="$mq" @click.native="premium(timeline)">{{ timeline.descriptionTitle }}</router-link>
-                    <router-link :to="{ path: 'timeline/' + timeline.id }" class="desc" :class="$mq" @click.native="premium(timeline)">
-                        {{ timeline.description.replace(/ \[([^\]]+)\]\(([^\)]+)\)/g, '').substring(0, 200) }}...
-                    </router-link>
-                    <router-link :to="{ path: 'timeline/' + timeline.id }" class="image_container" :class="$mq" @click.native="premium(timeline)">
-                        <img :class="$mq" v-if="timeline.pictures.length > 0" class="image" :src="timeline.pictures[0]">
-                        <img :class="$mq" v-else class="image" :src="require('../assets/images/default/Default' + (Math.floor(Math.random() * 10) + 1) + '.png')">
-                    </router-link>
-                    <div class="author" :class="$mq">By {{ timeline.user.username }}</div>
-                    <div class="views" v-if="timeline.category != 'TRENDING'" :class="$mq">{{ timeline.views }} views &middot; {{ timeline.likes.length }} likes</div>
-                    <div class="views" v-else >&#8593;{{ timeline.trendingViews }} views &middot; {{ timeline.likes.length }} likes</div>
-                    <div class="views creation">{{ timeline.creationDate }} </div>
-                </div>
-                <div v-else>
-                    <div v-if="$mq == 'small' && special" class="special-mobile">
-                        <div class="category-special" :class="$mq">FOR YOU</div>
-                        <div v-if="special.data[0].username != null" class="special-pc-users" :class="$mq">
-                            <h1 class="special-h1" :class="$mq">Users</h1>
-                            <router-link :to="{ path: '/profile/' + user.username }" class="special-router" :class="$mq" v-for="(user, idx) in special.data" :key="idx">
-                                <div class="special-name" :class="$mq" v-if="user.fullName">{{ user.fullName }} </div>
-                                <div class="special-name" :class="$mq" v-else> New user </div>
-                                <div class="special-desc" :class="$mq">@{{user.username}} &middot; {{user.followers.filter(e => e.userId != null).length}} followers </div>
+            <div v-if="$store.state.timelines.length > 0">
+                <transition-group name="fade">
+                    <div v-for="(timeline, idx) in $store.state.timelines" :key="timeline.id + idx">
+                        <div v-if="timeline.data == null" class="element" v-bind:class="[timeline.category == 'PREMIUM' ? 'premium': '', $mq]">
+                            <div class="more" :class="$mq" v-on:click="openMore(idx)">&#9866;</div>
+                            <div class="moreOpened" :class="$mq" :id="'more-' + idx" v-on:click="report(timeline, idx)">Report</div>
+                            <div class="category" :class="$mq">{{ timeline.category }}</div>
+                            <router-link :to="{ path: 'timeline/' + timeline.id }" class="title" :class="$mq" @click.native="premium(timeline)">{{ timeline.descriptionTitle }}</router-link>
+                            <router-link :to="{ path: 'timeline/' + timeline.id }" class="desc" :class="$mq" @click.native="premium(timeline)">
+                                {{ timeline.description.replace(/ \[([^\]]+)\]\(([^\)]+)\)/g, '') }}...
                             </router-link>
-                        </div>
-                        <div v-else class="special-pc-timelines" :class="$mq">
-                            <h1 class="special-h1" :class="$mq">Timelines</h1>
-                            <router-link :to="{ path: '/timeline/' + timeline.id }" class="special-router" :class="$mq" v-for="(timeline, idx) in special.data" :key="idx">
-                                <div class="special-name" :class="$mq"> {{timeline.descriptionTitle}} </div>
-                                <div class="special-desc" :class="$mq">by @{{ timeline.user.username }} &middot; {{ timeline.likes.length }} likes </div>
+                            <router-link :to="{ path: 'timeline/' + timeline.id }" class="image_container" :class="$mq" @click.native="premium(timeline)">
+                                <img :class="$mq" v-if="timeline.pictures.length > 0" class="image" :src="timeline.pictures[0]">
+                                <img :class="$mq" v-else class="image" :src="require('../assets/images/default/Default' + defaultImage + '.png')">
                             </router-link>
+                            <div class="author" :class="$mq">By {{ timeline.user.username }}</div>
+                            <div class="views" v-if="timeline.category != 'TRENDING'" :class="$mq">{{ timeline.views }} views &middot; {{ timeline.likes.length }} likes</div>
+                            <div class="views" v-else :class="$mq">&#8593;{{ timeline.trendingViews }} views &middot; {{ timeline.likes.length }} likes</div>
+                            <div class="views creation">{{ timeline.creationDate }} </div>
                         </div>
-                        <router-link :to="{ name: 'about' }" class="special-about" :class="$mq">About</router-link>
-                        <router-link :to="{ path: '/business' }" class="special-about-next">Business</router-link>
+                        <div v-else>
+                            <div v-if="$mq == 'small' && special" class="special-mobile">
+                                <div class="category-special" :class="$mq">FOR YOU</div>
+                                <div v-if="special.data[0].username != null" class="special-pc-users" :class="$mq">
+                                    <h1 class="special-h1" :class="$mq">Users</h1>
+                                    <router-link :to="{ path: '/profile/' + user.username }" class="special-router" :class="$mq" v-for="(user, idx) in special.data" :key="idx">
+                                        <div class="special-name" :class="$mq" v-if="user.fullName">{{ user.fullName }} </div>
+                                        <div class="special-name" :class="$mq" v-else> New user </div>
+                                        <div class="special-desc" :class="$mq">@{{user.username}} &middot; {{user.followers.filter(e => e.userId != null).length}} followers </div>
+                                    </router-link>
+                                </div>
+                                <div v-else class="special-pc-timelines" :class="$mq">
+                                    <h1 class="special-h1" :class="$mq">Timelines</h1>
+                                    <router-link :to="{ path: '/timeline/' + timeline.id }" class="special-router" :class="$mq" v-for="(timeline, idx) in special.data" :key="idx">
+                                        <div class="special-name" :class="$mq"> {{timeline.descriptionTitle}} </div>
+                                        <div class="special-desc" :class="$mq">by @{{ timeline.user.username }} &middot; {{ timeline.likes.length }} likes </div>
+                                    </router-link>
+                                </div>
+                                <router-link :to="{ name: 'about' }" class="special-about" :class="$mq">About</router-link>
+                                <router-link :to="{ path: '/business' }" class="special-about-next">Business</router-link>
+                            </div>
+                        </div>
                     </div>
+                </transition-group>
+            </div>
+            <div v-else>
+                <div class="empty-element" :class="$mq">
+                    <div class="empty-loading" :class="$mq"></div>
+                </div>
+                <div class="empty-element" :class="$mq">
+                    <div class="empty-loading" :class="$mq"></div>
                 </div>
             </div>
         </div>
@@ -72,23 +84,25 @@
             <h1 :class="$mq" class="search-h1" >Search results</h1>
             <div v-on:click="quit()" class="quit" :class="$mq">x</div>
             <div class="search-container" :class="$mq">
-                <div v-for="(timeline, idx) in searchResults" :key="idx" class="element search-element" :class="$mq">
-                    <div v-if="!timeline.none">
-                        <div class="category" :class="$mq"></div>
-                        <router-link :to="{ path: 'timeline/' + timeline.id }" class="title" :class="$mq">{{ timeline.descriptionTitle }}</router-link>
-                        <router-link :to="{ path: 'timeline/' + timeline.id }" class="desc" :class="$mq">
-                            {{ timeline.description.replace(/ \[([^\]]+)\]\(([^\)]+)\)/g, '').substring(0, 200) }}...
-                        </router-link>
-                        <router-link :to="{ path: 'timeline/' + timeline.id }" class="image_container" :class="$mq">
-                            <img :class="$mq" v-if="timeline.pictures.length > 0" class="image" :src="timeline.pictures[0]">
-                            <img :class="$mq" v-else class="image" :src="require('../assets/images/default/Default' + (Math.floor(Math.random() * 10) + 1) + '.png')">
-                        </router-link>
-                        <div class="author" :class="$mq">By {{ timeline.user.username }}</div>
-                        <div class="views" :class="$mq">{{ timeline.views }} views &middot; {{ timeline.likes.length }} likes</div>
-                        <div class="views creation">{{ timeline.creationDate }} </div>
+                <transition-group name="fade">
+                    <div v-for="(timeline, idx) in searchResults" :key="timeline.id + idx" class="element search-element" :class="$mq">
+                        <div v-if="!timeline.none">
+                            <div class="category" :class="$mq"></div>
+                            <router-link :to="{ path: 'timeline/' + timeline.id }" class="title" :class="$mq">{{ timeline.descriptionTitle }}</router-link>
+                            <router-link :to="{ path: 'timeline/' + timeline.id }" class="desc" :class="$mq">
+                                {{ timeline.description.replace(/ \[([^\]]+)\]\(([^\)]+)\)/g, '') }}...
+                            </router-link>
+                            <router-link :to="{ path: 'timeline/' + timeline.id }" class="image_container" :class="$mq">
+                                <img :class="$mq" v-if="timeline.pictures.length > 0" class="image" :src="timeline.pictures[0]">
+                                <img :class="$mq" v-else class="image" :src="require('../assets/images/default/Default' + defaultImage + '.png')">
+                            </router-link>
+                            <div class="author" :class="$mq">By {{ timeline.user.username }}</div>
+                            <div class="views" :class="$mq">{{ timeline.views }} views &middot; {{ timeline.likes.length }} likes</div>
+                            <div class="views creation">{{ timeline.creationDate }} </div>
+                        </div>
+                        <div v-else class="empty">Can't find.</div>
                     </div>
-                    <div v-else class="empty">Can't find.</div>
-                </div>
+                </transition-group>
             </div>
         </div>
     </div>
@@ -112,7 +126,8 @@ export default {
             searchResults: [ ],
             details: null,
             counter: 0,
-            special: null
+            special: null,
+            defaultImage: (Math.floor(Math.random() * 10) + 1)
         }
     },
     methods: {
@@ -220,6 +235,53 @@ export default {
 <style scoped lang="sass">
 @import '../assets/saas-vars.sass'
 
+@keyframes fadein
+    0%
+        opacity: 0
+    100%
+        opacity: 1
+
+.fade-leave-active
+    transition: all 1ms
+
+.fade-move, .fade-enter-active
+    transition: all 0.4s
+
+.fade-enter, .fade-leave-to
+    opacity: 0
+
+.empty-element
+    margin-top: 70px
+    box-shadow: 0px 2px 15px 4px rgba(0,0,0,0.09)
+    border-radius: 20px
+    position: relative
+    overflow: hidden
+    width: 40%
+    margin-left: 15%
+    background: $bg-color
+    &.medium
+        width: 60%
+        margin-left: 5%
+    &.small
+        width: 100%
+        margin-top: 20px
+        margin-left: 0
+
+.empty-loading
+    display: block
+    margin-left: -200px
+    height: 550px
+    width: 200px
+    background: linear-gradient(to right, transparent 0%, #eeeeee 50%, transparent 100%)
+    animation: loading 1.5s cubic-bezier(0.4, 0.0, 0.2, 1)
+    animation-iteration-count: infinite
+
+@keyframes loading
+    0%
+        margin-left: -200px
+    100%
+        margin-left: 100%
+
 .moreOpened
     position: absolute
     font-family: OpenSans-Regular
@@ -322,10 +384,14 @@ export default {
         margin-left: 5%
 
 .special-mobile
+    animation-timing-function: ease-in
+    animation: fadein 1s
     text-align: left
     margin: 60px 0
 
 .special-pc
+    animation-timing-function: ease-in
+    animation: fadein 1s
     text-align: left
     padding: 20px
     position: fixed
@@ -368,15 +434,18 @@ h1
         margin-left: 5%
 
 .search-input
+    -webkit-appearance: none
     background: rgba(50,50,50, 0.4)
     padding: 0 15px
     outline: none
     border: none
     color: white
-    width: 70%
+    width: 88%
     height: 36px
     border-radius: 10px
     font-size: 17px
+    &.small
+        width: 83%
 
 .search-b
     display: inline-block
@@ -387,9 +456,10 @@ h1
     color: #b8b8b8
     width: 10%
     font-size: 25px
-    transform: translateY(+3px) translateX(-10px)rotate(-45deg)
+    transform: translateY(+3px) rotate(-45deg)
     &.small
-        transform: translateY(+6px) rotate(-45deg)
+        font-size: 23px
+        width: 15%
 
 input::-webkit-search-cancel-button
   -webkit-appearance: none
@@ -399,19 +469,18 @@ input::-webkit-search-cancel-button
     font-family: OpenSans-Regular
     position: fixed
     z-index: 4
-    transform: translateY(-40px) translateX(calc(-50% + 5px))
+    transform: translateY(-38px) translateX(calc(-50% + 5px))
     left: 50%
     &.medium
         width: 40%
     &.small
-        width: 70%
+        width: 60%
 
 .views
     font-family: OpenSans-Regular
     font-size: 14px
     float: left
     margin-left: 8%
-    cursor: pointer
     margin-top: 5px
     color: #7e7e7e
     &.small
@@ -456,12 +525,14 @@ input::-webkit-search-cancel-button
         width: 90%
 
 .image
+    animation-timing-function: ease-in
+    animation: fadein 1s
     border-radius: 5px
     width: 100%
     height: 350px
     object-fit: cover
     &.medium
-        height: 300px
+        height: 320px
     &.small
         height: 300px
 
@@ -475,11 +546,9 @@ input::-webkit-search-cancel-button
     width: 84%
     text-align: justify 
     margin-left: 8%
-    height: 60px
-    &.medium
-        height: 62px
+    height: 67px
+    overflow: hidden
     &.small
-        height: 90px
         margin-left: 5%
         width: 90%
 
@@ -511,9 +580,9 @@ input::-webkit-search-cancel-button
         width: 60%
         margin-left: 5%
     &.small
-        width: 100%
+        width: 98%
         margin-top: 20px
-        margin-left: 0
+        margin-left: 1%
 
 .premium
     border: 1px solid #ffa585

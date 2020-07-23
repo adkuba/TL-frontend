@@ -18,13 +18,13 @@
                 <form action="javascript:void(0);" id="tform" :class="$mq">
                     <h1>Creator</h1>
                     <div class="errorID">{{ errorMessage }}</div>
-                    <input class="ttitle tlid" :class="$mq" type="text" id="timelineId" placeholder="ID" maxlength="40" required pattern="[^/]*" title="Don't use /" :value="timeline.id">
-                    <div class="opis">Create your timeline. See in preview how it looks.<br> If you want to add links, type: <div class="desc-link">[Tline](www.tline.site)</div> </div>
+                    <input class="ttitle tlid" autocorrect="off" spellcheck="false" :class="$mq" type="text" id="timelineId" placeholder="ID" maxlength="40" required pattern="[^/]*" title="Don't use /" :value="timeline.id">
+                    <div class="opis">Create your timeline. See in preview how it looks. If you want to add links, type: <div class="desc-link">[Tline](www.tline.site)</div> </div>
 
                     <div id="mainData">
-                        <input class="ttitle main-tl" :class="$mq" type="text" id="mainTitle" required maxlength="60" placeholder="Title" :value="timeline.descriptionTitle">
+                        <input class="ttitle main-tl" autocorrect="off" spellcheck="false" :class="$mq" type="text" id="mainTitle" required maxlength="60" placeholder="Title" :value="timeline.descriptionTitle">
                         <div v-if="timeline.pictures" class="file-container" :class="$mq" v-on:click="open(-1)">Files {{timeline.pictures.length}}</div>
-                        <textarea class="ttitle tlong main-long" :class="$mq" id="mainLong" required placeholder="Description" maxlength="3000" :value="timeline.description"></textarea>
+                        <textarea class="ttitle tlong main-long" autocorrect="off" spellcheck="false" :class="$mq" id="mainLong" required placeholder="Description" maxlength="3000" :value="timeline.description"></textarea>
                     </div>
 
                     <h2>Events</h2>
@@ -40,10 +40,10 @@
                                     <div class="control_item down" v-on:click="changeIndex(index, index+1)" v-if="index!=events.length-1">&lang;</div>
                                 </div>
                                 <div class="s_left">
-                                    <input class="ttitle" :class="$mq" type="text" :id="'title'+index" required maxlength="40" placeholder="Title" :value="evt.title">
+                                    <input class="ttitle" autocorrect="off" spellcheck="false" :class="$mq" type="text" :id="'title'+index" required maxlength="40" placeholder="Title" :value="evt.title">
                                     <input class="ttitle tdate" :class="$mq" type="date" required :id="'date'+index" placeholder="mm/dd/yyyy" :value="evt.date">
                                     <div v-if="timeline.pictures" :class="$mq" class="file-container" v-on:click="open(index)">Files {{evt.pictures.length}}</div>
-                                    <textarea class="ttitle tlong" :class="$mq" :id="'long'+index" required maxlength="1500" placeholder="Description" :value="evt.description"></textarea>
+                                    <textarea class="ttitle tlong" autocorrect="off" spellcheck="false" :class="$mq" :id="'long'+index" required maxlength="1500" placeholder="Description" :value="evt.description"></textarea>
                                     <div class="control_item add_sub" v-on:click="addSubEvent(index)">&#43;</div>
                                 </div>
                             </div>
@@ -55,10 +55,10 @@
                                         <div class="control_item down" v-on:click="changeSubIndex(index, subindex, subindex+1)" v-if="subindex!=evt.sub.length-1">&lang;</div>
                                     </div>
                                     <div class="s_left">
-                                        <input class="ttitle" :class="$mq" :id="'sub'+index+'title'+subindex" required maxlength="40" type="text" placeholder="Title" :value="subevt.title">
+                                        <input class="ttitle" autocorrect="off" spellcheck="false" :class="$mq" :id="'sub'+index+'title'+subindex" required maxlength="40" type="text" placeholder="Title" :value="subevt.title">
                                         <input class="ttitle tdate" :class="$mq" type="date" required :id="'sub'+index+'date'+subindex" placeholder="mm/dd/yyyy" :value="subevt.date">
                                         <div v-if="timeline.pictures" :class="$mq" class="file-container" v-on:click="open(index, subindex)">Files {{subevt.pictures.length}}</div>
-                                        <textarea class="ttitle tlong" :class="$mq" :id="'sub'+index+'long'+subindex" required maxlength="1500" placeholder="Description" :value="subevt.description"></textarea>
+                                        <textarea class="ttitle tlong" autocorrect="off" spellcheck="false" :class="$mq" :id="'sub'+index+'long'+subindex" required maxlength="1500" placeholder="Description" :value="subevt.description"></textarea>
                                     </div>
                                 </div>
                             </transition-group>
@@ -659,7 +659,6 @@
 .desc-link
     display: inline
     color: #14426B
-    margin: 0 10px
 
 .errorID
     position: absolute
@@ -789,6 +788,7 @@ h2
     padding: 15px 0
 
 .ttitle
+    text-align: justify
     box-sizing: border-box
     height: 50px
     width: 40%
@@ -806,7 +806,6 @@ h2
     &:focus
         outline: none
     &.small
-        border-radius: 8px 8px 0 0
         width: 94%
         margin: 0 3%
         margin-top: 10px
@@ -828,6 +827,7 @@ h2
         width: 89%
 
 .tdate
+    -webkit-appearance: none
     font-size: 12px
     width: 20%
     font-family: OpenSans-Regular
@@ -842,9 +842,9 @@ h2
     &.small
         padding: 0 20px
         height: 40px
-        border-radius: 0
         margin-left: 3%
-        margin-top: 0
+        margin-top: 5px
+        margin-bottom: 5px
 
 ::-webkit-inner-spin-button
     display: none
@@ -864,7 +864,6 @@ h2
     .sub &
         height: 120px
     &.small
-        border-radius: 0 0 8px 8px
         margin-left: 3%
         width: 94%
         margin-top: 0

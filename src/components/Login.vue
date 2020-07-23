@@ -26,7 +26,6 @@
                 <h1>About</h1>
                 <p>Start creating your own timelines.</p>
                 <p>The best way to showcase your projects, ideas, thinking process. Social features boosts views.</p>
-                <p style="color: #B8352D">One month free without card details!</p>
             </div>
         </div>
     </div>
@@ -44,7 +43,7 @@ import VueRecaptcha from 'vue-recaptcha'
         'vue-recaptcha': VueRecaptcha
     },
     created(){
-        window.scrollTo({ top: 0, behavior: 'smooth' })
+        window.scroll({ top: 0})
         if(!this.path){
             this.routerPath = '/settings'
 
@@ -292,7 +291,7 @@ import VueRecaptcha from 'vue-recaptcha'
     &.medium
         width: calc(40% + 20px)
     &.small
-        width: calc(70% + 20px)
+        width: calc(70% + 25px)
 
 .fsignup
     cursor: pointer

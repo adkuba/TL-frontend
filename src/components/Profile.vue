@@ -16,33 +16,45 @@
             <div class="premium-sign" :class="$mq" v-if="user.subscriptionEnd">PREMIUM</div>
             <div v-else class="premium-sign free" :class="$mq">FREE</div>
         </div>
+        <div v-else>
+            <div class="empty-profile" :class="$mq">
+                <div class="empty-profile-loading" :class="$mq"></div>
+            </div>
+        </div>
         <div class="controls" :class="$mq">
             <div class="menu-item" :class="$mq" v-on:click="openTimelines()">Timelines <div id="1" class="border" :class="$mq"></div></div>
             <div class="menu-item" :class="$mq" v-on:click="openLikes()">Likes <div id="2" class="border" :class="$mq"></div></div>
             <div class="menu-item" :class="$mq" v-on:click="openFollowing()">Following <div id="3" class="border" :class="$mq"></div></div>
         </div>
         <div class="timelines-container" v-if="selected && selected[0] && selected[0].id" :class="$mq">
-            <div class="timeline" v-for="(timeline, index) in selected" :key="index" v-bind:class="[{ shadow: !timeline.active}, $mq]" >
-                <router-link :to="{ path: '/timeline/' + timeline.id }" class="tl-router">
-                    <div class="title">{{ timeline.descriptionTitle }}</div>
-                    <div class="descr" :class="$mq">{{ timeline.description.replace(/ \[([^\]]+)\]\(([^\)]+)\)/g, '').substring(0, 100) }}...</div>
-                    <div class="image-container">
-                        <img class="image" v-if="timeline.pictures.length > 0" :src="timeline.pictures[0]">
-                        <img :class="$mq" v-else class="image" :src="require('../assets/images/default/Default' + (Math.floor(Math.random() * 10) + 1) + '.png')">
+            <transition-group class="fade">
+                <div class="timeline" v-for="(timeline, index) in selected" :key="timeline.id + index" v-bind:class="[{ shadow: !timeline.active}, $mq]" >
+                    <router-link :to="{ path: '/timeline/' + timeline.id }" class="tl-router">
+                        <div class="title">{{ timeline.descriptionTitle }}</div>
+                        <div class="descr" :class="$mq">{{ timeline.description.replace(/ \[([^\]]+)\]\(([^\)]+)\)/g, '') }}...</div>
+                        <div class="image-container">
+                            <img class="image" v-if="timeline.pictures.length > 0" :src="timeline.pictures[0]">
+                            <img :class="$mq" v-else class="image" :src="require('../assets/images/default/Default' + defaultImage + '.png')">
+                        </div>
+                    </router-link>
+                    <div class="views-container">
+                        <router-link :to="{ path: '/statistics/' + user.username }" class="stats" v-if="$store.state.jwt && $store.state.jwt.user.username == timeline.user.username">Statistics</router-link>
+                        <div class="views" v-else>{{ timeline.views }} views &middot; {{ timeline.likes.length }} likes</div>
                     </div>
-                </router-link>
-                <div class="views-container">
-                    <router-link :to="{ path: '/statistics/' + user.username }" class="stats" v-if="$store.state.jwt && $store.state.jwt.user.username == timeline.user.username">Statistics</router-link>
-                    <div class="views" v-else>{{ timeline.views }} views &middot; {{ timeline.likes.length }} likes</div>
-                </div>
-                <div class="views-container user-edit">
-                    <div class="views" v-if="$store.state.jwt && $store.state.jwt.user.username == timeline.user.username">
-                        <router-link style="text-decoration: none" :to="{ path: '/editorLoader/' + timeline.id }" class="edit">Edit</router-link>
-                        <div class="edit">&middot;</div>
-                        <div class="edit" v-on:click="deleteTimeline(timeline)">Delete</div>
+                    <div class="views-container user-edit">
+                        <div class="views" v-if="$store.state.jwt && $store.state.jwt.user.username == timeline.user.username">
+                            <router-link style="text-decoration: none" :to="{ path: '/editorLoader/' + timeline.id }" class="edit">Edit</router-link>
+                            <div class="edit">&middot;</div>
+                            <div class="edit" v-on:click="deleteTimeline(timeline)">Delete</div>
+                        </div>
+                        <div v-else class="views">{{ timeline.creationDate }}</div>
                     </div>
-                    <div v-else class="views">{{ timeline.creationDate }}</div>
                 </div>
+            </transition-group>
+        </div>
+        <div v-if="!selected">
+            <div class="empty-element" :class="$mq">
+                <div class="empty-loading" :class="$mq"></div>
             </div>
         </div>
         <div class="fusers-container" v-if="selected && selected[0] && selected[0].email">
@@ -60,7 +72,7 @@
   export default  {
     name: 'Profile',
     created () {
-        window.scrollTo({ top: 0, behavior: 'smooth' })
+        window.scroll({ top: 0})
         this.axios.get(this.baseApi + 'users/public/' + this.$route.params.id)
             .then(response => {
                 if (response.data){
@@ -87,7 +99,8 @@
           user: null,
           likes: [],
           selected: null,
-          details: [{username: 'kuba'}]
+          details: [{username: 'kuba'}],
+          defaultImage: (Math.floor(Math.random() * 10) + 1)
       }
     },
     methods: {
@@ -189,6 +202,58 @@
 </script>
 
 <style scoped lang="sass">
+@import '../assets/saas-vars.sass'
+
+.fade-leave-active
+    transition: all 1ms
+
+.fade-move, .fade-enter-active
+    transition: all 0.4s
+
+.fade-enter, .fade-leave-to
+    opacity: 0
+
+.empty-profile
+    margin-top: 120px
+    background: #f1f1f1
+    border-radius: 20px
+    position: relative
+    overflow: hidden
+    width: 45%
+
+.empty-profile-loading
+    display: block
+    margin-left: -200px
+    height: 110px
+    width: 200px
+    background: linear-gradient(to right, transparent 0%, #e4e4e4 50%, transparent 100%)
+    animation: loading 1.5s cubic-bezier(0.4, 0.0, 0.2, 1)
+    animation-iteration-count: infinite
+
+.empty-element
+    margin: 2%
+    box-shadow: 0px 2px 15px 4px rgba(0,0,0,0.09)
+    border-radius: 20px
+    position: relative
+    overflow: hidden
+    width: 45%
+    background: $bg-color
+
+.empty-loading
+    display: block
+    margin-left: -200px
+    height: 450px
+    width: 200px
+    background: linear-gradient(to right, transparent 0%, #eeeeee 50%, transparent 100%)
+    animation: loading 1.5s cubic-bezier(0.4, 0.0, 0.2, 1)
+    animation-iteration-count: infinite
+
+@keyframes loading
+    0%
+        margin-left: -200px
+    100%
+        margin-left: 100%
+
 .stats
     font-family: OpenSans-Regular
     text-decoration: none
@@ -353,11 +418,9 @@
     margin-left: 5%
     font-family: OpenSans-Regular
     margin-top: 10px
-    height: 55px
-    &.medium
-        height: 60px
-    &.small
-        height: 70px
+    height: 67px
+    text-align: justify
+    overflow: hidden
 
 .image-container
     width: 90%
@@ -365,15 +428,19 @@
     margin-left: 5%
 
 .image
+    animation-timing-function: ease-in
+    animation: fadein 1s
     border-radius: 5px
     width: 100%
     height: 330px
     &.medium
-        height: 270px
+        height: 280px
     &.small
         height: 250px
 
 .user
+    animation-timing-function: ease-in
+    animation: fadein 1s
     text-align: left
     margin-top: 120px
 
