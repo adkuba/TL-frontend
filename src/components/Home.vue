@@ -72,12 +72,8 @@
                 </transition-group>
             </div>
             <div v-else>
-                <div class="empty-element" :class="$mq">
-                    <div class="empty-loading" :class="$mq"></div>
-                </div>
-                <div class="empty-element" :class="$mq">
-                    <div class="empty-loading" :class="$mq"></div>
-                </div>
+                <div class="empty-element" :class="$mq"></div>
+                <div class="empty-element" :class="$mq"></div>
             </div>
         </div>
         <div v-else>
@@ -255,10 +251,11 @@ export default {
     box-shadow: 0px 2px 15px 4px rgba(0,0,0,0.09)
     border-radius: 20px
     position: relative
-    overflow: hidden
     width: 40%
+    height: 550px
     margin-left: 15%
-    background: $bg-color
+    background: rgba(0, 0, 0, 0.04)
+    animation: pulse 1.5s linear infinite
     &.medium
         width: 60%
         margin-left: 5%
@@ -267,20 +264,13 @@ export default {
         margin-top: 20px
         margin-left: 0
 
-.empty-loading
-    display: block
-    margin-left: -200px
-    height: 550px
-    width: 200px
-    background: linear-gradient(to right, transparent 0%, #eeeeee 50%, transparent 100%)
-    animation: loading 1.5s cubic-bezier(0.4, 0.0, 0.2, 1)
-    animation-iteration-count: infinite
-
-@keyframes loading
+@keyframes pulse
     0%
-        margin-left: -200px
+        background: rgba(0, 0, 0, 0.04)
+    50%
+        background: rgba(0, 0, 0, 0.09)
     100%
-        margin-left: 100%
+        background: rgba(0, 0, 0, 0.04)
 
 .moreOpened
     position: absolute
@@ -440,7 +430,7 @@ h1
     outline: none
     border: none
     color: white
-    width: 88%
+    width: 86%
     height: 36px
     border-radius: 10px
     font-size: 17px
@@ -469,12 +459,14 @@ input::-webkit-search-cancel-button
     font-family: OpenSans-Regular
     position: fixed
     z-index: 4
-    transform: translateY(-38px) translateX(calc(-50% + 5px))
-    left: 50%
+    top: 11px
+    left: 30%
     &.medium
-        width: 40%
+        width: 50%
+        left: 25%
     &.small
         width: 60%
+        left: 20%
 
 .views
     font-family: OpenSans-Regular

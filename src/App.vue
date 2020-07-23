@@ -10,7 +10,6 @@
         <div class="message" :class="$mq">{{ $store.state.message }}</div>
         <div id="modal-button" v-on:click="closeModal()" class="ok-button" :class="$mq">OK</div>
     </div>
-    <div id="refresh-token"></div>
     <router-view></router-view>
   </div>
 </template>
@@ -20,7 +19,6 @@
 export default {
     name: 'App',
     mounted(){
-        document.getElementById("refresh-token").style.display = "block"
         this.refreshToken()
         this.tokenRefresh = setInterval(() => this.refreshToken(), 840000) //14min
     },
@@ -36,11 +34,9 @@ export default {
             this.axios.post(refreshApi, {}, {withCredentials: true})
                     .then(response => {
                         this.$store.commit('set', response.data)
-                        document.getElementById("refresh-token").style.display = "none"
                     })
                     .catch(error => {
                         console.log(error)
-                        document.getElementById("refresh-token").style.display = "none"
                     })
         },
         closeModal(){
@@ -59,16 +55,6 @@ export default {
         opacity: 0
     100%
         opacity: 1
-
-#refresh-token
-    position: fixed
-    background: rgba(0, 0, 0, 0.5)
-    width: 100%
-    top: 0
-    height: 100%
-    display: none
-    z-index: 2
-    animation: pulse 1.5s linear infinite
 
 .loader
     border: 4px solid #c2c2c2

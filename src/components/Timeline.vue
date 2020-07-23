@@ -120,9 +120,7 @@
         </div>
     </div>
     <div v-else>
-        <div class="empty-element" :class="$mq">
-            <div class="empty-loading" :class="$mq"></div>
-        </div>
+        <div class="empty-element" :class="$mq"></div>
     </div>
 </template>
 
@@ -477,10 +475,11 @@ export default {
     box-shadow: 0px 2px 15px 4px rgba(0,0,0,0.09)
     border-radius: 20px
     position: relative
-    overflow: hidden
     width: 80%
+    height: 1000px
     margin-left: 10%
-    background: $bg-color
+    background: rgba(0, 0, 0, 0.04)
+    animation: pulse 1.5s linear infinite
     &.medium
         width: 100%
         margin-left: 0
@@ -488,20 +487,13 @@ export default {
         width: 100%
         margin-left: 0
 
-.empty-loading
-    display: block
-    margin-left: -400px
-    height: 1000px
-    width: 400px
-    background: linear-gradient(to right, transparent 0%, #eeeeee 50%, transparent 100%)
-    animation: loading 1.5s cubic-bezier(0.4, 0.0, 0.2, 1)
-    animation-iteration-count: infinite
-
-@keyframes loading
+@keyframes pulse
     0%
-        margin-left: -400px
+        background: rgba(0, 0, 0, 0.04)
+    50%
+        background: rgba(0, 0, 0, 0.09)
     100%
-        margin-left: 100%
+        background: rgba(0, 0, 0, 0.04)
 
 #more
     position: absolute
