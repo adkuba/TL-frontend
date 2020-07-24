@@ -22,7 +22,7 @@
   export default  {
     name: 'NameChange',
     created() {
-        window.scroll({ top: 0})
+        this.scrollToTop()
     },
     data () {
       return {
@@ -31,6 +31,13 @@
       }
     },
     methods: {
+        scrollToTop() {
+            const c = document.documentElement.scrollTop || document.body.scrollTop;
+            if (c > 0) {
+                window.requestAnimationFrame(this.scrollToTop);
+                window.scrollTo(0, c - c / 8);
+            }
+        },
         changeName(){
             let self = this
             var nameApi = this.baseApi + 'users/name'

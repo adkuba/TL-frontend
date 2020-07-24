@@ -85,7 +85,7 @@
   export default  {
     name: 'Settings',
     created() {
-        window.scroll({ top: 0})
+        this.scrollToTop()
         this.axios.get(this.baseApi + 'users/check-subscription', {
             headers: {
                     'Authorization': 'Bearer ' + this.$store.state.jwt.token
@@ -106,6 +106,13 @@
       }
     },
     methods: {
+        scrollToTop() {
+            const c = document.documentElement.scrollTop || document.body.scrollTop;
+            if (c > 0) {
+                window.requestAnimationFrame(this.scrollToTop);
+                window.scrollTo(0, c - c / 8);
+            }
+        },
         logout(){
             var logoutApi = this.baseApi + 'auth/logout'
             this.axios.post(logoutApi, {}, {withCredentials: true})

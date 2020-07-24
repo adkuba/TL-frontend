@@ -120,7 +120,7 @@
         </div>
     </div>
     <div v-else>
-        <div class="empty-element" :class="$mq"></div>
+        <div v-if="!mockTimeline" class="empty-element" :class="$mq"></div>
     </div>
 </template>
 
@@ -471,7 +471,7 @@ export default {
         display: block
 
 .empty-element
-    margin-top: 120px
+    margin-top: 80px
     box-shadow: 0px 2px 15px 4px rgba(0,0,0,0.09)
     border-radius: 20px
     position: relative
@@ -601,7 +601,7 @@ export default {
     border-radius: 10px
     height: 35px
     margin-bottom: 15px
-    background: #c3c3c3
+    background: $bg-color
     &.medium
         width: 50%
         margin-left: 25%
@@ -951,7 +951,7 @@ div#sub_timeline::-webkit-scrollbar
     //czyli 866-260px = 606 padding bottom
     //w praktyce gdzies 450 starczy
     padding-top: 100px
-    margin-top: 120px
+    margin-top: 80px
     padding-bottom: 500px
     font-family: 'Raleway-Regular'
     &.large

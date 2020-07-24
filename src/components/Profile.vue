@@ -31,7 +31,7 @@
                         <div class="title">{{ timeline.descriptionTitle }}</div>
                         <div class="descr" :class="$mq">{{ timeline.description.replace(/ \[([^\]]+)\]\(([^\)]+)\)/g, '') }}...</div>
                         <div class="image-container">
-                            <img class="image" v-if="timeline.pictures.length > 0" :src="timeline.pictures[0]">
+                            <img class="image" v-if="timeline.pictures && timeline.pictures.length > 0" :src="timeline.pictures[0]">
                             <img :class="$mq" v-else class="image" :src="require('../assets/images/default/Default' + defaultImage + '.png')">
                         </div>
                     </router-link>
@@ -68,7 +68,7 @@
   export default  {
     name: 'Profile',
     created () {
-        window.scroll({ top: 0})
+        this.scrollToTop()
         this.axios.get(this.baseApi + 'users/public/' + this.$route.params.id)
             .then(response => {
                 if (response.data){
@@ -100,6 +100,13 @@
       }
     },
     methods: {
+        scrollToTop() {
+            const c = document.documentElement.scrollTop || document.body.scrollTop;
+            if (c > 0) {
+                window.requestAnimationFrame(this.scrollToTop);
+                window.scrollTo(0, c - c / 8);
+            }
+        },
         getLikes(){
             for (var i=0, len=this.user.likes.length; i<len; i++){
                 this.axios.get(this.baseApi + 'timelines/public?id=' + this.user.likes[i])
@@ -214,10 +221,13 @@
     background: #f1f1f1
     border-radius: 20px
     position: relative
-    width: 45%
     height: 110px
     background: rgba(0, 0, 0, 0.04)
     animation: pulse 1.5s linear infinite
+    &.small
+        height: 155px
+        width: 96%
+        margin-left: 2%
 
 .empty-element
     margin: 2%
@@ -228,6 +238,9 @@
     height: 500px
     background: rgba(0, 0, 0, 0.04)
     animation: pulse 1.5s linear infinite
+    &.small
+        width: 96%
+        height: 450px
 
 @keyframes pulse
     0%
@@ -401,7 +414,7 @@
     margin-left: 5%
     font-family: OpenSans-Regular
     margin-top: 10px
-    height: 67px
+    height: 70px
     text-align: justify
     overflow: hidden
 
@@ -416,16 +429,20 @@
     border-radius: 5px
     width: 100%
     height: 330px
+    object-fit: cover
     &.medium
         height: 280px
     &.small
-        height: 250px
+        height: 240px
 
 .user
     animation-timing-function: ease-in
     animation: fadein 1s
     text-align: left
     margin-top: 120px
+    &.small
+        margin-left: 2%
+        margin-right: 2%
 
 h1
     margin-bottom: 0
@@ -446,8 +463,8 @@ h1
         margin-left: 3%
         width: 94%
     &.small
-        margin-left: 5%
-        width: 90%
+        margin-left: 1%
+        width: 98%
 
 .email
     display: inline-block

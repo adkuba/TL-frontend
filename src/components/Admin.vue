@@ -210,6 +210,11 @@ import BarChart from './BarChart.vue'
                         beginAtZero: true
                     },
                 }],
+                xAxes: [{
+                    ticks: {
+                        maxRotation: 90
+                    }
+                }]
             } 
         }
       }

@@ -27,7 +27,7 @@
     export default  {
     name: 'Subscription',
     created() {
-        window.scroll({ top: 0})
+        this.scrollToTop()
     },
     mounted() {
         var elements = stripe.elements({
@@ -80,6 +80,13 @@
         }
     },
     methods: {
+        scrollToTop() {
+            const c = document.documentElement.scrollTop || document.body.scrollTop;
+            if (c > 0) {
+                window.requestAnimationFrame(this.scrollToTop);
+                window.scrollTo(0, c - c / 8);
+            }
+        },
         showCardError(event) {
             let displayError = document.getElementById('card-errors');
             if (event.error) {

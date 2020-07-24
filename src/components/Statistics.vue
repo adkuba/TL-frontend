@@ -75,7 +75,7 @@ import BarChart from './BarChart'
         BarChart
     },
     created() {
-        window.scroll({ top: 0})
+        this.scrollToTop()
         if (this.$store.state.jwt.user.username != this.$route.params.id){
             this.$router.push({ name: "home" })
         }
@@ -109,11 +109,23 @@ import BarChart from './BarChart'
                             beginAtZero: true
                         },
                     }],
+                    xAxes: [{
+                        ticks: {
+                            maxRotation: 90
+                        }
+                    }]   
                 } 
             }
       }
     },
     methods: {
+        scrollToTop() {
+            const c = document.documentElement.scrollTop || document.body.scrollTop;
+            if (c > 0) {
+                window.requestAnimationFrame(this.scrollToTop);
+                window.scrollTo(0, c - c / 8);
+            }
+        },
         switchChart(index){
             this.chart = index
         },

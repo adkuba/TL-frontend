@@ -20,7 +20,7 @@
   export default  {
     name: 'Review',
     created() {
-        window.scroll({ top: 0})
+        this.scrollToTop()
     },
     data () {
       return {
@@ -28,6 +28,13 @@
       }
     },
     methods: {
+        scrollToTop() {
+            const c = document.documentElement.scrollTop || document.body.scrollTop;
+            if (c > 0) {
+                window.requestAnimationFrame(this.scrollToTop);
+                window.scrollTo(0, c - c / 8);
+            }
+        },
         submitReview(){
             document.getElementById("ls").style.opacity = "1"
             document.getElementById("submit-button").style.background = "#932a24"
@@ -64,6 +71,7 @@
         margin-left: calc(15% - 10px)
 
 .opinion
+    -webkit-appearance: none
     border: 1px solid #d7d7d7
     padding: 8px 11px
     resize: none

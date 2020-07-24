@@ -19,8 +19,8 @@
                 </vue-recaptcha>
                 <br>
                 <div class="fsignup" :class="$mq" v-on:click="signupShow()">{{signupText}}</div>
-                <div class="loader" id="ls"></div>
                 <router-link class="p-reset" :class="$mq" :to="{ path: '/passwordReset/true' }">Forgot password?</router-link>
+                <div class="loader" id="ls"></div>
             </form>
             <div class="login-desc" :class="$mq">
                 <h1>About</h1>
@@ -43,7 +43,7 @@ import VueRecaptcha from 'vue-recaptcha'
         'vue-recaptcha': VueRecaptcha
     },
     created(){
-        window.scroll({ top: 0})
+        this.scrollToTop()
         if(!this.path){
             this.routerPath = '/settings'
 
@@ -64,6 +64,13 @@ import VueRecaptcha from 'vue-recaptcha'
       }
     },
     methods: {
+        scrollToTop() {
+            const c = document.documentElement.scrollTop || document.body.scrollTop;
+            if (c > 0) {
+                window.requestAnimationFrame(this.scrollToTop);
+                window.scrollTo(0, c - c / 8);
+            }
+        },
         signUp(){
             this.$refs.recaptcha.execute()
         },
@@ -203,10 +210,15 @@ import VueRecaptcha from 'vue-recaptcha'
 @import '../assets/saas-vars.sass'
 
 #ls
-    display: inline-block
     opacity: 0
     vertical-align: top
-    margin-top: 15px
+    margin-top: 25px
+    display: block
+    margin-left: 20%
+    &.medium
+        margin-left: 30%
+    &.small
+        margin-left: 15%
 
 .login-desc
     margin: 65px auto
@@ -260,6 +272,7 @@ import VueRecaptcha from 'vue-recaptcha'
     height: 40px
     width: 60%
     padding-left: 20px
+    padding-right: 1px
     font-size: 15px
     font-family: 'OpenSans-Regular'
     &:focus
@@ -291,7 +304,7 @@ import VueRecaptcha from 'vue-recaptcha'
     &.medium
         width: calc(40% + 20px)
     &.small
-        width: calc(70% + 25px)
+        width: calc(70% + 20px)
 
 .fsignup
     cursor: pointer

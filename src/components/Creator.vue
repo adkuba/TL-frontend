@@ -66,7 +66,7 @@
                     </transition-group>
                     <input type="submit" :class="$mq" class="masterC" v-on:click="preview()" value="Preview">
                     <input type="submit" :class="$mq" class="masterC" v-on:click="submit()" value="Submit">
-                    <div class="loader" id="ls" :class="$mq"></div>
+                    <div class="ls-container"><div class="loader" id="ls" :class="$mq"></div></div>
                 </form>
                 
             </div>
@@ -582,12 +582,6 @@
 <style scoped lang="sass">
 @import '../assets/saas-vars.sass'
 
-#ls
-    opacity: 0
-    margin-top: 130px
-    &.small
-        margin-top: 140px
-
 .message
     margin-top: 100px
     text-align: center
@@ -668,6 +662,7 @@
     color: #B8352D
 
 .file
+    -webkit-appearance: none
     position: absolute
     margin-top: 22px
     left: 20px
@@ -719,6 +714,12 @@ h2
     width: 100%
     height: 5px
     background: #303030
+
+.ls-container
+    display: inline-block
+
+#ls
+    opacity: 0
 
 .masterC
     user-select: none

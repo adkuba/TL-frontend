@@ -1,7 +1,7 @@
 <template>
 <div>
     <form action="javascript:void(0);" class="search" :class="$mq">
-        <input autocorrect="off" spellcheck="false" placeholder="Search" type="search" class="search-input" onfocus="window.scroll({ top: 0})" id="search-input" :class="$mq">
+        <input autocorrect="off" spellcheck="false" placeholder="Search" type="search" class="search-input" @focus="scrollToTop()" id="search-input" :class="$mq">
         <button type="submit" v-on:click="search()" class="search-b" :class="$mq">&#9906;</button>
     </form>
     <div id="homepage" :class="$mq">
@@ -28,7 +28,7 @@
             </div>
             <div v-if="$store.state.timelines.length > 0">
                 <transition-group name="fade">
-                    <div v-for="(timeline, idx) in $store.state.timelines" :key="timeline.id + idx">
+                    <div v-for="(timeline, idx) in $store.state.timelines" :key="timeline.id + idx.toString()">
                         <div v-if="timeline.data == null" class="element" v-bind:class="[timeline.category == 'PREMIUM' ? 'premium': '', $mq]">
                             <div class="more" :class="$mq" v-on:click="openMore(idx)">&#9866;</div>
                             <div class="moreOpened" :class="$mq" :id="'more-' + idx" v-on:click="report(timeline, idx)">Report</div>
@@ -81,7 +81,7 @@
             <div v-on:click="quit()" class="quit" :class="$mq">x</div>
             <div class="search-container" :class="$mq">
                 <transition-group name="fade">
-                    <div v-for="(timeline, idx) in searchResults" :key="timeline.id + idx" class="element search-element" :class="$mq">
+                    <div v-for="(timeline, idx) in searchResults" :key="timeline.id + idx.toString()" class="element search-element" :class="$mq">
                         <div v-if="!timeline.none">
                             <div class="category" :class="$mq"></div>
                             <router-link :to="{ path: 'timeline/' + timeline.id }" class="title" :class="$mq">{{ timeline.descriptionTitle }}</router-link>
@@ -123,10 +123,17 @@ export default {
             details: null,
             counter: 0,
             special: null,
-            defaultImage: (Math.floor(Math.random() * 10) + 1)
+            defaultImage: (Math.floor(Math.random() * 10) + 1),
         }
     },
     methods: {
+        scrollToTop() {
+            const c = document.documentElement.scrollTop || document.body.scrollTop;
+            if (c > 0) {
+                window.requestAnimationFrame(this.scrollToTop);
+                window.scrollTo(0, c - c / 8);
+            }
+        },
         premium(timeline){
             if (timeline.category == 'PREMIUM'){
                 this.axios.post(this.baseApi + 'timelines/public/premium-view?id=' + timeline.id)
@@ -430,44 +437,32 @@ h1
     outline: none
     border: none
     color: white
-    width: 88%
+    width: 100%
     height: 36px
     border-radius: 10px
     font-size: 17px
-    &.small
-        width: 80%
 
 .search-b
-    display: inline-block
-    margin-left: 2%
-    background: none
-    border: none
-    outline: none
-    color: #b8b8b8
-    width: 10%
-    font-size: 25px
-    transform: translateY(+3px) rotate(-45deg)
-    &.small
-        font-size: 23px
-        width: 15%
+    visibility: hidden
 
 input::-webkit-search-cancel-button
   -webkit-appearance: none
 
 .search
+    box-sizing: content-box
     width: 40%
     font-family: OpenSans-Regular
     position: fixed
     z-index: 4
     top: 0
-    padding-top: 10px
+    padding-top: 11px
     left: 30%
     &.medium
         width: 50%
         left: 25%
     &.small
         width: 60%
-        left: 20%
+        left: 18%
 
 .views
     font-family: OpenSans-Regular
