@@ -80,6 +80,7 @@
             <h1 :class="$mq" class="search-h1" >Search results</h1>
             <div v-on:click="quit()" class="quit" :class="$mq">x</div>
             <div class="search-container" :class="$mq">
+                <div v-if="searchResults[0] != 'loading'">
                 <transition-group name="fade">
                     <div v-for="(timeline, idx) in searchResults" :key="timeline.id + idx.toString()" class="element search-element" :class="$mq">
                         <div v-if="!timeline.none">
@@ -99,6 +100,8 @@
                         <div v-else class="empty">Can't find.</div>
                     </div>
                 </transition-group>
+                </div>
+                <div v-else class="empty-element search-element" :class="$mq"></div>
             </div>
         </div>
     </div>
@@ -173,6 +176,7 @@ export default {
         },
         search(){
             if (document.getElementById("search-input").value){
+                this.searchResults = ['loading']
                 var timelinesApi = this.baseApi + 'timelines/public/search'
                 this.axios.get(timelinesApi, {
                     params: {
@@ -271,11 +275,17 @@ export default {
         margin-top: 20px
         margin-left: 0
 
+.empty-search
+    background: rgba(0, 0, 0, 0.04)
+    animation: pulse 1.5s linear infinite
+    height: 100px
+    border-radius: 15px
+
 @keyframes pulse
     0%
         background: rgba(0, 0, 0, 0.04)
     50%
-        background: rgba(0, 0, 0, 0.09)
+        background: rgba(0, 0, 0, 0.1)
     100%
         background: rgba(0, 0, 0, 0.04)
 
@@ -462,7 +472,7 @@ input::-webkit-search-cancel-button
         left: 25%
     &.small
         width: 60%
-        left: 18%
+        left: 20%
 
 .views
     font-family: OpenSans-Regular

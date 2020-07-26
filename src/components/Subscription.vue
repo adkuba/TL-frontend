@@ -13,7 +13,7 @@
             <!-- We'll put the error messages in this element -->
             <div id="card-errors" role="alert"></div>
             <button id="submit-button" class="fsubmit" :class="$mq" v-on:click="createPaymentMethod(2)" type="submit">Subscribe</button>
-            <div class="loader" id="ls"></div>
+            <div class="loader" id="ls" :class="$mq"></div>
         </form>
     </div>
 </template>
@@ -228,6 +228,8 @@
 #ls
     display: block
     margin-top: 20px
+    margin-left: 0
+
 
 #subscription
     text-align: left

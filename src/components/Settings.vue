@@ -56,11 +56,11 @@
                             <div v-if="$store.state.jwt.user.subscriptionEnd && !$store.state.jwt.user.subscriptionID" class="daneh" :class="$mq">Ends:</div> 
                             <div v-if="$store.state.jwt.user.subscriptionEnd && !$store.state.jwt.user.subscriptionID" class="danev" :class="$mq">{{ $store.state.jwt.user.subscriptionEnd }}</div>
                         
-                        <div class="danea" style="text-decoration: underline; cursor: pointer" :class="$mq" v-if="$store.state.jwt.user.subscriptionID" v-on:click="cancel()">
-                            Cancel
+                        <div class="danea" :class="$mq" v-if="$store.state.jwt.user.subscriptionID" v-on:click="cancel()">
+                            <div style="text-decoration: underline; cursor: pointer; vertical-align: top; display: inline-block">Cancel</div>
                             <div class="loader" id="ls"></div>
                         </div>
-                        <router-link :to="{ name: 'subscription'}" class="danea" :class="$mq" v-else>Activate</router-link>
+                        <router-link :to="{ name: 'subscription'}" class="danea" style="vertical-align: top" :class="$mq" v-else>Activate</router-link>
                     </div>
                     <div class="s_line"></div>
                 </div>
@@ -150,7 +150,8 @@
 
 #ls
     display: inline-block
-    vertical-align: bottom
+    vertical-align: top
+    margin-top: 0
     margin-left: 20px
 
 .data-settings

@@ -20,7 +20,7 @@
                 <br>
                 <div class="fsignup" :class="$mq" v-on:click="signupShow()">{{signupText}}</div>
                 <router-link class="p-reset" :class="$mq" :to="{ path: '/passwordReset/true' }">Forgot password?</router-link>
-                <div class="loader" id="ls"></div>
+                <div class="loader" id="ls" :class="$mq"></div>
             </form>
             <div class="login-desc" :class="$mq">
                 <h1>About</h1>

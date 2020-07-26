@@ -69,7 +69,7 @@
     name: 'Profile',
     created () {
         this.scrollToTop()
-        this.axios.get(this.baseApi + 'users/public/' + this.$route.params.id)
+        this.axios.get(this.baseApi + 'users/public/' + this.$route.params.id + '?profile=true')
             .then(response => {
                 if (response.data){
                     this.user = response.data
@@ -246,7 +246,7 @@
     0%
         background: rgba(0, 0, 0, 0.04)
     50%
-        background: rgba(0, 0, 0, 0.09)
+        background: rgba(0, 0, 0, 0.1)
     100%
         background: rgba(0, 0, 0, 0.04)
 

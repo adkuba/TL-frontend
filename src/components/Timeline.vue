@@ -135,6 +135,7 @@ export default {
         mockSubEvents: Array
     },
     created () {
+        this.scrollToTop()
         this.mainColor = this.circleColors[Math.floor(Math.random() * this.circleColors.length)]
         if (!this.mockEvents){
             var username = null
@@ -239,6 +240,13 @@ export default {
         }
     },
     methods: {
+        scrollToTop() {
+            const c = document.documentElement.scrollTop || document.body.scrollTop;
+            if (c > 0) {
+                window.requestAnimationFrame(this.scrollToTop);
+                window.scrollTo(0, c - c / 8);
+            }
+        },
         openMore(){
             var more = document.getElementById('more')
             if (more.style.display=='block'){
@@ -491,7 +499,7 @@ export default {
     0%
         background: rgba(0, 0, 0, 0.04)
     50%
-        background: rgba(0, 0, 0, 0.09)
+        background: rgba(0, 0, 0, 0.1)
     100%
         background: rgba(0, 0, 0, 0.04)
 

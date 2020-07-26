@@ -4,19 +4,46 @@
         <div class="element" v-if="user" :class="$mq">
             <h1 class="title" :class="$mq">Profile</h1>
             <p class="timeline-id" :class="$mq">{{ user.username }}</p>
-            <div class="info-container" :class="$mq">
-                <div class="profile-item">
-                    Followers 
-                    <div class="profile-data">{{ user.followers.filter(e => e.userId != null).length }}</div>
-                </div>
-                <div class="profile-item">
+            <div class="left" :class="$mq">
+                <div class="daneh">Creation date</div><div class="dane">{{ user.creationTime }}</div>
+                <div class="daneh">Followers</div><div class="dane">{{ user.followers.filter(e => e.userId != null).length }}</div>
+                
+                <div class="daneh">
                     Following
-                    <div class="profile-data">{{ user.followers.length - user.followers.filter(e => e.userId != null).length }}</div>
+                    <div class="desc">You are following</div>
                 </div>
-                <div class="profile-item">
+                <div class="dane">{{ user.followers.length - user.followers.filter(e => e.userId != null).length }}</div>
+                
+                <div class="daneh">
                     Your likes
-                    <div class="profile-data">{{ user.likes.length }}</div>
-                </div> 
+                    <div class="desc">You are liking</div>
+                </div>
+                <div class="dane">{{ user.likes.length }}</div>
+                
+                <div class="daneh">
+                    Views
+                    <div class="desc">Views on your profile</div>
+                </div>
+                <div class="dane">{{ user.profileViewsNumber }}</div>
+                <div class="controler" :class="$mq">
+                    <div class="item" v-on:click="switchChart(1)">Views</div>
+                    <div class="item" style="cursor: default">&middot;</div>
+                    <div class="item" v-on:click="switchChart(2)">Location</div>
+                    <div class="desc">Click to change charts</div>
+                </div>
+            </div>
+            <div class="right" :class="$mq">
+                <div v-if="!$store.state.jwt.user.subscriptionEnd" class="normal-info">
+                    More detailed charts only for premum users. Subscribe to see more.
+                </div>
+                <div v-else>
+                    <div v-if="chart==1 && user.viewsDetails">
+                        <LineChart :chartdata="user.viewsDetails" :options="viewsOptions" class="line-container"/>
+                        </div>
+                    <div v-if="chart==2 && user.viewsCountry">
+                        <BarChart :chartdata="user.viewsCountry" :options="viewsOptions" class="line-container"/>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="element" v-for="(timeline, idx) in timelines" :key="idx" :class="$mq">
@@ -82,7 +109,14 @@ import BarChart from './BarChart'
         this.axios.get(this.baseApi + 'users/public/' + this.$route.params.id)
             .then(response => {
                 if (response.data){
-                    this.user = response.data
+                    var user = response.data
+                    user["viewsCountry"] = null
+                    user["viewsDetails"] = null
+                    this.user = user
+                    if (this.$store.state.jwt.user.subscriptionEnd){
+                        this.getStatsForUser(user)
+                        this.getViewsForUser(user)
+                    }
                     this.getTimelines()
                 } else {
                     this.$router.push( {path: "/"} )
@@ -174,6 +208,33 @@ import BarChart from './BarChart'
                 this.timelines[this.timelines.indexOf(timeline)].viewsCountry = object
             })
         },
+        getStatsForUser(user){
+            this.axios.get(this.baseApi + 'statistics/profile-locations/' + user.username, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.$store.state.jwt.token
+                }
+            }).then(response => {
+                var labels = []
+                for (var i=0, len=response.data.length; i<len; i++){
+                    labels.push(response.data[i].location)
+                }
+                var data = []
+                for (i=0, len=response.data.length; i<len; i++){
+                    data.push(response.data[i].number)
+                }
+                var object = {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: "Views",
+                            data: data,
+                            backgroundColor: "rgba(1, 116, 188, 0.7)",
+                        }
+                    ]
+                }
+                this.user.viewsCountry = object
+            })
+        },
         getViewsForTimeline(timeline){
             this.axios.get(this.baseApi + 'statistics/timeline-views/' + timeline.id, {
                 headers: {
@@ -202,6 +263,35 @@ import BarChart from './BarChart'
                 }
                 this.timelines[this.timelines.indexOf(timeline)].viewsDetails = object
             })
+        },
+        getViewsForUser(user){
+            this.axios.get(this.baseApi + 'statistics/profile-views/' + user.username, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.$store.state.jwt.token
+                }
+            }).then(response => {
+                var labels = []
+                for (var i=0, len=response.data.length; i<len; i++){
+                    labels.push(response.data[i].date)
+                }
+                var data = []
+                for (i=0, len=response.data.length; i<len; i++){
+                    data.push(response.data[i].number)
+                }
+                var object = {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: "Views",
+                            data: data,
+                            backgroundColor: "transparent",
+                            borderColor: "rgba(1, 116, 188, 0.8)",
+                            pointBackgroundColor: "rgba(1, 116, 188, 1)"
+                        }
+                    ]
+                }
+                this.user.viewsDetails = object
+            })
         }
     }
 }
@@ -210,21 +300,6 @@ import BarChart from './BarChart'
 </script>
 
 <style scoped lang="sass">
-.profile-data
-    margin-top: 5px
-    color: #14426B
-
-.info-container
-    margin: 0 5%
-    margin-bottom: 20px
-    &.medium
-        margin: 0 3%
-    &.small
-        margin: 0 5%
-
-.profile-item
-    width: 33%
-    display: inline-block
 
 .normal-info
     text-align: center

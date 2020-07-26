@@ -24,7 +24,9 @@
             <li>Better homepage - recommendation system.</li>
         </ul>
         <h1 id="regulations">Regulations</h1>
-        <p>Following Regulations describes the way user uses Tline. This service is created by Jakub Adamski.</p>
+        <p>Following Regulations describes the way user uses Tline. This service is created by 
+            <router-link style="display: inline; cursor: auto; text-decoration: none; color: #303030" :to="{ path: '/ola'}">Jakub Adamski.</router-link>
+        </p>
         <p>In Tline user can choose between two accounts - free or paid. In free version user allows to display ads from external ad networks. Tline does not transfer any additional data to advertisers and does not take responsibility for content displayed on ads. We are making everything to create smooth user experience and in case of possible violation of content rules (below) ad can be reported by user and blocked by our administrators after analyze. In free version users allow to display ads next to their content.</p>
         <p>...</p>
         <p>This product includes GeoLite2 data created by MaxMind, available from</p>

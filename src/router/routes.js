@@ -15,6 +15,7 @@ import About from '../components/About.vue'
 import PasswordReset from '../components/PasswordReset.vue'
 import Statistics from '../components/Statistics.vue'
 import Business from '../components/Business.vue'
+import Ola from '../components/Ola.vue'
 
 // the routes are simply an array of objects
 const routes = [
@@ -137,6 +138,11 @@ const routes = [
         path: '/business',
         name: 'business',
         component: Business
+    },
+    {
+        path: '/ola',
+        name: 'ola',
+        component: Ola
     },
 ];
 

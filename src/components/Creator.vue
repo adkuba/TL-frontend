@@ -662,7 +662,6 @@
     color: #B8352D
 
 .file
-    -webkit-appearance: none
     position: absolute
     margin-top: 22px
     left: 20px
@@ -671,6 +670,7 @@
         outline: none
 
 .file::-webkit-file-upload-button
+    -webkit-appearance: none
     user-select: none
     cursor: pointer
     border: 0
