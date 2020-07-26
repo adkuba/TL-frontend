@@ -5,50 +5,60 @@
             <div class="stats" :class="$mq">
                 <h1>Stats</h1>
                 <p class="download" v-on:click="download(allStats, 'stats.csv')">Download</p>
-                <div class="data" v-for="(stat, idx) in allStats" :key="idx">
-                    Day: {{ stat.day }} mainPageViews: {{ stat.mainPageViews }} newUsers: {{ stat.numberOfUsers }} totalTimelinesViews: {{ stat.totalTimelinesViews }} activeUsers(updates next day): {{ stat.activeUsers }}
+                <div class="container">
+                    <div class="data" v-for="(stat, idx) in allStats" :key="idx">
+                        Day: {{ stat.day }} Views(home, timeline, profile): {{ stat.mainPageViews }}+{{ stat.totalTimelinesViews }}+{{ stat.profileViews }}={{ stat.profileViews + stat.totalTimelinesViews + stat.mainPageViews }}  newUsers: {{ stat.numberOfUsers }} activeUsers: {{ stat.activeUsers }}
+                    </div>
                 </div>
                 <LineChart v-if="allStatObject" :chartdata="allStatObject" :options="viewsOptions" class="stat-chart"/>
             </div>
             <div class="timelines" :class="$mq">
                 <h1>Timelines</h1>
                 <p class="download" v-on:click="download(allTimelines, 'timelines.csv')">Download</p>
-                <div class="data" v-for="(timeline, idx) in allTimelines" :key="idx">
-                    <router-link :to="{ path: 'timeline/' + timeline.id }" class="router">
-                        Title: {{ timeline.id }} Views: {{ timeline.views }} Likes: {{ timeline.likes.length }} Trending: {{ timeline.trendingViews }} User: {{ timeline.user.email }} Reports: {{ timeline.numberOfReports }}
-                    </router-link>
-                    <div v-on:click="deleteTimeline(timeline)" class="del">DELETE</div>
+                <div class="container">
+                    <div class="data" v-for="(timeline, idx) in allTimelines" :key="idx">
+                        <router-link :to="{ path: 'timeline/' + timeline.id }" class="router">
+                            Title: {{ timeline.id }} Views: {{ timeline.views }} Likes: {{ timeline.likes.length }} Trending: {{ timeline.trendingViews }} User: {{ timeline.user.email }} Reports: {{ timeline.numberOfReports }}
+                        </router-link>
+                        <div v-on:click="deleteTimeline(timeline)" class="del">DELETE</div>
+                    </div>
                 </div>
             </div>
             <div class="users" :class="$mq">
                 <h1>Users</h1>
                 <p class="download" v-on:click="download(allUsers, 'users.csv')">Download</p>
-                <div class="data" v-bind:class="{blocked: user.blocked}" v-for="(user, idx) in allUsers" :key="idx">
-                    <router-link :to="{ path: 'profile/' + user.username }" class="router">
-                        Username: {{ user.username }} Email: {{ user.email }} Creation: {{ user.creationTime }} Followers: {{ user.followers.filter(e => e.userId != null).length }}
-                    </router-link>
-                    <div class="del" v-on:click="deleteUser(user)">DELETE</div>
-                    <div class="del" v-on:click="blockUser(user)" v-if="!user.blocked">BLOCK</div>
-                    <div class="del" v-on:click="unBlockUser(user)" v-if="user.blocked">UNBLOCK</div>
+                <div class="container">
+                    <div class="data" v-bind:class="{blocked: user.blocked}" v-for="(user, idx) in allUsers" :key="idx">
+                        <router-link :to="{ path: 'profile/' + user.username }" class="router">
+                            Username: {{ user.username }} Email: {{ user.email }} Creation: {{ user.creationTime }} Followers: {{ user.followers.filter(e => e.userId != null).length }}
+                        </router-link>
+                        <div class="del" v-on:click="deleteUser(user)">DELETE</div>
+                        <div class="del" v-on:click="blockUser(user)" v-if="!user.blocked">BLOCK</div>
+                        <div class="del" v-on:click="unBlockUser(user)" v-if="user.blocked">UNBLOCK</div>
+                    </div>
                 </div>
             </div>
             <div class="timelines" :class="$mq">
                 <h1>Reported timelines</h1>
                 <p class="download" v-on:click="download(reportedTimelines, 'reported-timelines.csv')">Download</p>
-                <div class="data" v-for="(timeline, idx) in reportedTimelines" :key="idx">
-                    <router-link :to="{ path: 'timeline/' + timeline.id }" class="router">
-                        Title: {{ timeline.id }} Views: {{ timeline.views }} Likes: {{ timeline.likes.length }} Trending: {{ timeline.trendingViews }} User: {{ timeline.user.email }} Reports: {{ timeline.numberOfReports }}
-                    </router-link>
-                    <div v-on:click="deleteTimeline(timeline)" class="del">DELETE</div>
-                    <div v-on:click="unReportTimeline(timeline)" class="del">UNREPORT</div>
+                <div class="container">
+                    <div class="data" v-for="(timeline, idx) in reportedTimelines" :key="idx">
+                        <router-link :to="{ path: 'timeline/' + timeline.id }" class="router">
+                            Title: {{ timeline.id }} Views: {{ timeline.views }} Likes: {{ timeline.likes.length }} Trending: {{ timeline.trendingViews }} User: {{ timeline.user.email }} Reports: {{ timeline.numberOfReports }}
+                        </router-link>
+                        <div v-on:click="deleteTimeline(timeline)" class="del">DELETE</div>
+                        <div v-on:click="unReportTimeline(timeline)" class="del">UNREPORT</div>
+                    </div>
                 </div>
             </div>
             <div class="devices" :class="$mq">
                 <h1>Devices</h1>
                 <p>No duplicates - there can be multiple views by the same device.</p>
                 <p class="download" v-on:click="download(allDevices, 'devices.csv')">Download</p>
-                <div class="data" v-for="(device, idx) in allDevices" :key="idx">
-                     Device details: {{ device.deviceDetails }} Location: {{ device.location }} Username: {{ device.username }} LastLogin: {{ device.lastLogged }}
+                <div class="container">
+                    <div class="data" v-for="(device, idx) in allDevices" :key="idx">
+                        Device details: {{ device.deviceDetails }} Location: {{ device.location }} Username: {{ device.username }} LastLogin: {{ device.lastLogged }}
+                    </div>
                 </div>
                 <BarChart v-if="locationStat" :chartdata="locationStat" :options="viewsOptions" class="stat-chart" :class="$mq"/>
                 <BarChart v-if="devicesInfoChart" :chartdata="devicesInfoChart" :options="viewsOptions" class="stat-chart" :class="$mq"/>
@@ -83,17 +93,17 @@ import BarChart from './BarChart.vue'
             for (var i=0, len=response.data.length; i<len; i++){
                 labels.push(response.data[i].day)
             }
-            var mainPageViews = []
+            var totalViews = []
             for (i=0, len=response.data.length; i<len; i++){
-                mainPageViews.push(response.data[i].mainPageViews)
+                totalViews.push(response.data[i].mainPageViews + response.data[i].totalTimelinesViews + response.data[i].profileViews)
             }
-            var newUsers = []
+            var totalUsers = []
             for (i=0, len=response.data.length; i<len; i++){
-                newUsers.push(response.data[i].numberOfUsers)
-            }
-            var timelineViews = []
-            for (i=0, len=response.data.length; i<len; i++){
-                timelineViews.push(response.data[i].totalTimelinesViews)
+                var usersNumber = 0
+                for (var j=0, len2=i; j<=len2; j++){
+                    usersNumber += response.data[j].numberOfUsers
+                }
+                totalUsers.push(usersNumber)
             }
             var activeUsers = []
             for (i=0, len=response.data.length; i<len; i++){
@@ -104,25 +114,18 @@ import BarChart from './BarChart.vue'
                 labels: labels,
                 datasets: [
                     {
-                        label: "Main-Page-Views",
-                        data: mainPageViews,
+                        label: "Views",
+                        data: totalViews,
                         backgroundColor: "transparent",
                         borderColor: "rgba(1, 116, 188, 0.8)",
                         pointBackgroundColor: "rgba(1, 116, 188, 1)"
                     },
                     {
-                        label: "New-Users",
-                        data: newUsers,
+                        label: "Total-Users",
+                        data: totalUsers,
                         backgroundColor: "transparent",
                         borderColor: "rgba(100, 116, 188, 0.8)",
                         pointBackgroundColor: "rgba(100, 116, 188, 1)"
-                    },
-                    {
-                        label: "Timeline-Views",
-                        data: timelineViews,
-                        backgroundColor: "transparent",
-                        borderColor: "rgba(200, 116, 188, 0.8)",
-                        pointBackgroundColor: "rgba(200, 116, 188, 1)"
                     },
                     {
                         label: "Active-Users",
@@ -436,6 +439,10 @@ import BarChart from './BarChart.vue'
 </script>
 
 <style scoped lang="sass">
+
+.container
+    height: 200px
+    overflow: auto
 
 .data
     margin-bottom: 20px

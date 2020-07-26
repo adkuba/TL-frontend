@@ -11,13 +11,22 @@
 
   export default  {
     name: 'Business',
+    created(){
+        this.scrollToTop()
+    },
     data () {
       return {
           baseApi: 'https://tline-283413.ew.r.appspot.com/api/',
       }
     },
     methods: {
-
+        scrollToTop() {
+            const c = document.documentElement.scrollTop || document.body.scrollTop;
+            if (c > 0) {
+                window.requestAnimationFrame(this.scrollToTop);
+                window.scrollTo(0, c - c / 8);
+            }
+        },
     }
 }
 

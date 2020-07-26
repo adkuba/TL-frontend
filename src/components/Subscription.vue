@@ -1,7 +1,10 @@
 <template lang="html">
     <div id="subscription" :class="$mq">
         <h1 :class="$mq">Subscription</h1>
-        <p :class="$mq">Unlock premium plan only 3$ monthly, submit your details.</p>
+        <p :class="$mq">Unlock premium plan, submit your details. Get access to unlimited timelines, more detailed statistics and special premium section on our homepage.</p>
+        <h1 class="price">3$ monthly</h1>
+        <p v-if="$store.state.jwt.user.subscriptionEnd">Your next payment: {{ $store.state.jwt.user.subscriptionEnd }}</p>
+        <p v-else>Billed now.</p>
         <form id="subscription-form" action="javascript:void(0);" :class="$mq">
             <input autocorrect="off" spellcheck="false" type="text" placeholder="Your name" id="name" class="fin">
             <div id="card-element" class="MyCardElement">
@@ -139,14 +142,14 @@
                 }
             })
             .catch(error =>{
-                this.$store.commit('setMessage', error.message)
+                this.$store.commit('setMessage', error.message )
                 document.getElementById("ls").style.opacity = "0"
                 document.getElementById("submit-button").style.background = "#B8352D"
                 document.getElementById("modal").style.display = "block"
             })
         },
         handleCustomerActionRequired({ subscription, priceId, paymentMethodId, isRetry}){
-            if (subscription && subscription.status === 'active') {
+            if (subscription && (subscription.status === 'active' || subscription.status === 'trialing')) {
                 this.$store.commit('setMessage', "Succces!")
                 var jwt = this.$store.state.jwt
                 jwt.user.subscriptionID = subscription.id
@@ -165,7 +168,7 @@
             //tam w poradniku na stripe jest ze probuje jeszcze raz a ja tylko powiadamiam usera i moze sobie jeszcze raz sprobowac
             let paymentIntent = subscription.latest_invoice.payment_intent;
 
-            if ( paymentIntent.status === 'requires_action') {
+            if (paymentIntent && paymentIntent.status === 'requires_action') {
                 return stripe.confirmCardPayment(paymentIntent.client_secret, {
                     payment_method: paymentMethodId,
                 })
@@ -192,7 +195,7 @@
                     alert(error.error.message);
                 });
             }
-            else if (paymentIntent.status === 'requires_payment_method'){
+            else if (paymentIntent && paymentIntent.status === 'requires_payment_method'){
                 this.$store.commit('setMessage', "Your card was rejected! Try again.")
                 document.getElementById("modal").style.display = "block"
                 document.getElementById("ls").style.opacity = "0"
@@ -224,6 +227,10 @@
 
 <style scoped lang="sass">
 @import '../assets/saas-vars.sass'
+
+.price
+    font-size: 22px
+    padding: 0
 
 #ls
     display: block

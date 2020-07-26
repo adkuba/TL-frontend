@@ -21,7 +21,8 @@
         <h1>Coming</h1>
         <p>We are currently working on:</p>
         <ul>
-            <li>Better homepage - recommendation system.</li>
+            <li>Better homepage - recommendation system,</li>
+            <li>Improved subscription system.</li>
         </ul>
         <h1 id="regulations">Regulations</h1>
         <p>Following Regulations describes the way user uses Tline. This service is created by 
@@ -38,13 +39,22 @@
 
   export default  {
     name: 'About',
+    created(){
+        this.scrollToTop()
+    },
     data () {
       return {
           baseApi: 'https://tline-283413.ew.r.appspot.com/api/',
       }
     },
     methods: {
-
+        scrollToTop() {
+            const c = document.documentElement.scrollTop || document.body.scrollTop;
+            if (c > 0) {
+                window.requestAnimationFrame(this.scrollToTop);
+                window.scrollTo(0, c - c / 8);
+            }
+        },
     }
 }
 
