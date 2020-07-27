@@ -22,13 +22,13 @@
                     <div class="opis">Create your timeline. See in preview how it looks. If you want to add links, type: <div class="desc-link">[Tline](www.tline.site)</div> </div>
 
                     <div id="mainData">
-                        <input class="ttitle main-tl" autocorrect="off" spellcheck="false" :class="$mq" type="text" id="mainTitle" required maxlength="60" placeholder="Title" :value="timeline.descriptionTitle">
+                        <input class="ttitle main-tl" autocorrect="off" spellcheck="false" :class="$mq" type="text" id="mainTitle" required maxlength="60" minlength="3" placeholder="Title" :value="timeline.descriptionTitle">
                         <div v-if="timeline.pictures" class="file-container" :class="$mq" v-on:click="open(-1)">Files {{timeline.pictures.length}}</div>
                         <textarea class="ttitle tlong main-long" autocorrect="off" spellcheck="false" :class="$mq" id="mainLong" required placeholder="Description" maxlength="3000" :value="timeline.description"></textarea>
                     </div>
 
                     <h2>Events</h2>
-                    <div class="opis">Add events to your timeline.</div>
+                    <div class="opis">Add events to your timeline. Save your data, we are still working on a backup feature.</div>
 
                     <transition-group name="fade">
                         <div v-for="(evt, index) in events" v-bind:key="evt.id">
