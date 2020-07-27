@@ -2,9 +2,9 @@
     <div id="subscription" :class="$mq">
         <h1 :class="$mq">Subscription</h1>
         <p :class="$mq">Unlock premium plan, submit your details. Get access to unlimited timelines, more detailed statistics and special premium section on our homepage.</p>
-        <h1 class="price">3$ monthly</h1>
-        <p v-if="$store.state.jwt.user.subscriptionEnd">Your next payment: {{ $store.state.jwt.user.subscriptionEnd }}</p>
-        <p v-else>Billed now.</p>
+        <h1 class="price" :class="$mq">3$ monthly</h1>
+        <p v-if="$store.state.jwt.user.subscriptionEnd" :class="$mq">Your next payment: {{ $store.state.jwt.user.subscriptionEnd }}</p>
+        <p v-else :class="$mq">Billed now.</p>
         <form id="subscription-form" action="javascript:void(0);" :class="$mq">
             <input autocorrect="off" spellcheck="false" type="text" placeholder="Your name" id="name" class="fin">
             <div id="card-element" class="MyCardElement">
@@ -24,7 +24,7 @@
 <script src="https://js.stripe.com/v3/"></script>
 <script lang="js">
 
-    var stripe = Stripe('pk_test_51GvlqGG6mQST9KMb0zlu9ve2ztlyvHxpqHKbCCwWhjCHJDRKZ3f04oyfRFW3wtdfsP2T1SB9kiL7SIflXllLA15g00qMN28v5H');
+    var stripe = Stripe('pk_live_51GvlqGG6mQST9KMbJSmkP6ioKcyjlte02LEnYbiQcj5R1GFzwjgOm320AWXpt7w1FXdkcmUZtAOpexVVBRHiI9BI009xUuT25J');
     var elements = stripe.elements()
 
     export default  {
@@ -274,6 +274,7 @@ p
 
 #subscription-form
     margin: 20px auto
+    margin-top: 60px
     width: 60%
     &.small
         width: 90%

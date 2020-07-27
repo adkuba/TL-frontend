@@ -8,3 +8,7 @@ handlers:
 - url: /.*
   static_files: dist/index.html
   upload: dist/index.html
+  #force https
+- url: /.*
+  script: auto
+  secure: always
