@@ -33,9 +33,13 @@ export default {
     },
     methods: {
         redirectHttps(){
-            if (location.protocol !== 'https:') {
-                location.replace(`https:${location.href.substring(location.protocol.length)}`);
-            }
+            if (window.location.protocol == 'http:') {       
+                console.log("you are accessing us via " +  "an insecure protocol (HTTP). " + "Redirecting you to HTTPS."); 
+                window.location.href =  window.location.href.replace( 'http:', 'https:'); 
+            }  
+            else if (window.location.protocol == "https:") { 
+                    console.log("you are accessing us via" + " our secure HTTPS protocol."); 
+            } 
         },
         refreshToken(){
             var refreshApi = this.baseApi + 'auth/refreshToken'
