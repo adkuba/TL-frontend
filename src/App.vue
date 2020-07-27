@@ -24,36 +24,12 @@ export default {
     },
     data(){
         return {
-            baseApi: 'https://tline-283413.ew.r.appspot.com/api/',
+            baseApi: 'https://api.tline.site/api/',
             tokenRefresh: null
         }
     },
     methods: {
         refreshToken(){
-            
-            try {
-                document.hasStorageAccess().then(hasAccess => {
-                if (!hasAccess) {
-                    return document.requestStorageAccess();
-                }
-                }).then(() => {
-                    // Now we have first-party storage access!
-                    console.log("storage access api available")
-                    this.refreshTokenPost()
-                }).catch(error => {
-                    console.log(error)
-                })
-            } catch (error){
-                if (error.toString().includes("is not a function")){
-                    console.log("storage access api not available")
-                    this.refreshTokenPost()
-                }
-            }
-        },
-        closeModal(){
-            document.getElementById("modal").style.display = "none"
-        },
-        refreshTokenPost(){
             var refreshApi = this.baseApi + 'auth/refreshToken'
             this.axios.post(refreshApi, {}, {withCredentials: true})
                     .then(response => {
@@ -62,6 +38,9 @@ export default {
                     .catch(error => {
                         console.log(error)
                     })
+        },
+        closeModal(){
+            document.getElementById("modal").style.display = "none"
         }
     }
 }

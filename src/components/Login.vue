@@ -55,7 +55,7 @@ import VueRecaptcha from 'vue-recaptcha'
     },
     data () {
       return {
-          baseApi: 'https://tline-283413.ew.r.appspot.com/api/',
+          baseApi: 'https://api.tline.site/api/',
           errMessage: '',
           routerPath: null,
           action: 'Sign in',
@@ -86,26 +86,26 @@ import VueRecaptcha from 'vue-recaptcha'
             let self = this;
 
             if(this.action == "Sign in"){
-            
-                try {
-                    document.hasStorageAccess().then(hasAccess => {
-                    if (!hasAccess) {
-                        return document.requestStorageAccess();
-                    }
-                    }).then(() => {
-                        // Now we have first-party storage access!
-                        console.log("storage access api available")
-                        this.signInAction()
-                    }).catch(error => {
+                var loginApi = this.baseApi + 'auth/signin'
+                document.getElementById("ls").style.opacity = "1"
+                document.getElementById("submit-button").style.background = "#932a24"
+                this.axios.post(loginApi, {
+                    username: document.getElementById("username").value, 
+                    password: document.getElementById("password").value
+                    },
+                    {withCredentials: true})
+                    .then(response => {
+                        this.$store.commit('set', response.data)
+                        this.clearData()
+                        self.$router.push({ path: this.routerPath })
+                    })
+                    .catch(error => {
+                        this.errMessage = error.response.data.message
+                        document.getElementById("ls").style.opacity = "0"
+                        document.getElementById("submit-button").style.background = "#B8352D"
+                        this.clearData()
                         console.log(error)
                     })
-                } catch (error){
-                    if (error.toString().includes("is not a function")){
-                        console.log("storage access api not available")
-                        this.signInAction()
-                    }
-                }
-
             } else {
                 var signupApi = this.baseApi + 'auth/signup'
                 var passwordValue = document.getElementById("password").value
@@ -159,28 +159,6 @@ import VueRecaptcha from 'vue-recaptcha'
                 }
             }
             
-        },
-        signInAction(){
-            var loginApi = this.baseApi + 'auth/signin'
-            document.getElementById("ls").style.opacity = "1"
-            document.getElementById("submit-button").style.background = "#932a24"
-            this.axios.post(loginApi, {
-                username: document.getElementById("username").value, 
-                password: document.getElementById("password").value
-                },
-                {withCredentials: true})
-                .then(response => {
-                    this.$store.commit('set', response.data)
-                    this.clearData()
-                    self.$router.push({ path: this.routerPath })
-                })
-                .catch(error => {
-                    this.errMessage = error.response.data.message
-                    document.getElementById("ls").style.opacity = "0"
-                    document.getElementById("submit-button").style.background = "#B8352D"
-                    this.clearData()
-                    console.log(error)
-                })
         },
         redirect(){
             if(this.$store.state.jwt){
