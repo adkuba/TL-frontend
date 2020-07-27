@@ -18,6 +18,9 @@
 
 export default {
     name: 'App',
+    created(){
+        this.redirectHttps()
+    },
     mounted(){
         this.refreshToken()
         this.tokenRefresh = setInterval(() => this.refreshToken(), 840000) //14min
@@ -29,6 +32,11 @@ export default {
         }
     },
     methods: {
+        redirectHttps(){
+            if (location.protocol !== 'https:') {
+                location.replace(`https:${location.href.substring(location.protocol.length)}`);
+            }
+        },
         refreshToken(){
             var refreshApi = this.baseApi + 'auth/refreshToken'
             this.axios.post(refreshApi, {}, {withCredentials: true})
