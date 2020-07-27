@@ -18,9 +18,6 @@
 
 export default {
     name: 'App',
-    created(){
-        this.redirectHttps()
-    },
     mounted(){
         this.refreshToken()
         this.tokenRefresh = setInterval(() => this.refreshToken(), 840000) //14min
@@ -32,15 +29,6 @@ export default {
         }
     },
     methods: {
-        redirectHttps(){
-            if (window.location.protocol == 'http:') {       
-                console.log("you are accessing us via " +  "an insecure protocol (HTTP). " + "Redirecting you to HTTPS."); 
-                window.location.href =  window.location.href.replace( 'http:', 'https:'); 
-            }  
-            else if (window.location.protocol == "https:") { 
-                    console.log("you are accessing us via" + " our secure HTTPS protocol."); 
-            } 
-        },
         refreshToken(){
             var refreshApi = this.baseApi + 'auth/refreshToken'
             this.axios.post(refreshApi, {}, {withCredentials: true})
