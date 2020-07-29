@@ -12,9 +12,9 @@
     </div>
     <div id="regulations-info" v-if="checkLocalStorage()">
         <div>
-            By using our site you agree to
-            <a href="https://www.tline.site/about#regulations" style="color: #14426b">regulations</a>
-            <div class="close-info" v-on:click="closeInfo()">Click to close</div>
+            <div style="display: inline-block; margin-right: 5px">By using our site you agree to </div>
+            <a href="https://www.tline.site/about#regulations" style="color: #14426b; display: inline-block"> regulations</a>
+            <div class="close-info" :class="$mq" v-on:click="closeInfo()">Click to close</div>
         </div>
     </div>
     <router-view></router-view>
@@ -69,12 +69,14 @@ export default {
 
 .close-info
     font-size: 13px
-    margin-bottom: 30px
     cursor: pointer
     text-decoration: underline
     color: #7e7e7e
-    display: inline
+    display: inline-block
     margin-left: 20px
+    &.small
+        margin-left: 0
+        display: block
 
 #regulations-info
     border-top: 1px solid #303030
@@ -83,7 +85,8 @@ export default {
     font-family: OpenSans-Regular
     width: 100%
     bottom: 0
-    padding: 25px
+    padding: 20px 10px
+    box-sizing: border-box
     z-index: 5
     background: $bg-color
 
