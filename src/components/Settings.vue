@@ -30,7 +30,7 @@
                 </div>
 
                 <div class="s_item" :class="$mq">
-                    <div class="s_left" :class="$mq">Subscription</div>
+                    <div class="s_left" :class="$mq"><a href="https://www.tline.site/about#subscription" style="text-decoration: none; color: #303030">Subscription</a></div>
                     <div class="s_right" :class="$mq">
 
                             <div v-if="$store.state.jwt.user.subscriptionEnd && $store.state.jwt.user.subscriptionID" class="daneh" :class="$mq">Status:</div>

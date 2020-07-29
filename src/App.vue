@@ -10,6 +10,10 @@
         <div class="message" :class="$mq">{{ $store.state.message }}</div>
         <div id="modal-button" v-on:click="closeModal()" class="ok-button" :class="$mq">OK</div>
     </div>
+    <div id="regulations-info" v-if="checkLocalStorage()">
+        <p>By using our site you agree to <a href="https://www.tline.site/about#regulations" style="color: #14426b">regulations</a> </p>
+        <p class="close-info" v-on:click="closeInfo()">Click to close</p>
+    </div>
     <router-view></router-view>
   </div>
 </template>
@@ -25,7 +29,7 @@ export default {
     data(){
         return {
             baseApi: 'https://api.tline.site/api/',
-            tokenRefresh: null
+            tokenRefresh: null,
         }
     },
     methods: {
@@ -41,6 +45,16 @@ export default {
         },
         closeModal(){
             document.getElementById("modal").style.display = "none"
+        },
+        closeInfo(){
+            document.getElementById("regulations-info").style.display = "none"
+            localStorage.setItem("regulations", true)
+        },
+        checkLocalStorage(){
+            if (this.$store.state.jwt || localStorage.getItem("regulations")){
+                return false
+            }
+            return true
         }
     }
 }
@@ -49,6 +63,22 @@ export default {
 
 <style lang="sass">
 @import './assets/saas-vars.sass'
+
+.close-info
+    font-size: 14px
+    margin-bottom: 30px
+    cursor: pointer
+    text-decoration: underline
+    color: #7e7e7e
+    display: block
+
+#regulations-info
+    border-top: 1px solid #303030
+    position: fixed
+    width: 100%
+    bottom: 0
+    z-index: 5
+    background: $bg-color
 
 @keyframes fadein
     0%

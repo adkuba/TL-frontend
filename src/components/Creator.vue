@@ -7,6 +7,7 @@
             <div id="mainPicturesContainer" class="file-selector" :class="$mq">
                 <div class="exit" v-on:click="close()">x</div>
                 <input class="file" accept="image/*" @change="saveData()" type="file" id="mainPictures" multiple><br>
+                <div class="file-desc">Click on image to delete</div>
                 <div class="image-master">
                     <div class="image-container" :class="$mq" v-for="(img, index) in currentPictures" :key="index">
                         <img class="image" :class="$mq" :src="img" v-on:click="deleteImg(index)">
@@ -18,13 +19,13 @@
                 <form action="javascript:void(0);" id="tform" :class="$mq">
                     <h1>Creator</h1>
                     <div class="errorID">{{ errorMessage }}</div>
-                    <input class="ttitle tlid" autocorrect="off" spellcheck="false" :class="$mq" type="text" id="timelineId" placeholder="ID" maxlength="40" required pattern="[^/]*" title="Don't use /" :value="timeline.id">
+                    <input class="ttitle tlid" autocorrect="off" spellcheck="false" :class="$mq" type="text" id="timelineId" placeholder="ID" maxlength="40" required pattern="[^/]*" title="Don't use /" v-model="timeline.id">
                     <div class="opis">Create your timeline. See in preview how it looks. If you want to add links, type: <div class="desc-link">[Tline](www.tline.site)</div> </div>
 
                     <div id="mainData">
-                        <input class="ttitle main-tl" autocorrect="off" spellcheck="false" :class="$mq" type="text" id="mainTitle" required maxlength="60" minlength="3" placeholder="Title" :value="timeline.descriptionTitle">
+                        <input class="ttitle main-tl" autocorrect="off" spellcheck="false" :class="$mq" type="text" id="mainTitle" required maxlength="60" minlength="3" placeholder="Title" v-model="timeline.descriptionTitle">
                         <div v-if="timeline.pictures" class="file-container" :class="$mq" v-on:click="open(-1)">Files {{timeline.pictures.length}}</div>
-                        <textarea class="ttitle tlong main-long" autocorrect="off" spellcheck="false" :class="$mq" id="mainLong" required placeholder="Description" maxlength="3000" :value="timeline.description"></textarea>
+                        <textarea class="ttitle tlong main-long" autocorrect="off" spellcheck="false" :class="$mq" id="mainLong" required placeholder="Description" maxlength="3000" v-model="timeline.description"></textarea>
                     </div>
 
                     <h2>Events</h2>
@@ -40,10 +41,10 @@
                                     <div class="control_item down" v-on:click="changeIndex(index, index+1)" v-if="index!=events.length-1">&lang;</div>
                                 </div>
                                 <div class="s_left">
-                                    <input class="ttitle" autocorrect="off" spellcheck="false" :class="$mq" type="text" :id="'title'+index" required maxlength="40" placeholder="Title" :value="evt.title">
-                                    <input class="ttitle tdate" :class="$mq" type="date" required :id="'date'+index" placeholder="mm/dd/yyyy" :value="evt.date">
+                                    <input class="ttitle" autocorrect="off" spellcheck="false" :class="$mq" type="text" :id="'title'+index" required maxlength="40" minlength="3" placeholder="Title" v-model="evt.title">
+                                     <date-picker class="tdate" :class="$mq" :input-attr="{ id: 'date' + index, required: true  }" placeholder="Select date" v-model="evt.date" value-type="format"></date-picker>
                                     <div v-if="timeline.pictures" :class="$mq" class="file-container" v-on:click="open(index)">Files {{evt.pictures.length}}</div>
-                                    <textarea class="ttitle tlong" autocorrect="off" spellcheck="false" :class="$mq" :id="'long'+index" required maxlength="1500" placeholder="Description" :value="evt.description"></textarea>
+                                    <textarea class="ttitle tlong" autocorrect="off" spellcheck="false" :class="$mq" :id="'long'+index" required maxlength="1500" placeholder="Description" v-model="evt.description"></textarea>
                                     <div class="control_item add_sub" v-on:click="addSubEvent(index)">&#43;</div>
                                 </div>
                             </div>
@@ -55,10 +56,10 @@
                                         <div class="control_item down" v-on:click="changeSubIndex(index, subindex, subindex+1)" v-if="subindex!=evt.sub.length-1">&lang;</div>
                                     </div>
                                     <div class="s_left">
-                                        <input class="ttitle" autocorrect="off" spellcheck="false" :class="$mq" :id="'sub'+index+'title'+subindex" required maxlength="40" type="text" placeholder="Title" :value="subevt.title">
-                                        <input class="ttitle tdate" :class="$mq" type="date" required :id="'sub'+index+'date'+subindex" placeholder="mm/dd/yyyy" :value="subevt.date">
+                                        <input class="ttitle" autocorrect="off" spellcheck="false" :class="$mq" :id="'sub'+index+'title'+subindex" required maxlength="40" minlength="3" type="text" placeholder="Title" v-model="subevt.title">
+                                        <date-picker class="tdate" :class="$mq" :input-attr="{ id: 'sub'+index+'date'+subindex, required: true }" placeholder="Select date" v-model="subevt.date" value-type="format"></date-picker>
                                         <div v-if="timeline.pictures" :class="$mq" class="file-container" v-on:click="open(index, subindex)">Files {{subevt.pictures.length}}</div>
-                                        <textarea class="ttitle tlong" autocorrect="off" spellcheck="false" :class="$mq" :id="'sub'+index+'long'+subindex" required maxlength="1500" placeholder="Description" :value="subevt.description"></textarea>
+                                        <textarea class="ttitle tlong" autocorrect="off" spellcheck="false" :class="$mq" :id="'sub'+index+'long'+subindex" required maxlength="1500" placeholder="Description" v-model="subevt.description"></textarea>
                                     </div>
                                 </div>
                             </transition-group>
@@ -79,6 +80,8 @@
 
 <script lang="js">
   import Timeline from './Timeline.vue';
+  import DatePicker from 'vue2-datepicker';
+  import 'vue2-datepicker/index.css';
 
   export default  {
     name: 'Creator',
@@ -87,7 +90,8 @@
         editEvents: Array
     },
     components: {
-        Timeline
+        Timeline,
+        DatePicker
     },
     created () {
         var timelineApi = this.baseApi + 'timelines/public/' + this.$store.state.jwt.user.username
@@ -534,31 +538,8 @@
             this.timeline.description = document.getElementById("mainLong").value
 
             for (i=0, len=this.events.length; i<len; i++){
-                this.events[i].title = document.getElementById("title"+i).value;
-                document.getElementById("title"+i).value = '';
-
-                this.events[i].description = document.getElementById("long"+i).value
-                document.getElementById("long"+i).value = '';
-
-                this.events[i].date = document.getElementById("date"+i).value;
-                document.getElementById("date"+i).value = '';
-
-                if (this.events[i].sub){
-                    for (var j=0, len2=this.events[i].sub.length; j<len2; j++){
-                        if (document.getElementById("sub"+i+"title"+j)){
-                            this.events[i].sub[j].title = document.getElementById("sub"+i+"title"+j).value;
-                            document.getElementById("sub"+i+"title"+j).value = '';
-
-                            this.events[i].sub[j].description = document.getElementById("sub"+i+"long"+j).value
-                            document.getElementById("sub"+i+"long"+j).value = ''
-
-                            this.events[i].sub[j].date = document.getElementById("sub"+i+"date"+j).value;
-                            document.getElementById("sub"+i+"date"+j).value = '';
-                        }
-                    }
-                    if (sort){
-                        this.events[i].sub = this.sortByDate(this.events[i].sub)
-                    }
+                if (this.events[i].sub && sort){
+                    this.events[i].sub = this.sortByDate(this.events[i].sub)
                 }
             }
             if (sort){
@@ -579,15 +560,39 @@
 
 </script>
 
+<style lang="sass">
+
+.mx-input
+    border: 0px
+    border-radius: 8px
+    padding: 0 20px
+    font-size: 15px
+    font-family: OpenSans-Regular
+    background: #f3f3f3
+    color: #404040
+    box-shadow: none
+
+</style>
+
 <style scoped lang="sass">
+
 @import '../assets/saas-vars.sass'
+
+.file-desc
+    position: absolute
+    top: 0
+    font-size: 13px
+    left: 50%
+    width: 100%
+    color: #7e7e7e
+    transform: translateX(-50%)
 
 .message
     margin-top: 100px
     text-align: center
 
 .image-master
-    margin-top: 47px
+    margin-top: 50px
     margin-left: 15px
 
 .exit
@@ -663,7 +668,7 @@
 
 .file
     position: absolute
-    margin-top: 22px
+    margin-top: 25px
     left: 20px
     color: transparent
     &:focus
@@ -827,25 +832,18 @@ h2
         top: 85px
         width: 89%
 
+
 .tdate
-    -webkit-appearance: none
-    font-size: 12px
     width: 20%
-    font-family: OpenSans-Regular
-    padding: 0 10px
-    margin-left: 45px
-    height: 30px
-    vertical-align: bottom
-    color: #535353
+    margin-left: 35px
+    transform: translateY(+3px)
     &.medium
         margin-left: 10px
-        width: calc(20% + 20px)
+        width:  calc(20% + 20px)
     &.small
-        padding: 0 20px
-        height: 40px
-        margin-left: 3%
-        margin-top: 5px
-        margin-bottom: 5px
+        margin: 5px 3%
+        transform: translateY(0)
+        width: 94%
 
 ::-webkit-inner-spin-button
     display: none

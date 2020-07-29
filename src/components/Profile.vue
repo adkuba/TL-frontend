@@ -223,6 +223,7 @@
     position: relative
     height: 110px
     background: rgba(0, 0, 0, 0.04)
+    box-shadow: 0px 2px 15px 4px rgba(0,0,0,0.09)
     animation: pulse 1.5s linear infinite
     &.small
         height: 155px
