@@ -16,6 +16,7 @@
                 <input v-if="action=='Sign in'" id="submit-button" type="submit" value="Submit" class="fsubmit" :class="$mq" v-on:click="signin()">
                 <vue-recaptcha v-else sitekey="6LcwcqwZAAAAAGHazabCBGXKndRustjOflfOFQSX" ref="recaptcha" @verify="onCaptchaVerified" @expired="onCaptchaExpired" size="invisible">
                     <input :disabled="status==='submitting'" type="submit" value="Submit" id="submit-button" class="fsubmit" :class="$mq" v-on:click="signUp()">
+                    <div class="regulations-inf" :class="$mq">By clicking submit you agree to our <a href="https://www.tline.site/about#regulations" style="color: #14426b">regulations</a></div>
                 </vue-recaptcha>
                 <br>
                 <div class="fsignup" :class="$mq" v-on:click="signupShow()">{{signupText}}</div>
@@ -207,6 +208,23 @@ import VueRecaptcha from 'vue-recaptcha'
 
 <style lang="sass">
 @import '../assets/saas-vars.sass'
+
+.regulations-inf
+    margin-top: 5px
+    text-align: left
+    letter-spacing: 0
+    color: #7e7e7e
+    font-size: 13px
+    font-family: OpenSans-Regular
+    margin-left: 20%
+    width: 60%
+    &.medium
+        margin-left: 30%
+        width: 40%
+    &.small
+        width: 70%
+        margin-left: 15%
+
 
 #ls
     opacity: 0

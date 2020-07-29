@@ -11,8 +11,11 @@
         <div id="modal-button" v-on:click="closeModal()" class="ok-button" :class="$mq">OK</div>
     </div>
     <div id="regulations-info" v-if="checkLocalStorage()">
-        <p>By using our site you agree to <a href="https://www.tline.site/about#regulations" style="color: #14426b">regulations</a> </p>
-        <p class="close-info" v-on:click="closeInfo()">Click to close</p>
+        <div>
+            By using our site you agree to
+            <a href="https://www.tline.site/about#regulations" style="color: #14426b">regulations</a>
+            <div class="close-info" v-on:click="closeInfo()">Click to close</div>
+        </div>
     </div>
     <router-view></router-view>
   </div>
@@ -65,18 +68,22 @@ export default {
 @import './assets/saas-vars.sass'
 
 .close-info
-    font-size: 14px
+    font-size: 13px
     margin-bottom: 30px
     cursor: pointer
     text-decoration: underline
     color: #7e7e7e
-    display: block
+    display: inline
+    margin-left: 20px
 
 #regulations-info
     border-top: 1px solid #303030
     position: fixed
+    font-size: 14px
+    font-family: OpenSans-Regular
     width: 100%
     bottom: 0
+    padding: 25px
     z-index: 5
     background: $bg-color
 

@@ -2,20 +2,20 @@
     <div id="about-container" :class="$mq">
         <h1 id="about">About</h1>
         <p>Welcome on Tline! <br><br> Tline allows users to create various content based on timeline concept, to showcase projects, achievements, to inspire and develop connections. Step by step guide and images:</p>
-        <ul>
-            <li>Create free account</li>
-            <li>Fill your details. User full name will be displayed above timeline to direct users to owner’s profile,</li>
-            <li>“Create” will direct you to our special timeline creator. Add description, events and pictures,</li>
-            <li>Profile is a summary of your activity. You can find there your timelines, likes, and following users. Here you can also edit or delete created timelines,</li>
-            <li>Timelines will be displayed on the homepage. That's the best place to discover other users creations. With our homepage you can better promote your content and profile.</li>
-        </ul>
-        <p class="img-desc" style="margin-top: 80px"></p>
+        <p class="img-desc" style="margin-bottom: 60px"></p>
         <img src="../assets/images/about/signup.png" class="image">
+        <p class="img-desc">Create free account.</p>
         <img src="../assets/images/about/settings.png" class="image">
+        <p class="img-desc">Fill your details. User full name will be displayed above timeline to direct users to owner’s profile.</p>
         <img src="../assets/images/about/creator.png" class="image">
+        <p class="img-desc">“Create” will direct you to our special timeline creator. Add description, events and pictures.</p>
         <img src="../assets/images/about/profile.png" class="image">
+        <p class="img-desc">Profile is a summary of your activity. You can find there your timelines, likes, and following users. Here you can also edit or delete created timelines.</p>
         <img src="../assets/images/about/homepage.png" class="image">
-        
+        <p class="img-desc">Timelines will be displayed on the homepage. That's the best place to discover other users creations. With our homepage you can better promote your content and profile.</p>
+        <img src="../assets/images/about/timeline.png" class="image">
+        <p class="img-desc">Ready timeline.</p>
+
         <h1 id="subscription">Subscription</h1>
         <p>Premium version allows you to use special promotion section on the homepage. It helps you to reach more users. Also premium unlocks more detailed timeline statistics to let you better understand users interactions.</p>
         <p>In future we are planning to implement ads on our page. Premium version will be free from them. Ads in standard version will display on homepage, profiles and timelines. So with premium, even non logged user visiting your profile or timeline won’t see ads.</p>
@@ -89,9 +89,15 @@
 #regulations
     margin-top: 250px
 
+.img-desc
+    text-align: center
+    font-size: 14px
+    margin-bottom: 200px
+    color: #7e7e7e
+
 .image
     image-rendering: crisp-edges
-    margin-top: 100px
+    margin-top: 20px
     width: 100%
     border-radius: 10px
 

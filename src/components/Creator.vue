@@ -580,7 +580,7 @@
 
 .file-desc
     position: absolute
-    top: 0
+    top: 5px
     font-size: 13px
     left: 50%
     width: 100%
@@ -592,10 +592,11 @@
     text-align: center
 
 .image-master
-    margin-top: 50px
+    margin-top: 55px
     margin-left: 15px
 
 .exit
+    z-index: 5
     position: absolute
     user-select: none
     cursor: pointer
@@ -668,7 +669,7 @@
 
 .file
     position: absolute
-    margin-top: 25px
+    margin-top: 30px
     left: 20px
     color: transparent
     &:focus
