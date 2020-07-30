@@ -27,7 +27,7 @@
                         <h1 class="evt_h"> {{ eventsSub[openedSub].title }} </h1>
                         <p class="evt_desc_p"> {{ eventsSub[openedSub].description.replace(/ \[([^\]]+)\]\(([^\)]+)\)/g, '') }} </p>
                         <div class="link-container" v-for="(value, lidx) in eventsSub[openedSub].description.match(/\[([^\]]+)\]\(([^\)]+)\)/g)" :key="lidx">
-                            <a :href="'http://' + value.split('(')[1].slice(0, -1)" class="evt_desc_p2" > {{ value.split('(')[0].slice(1, -1) }} </a>
+                            <a :href="'https://' + value.split('(')[1].slice(0, -1).replace(/(^\w+:|^)\/\//, '')" target="_blank" class="evt_desc_p2" > {{ value.split('(')[0].slice(1, -1) }} </a>
                         </div>
                     </div>
                     
@@ -89,7 +89,7 @@
             <h1> {{ timeline.descriptionTitle }} </h1>
             <p> {{ timeline.description.replace(/ \[([^\]]+)\]\(([^\)]+)\)/g, '') }} </p>
             <div class="link-container" v-for="(value, lidx) in timeline.description.match(/\[([^\]]+)\]\(([^\)]+)\)/g)" :key="lidx">
-                <a :href="'http://' + value.split('(')[1].slice(0, -1)" class="evt_desc_p2" > {{ value.split('(')[0].slice(1, -1) }} </a>
+                <a :href="'https://' + value.split('(')[1].slice(0, -1).replace(/(^\w+:|^)\/\//, '')" target="_blank" class="evt_desc_p2" > {{ value.split('(')[0].slice(1, -1) }} </a>
             </div>
         </div>
         <div class="gallery-container" :class="$mq" v-if="timeline.pictures.length > 0" >
@@ -134,6 +134,13 @@ export default {
         mockTimeline: Object,
         mockSubEvents: Array
     },
+    metaInfo() {
+        return {
+            title: this.timeline.descriptionTitle,
+            titleTemplate: '%s - Tline',
+            content: this.timeline.description
+        }
+    },
     created () {
         this.scrollToTop()
         this.mainColor = this.circleColors[Math.floor(Math.random() * this.circleColors.length)]
@@ -157,7 +164,9 @@ export default {
         return {
         baseApi: 'https://api.tline.site/api/',
         open: false,
-        timeline: null,
+        timeline: {
+            description: 'Timeline'
+        },
         events: null,
         newPos: null,
         galleryScrolling: false,
@@ -564,36 +573,26 @@ export default {
 
 .left
     position: absolute
-    left: 35%
-    &.medium
-        left: 25%
-    &.small
-        left: 5%
+    left: 0
 
 .vm-item
     padding: 0 15px
-    margin-top: 4px
+    margin-top: 2px
     border-radius: 5px
     font-size: 17px
     position: absolute
     cursor: pointer
-    right: 35%
-    &.medium
-        right: 25%
-    &.small
-        right: 5%
+    right: 0
 
 .center
-    color: #303030
     position: absolute
     left: 50%
-    top: 5px
+    top: 3px
     transform: translateX(-50%)
 
 .arrow
     cursor: pointer
     font-size: 20px
-    margin-top: 2px
     padding: 0 20px
     margin-right: 10px
     display: inline-block
@@ -601,15 +600,16 @@ export default {
         margin-right: 5px
 
 .viewer-menu
-    color: #303030
+    color: #cccccc
     font-size: 15px
     font-family: OpenSans-Regular
     width: 30%
     margin-left: 35%
-    border-radius: 10px
-    height: 35px
-    margin-bottom: 15px
-    background: $bg-color
+    border-radius: 5px
+    height: 30px
+    margin-bottom: 5px
+    background: rgba(255, 255, 255, 0.25)
+    backdrop-filter: blur(7px)
     &.medium
         width: 50%
         margin-left: 25%
@@ -660,6 +660,7 @@ export default {
 .gallery-container
     z-index: 2
     position: relative
+    text-align: center
     margin: 70px 30%
     &.medium
         margin: 170px 15%
@@ -668,6 +669,7 @@ export default {
     #evt_container &
         width: 100%
         margin: 60px 10px
+        margin-left: 0
 
 
 div#sub_timeline::-webkit-scrollbar
@@ -733,6 +735,7 @@ div#sub_timeline::-webkit-scrollbar
     display: inline-block
 
 #evt_desc_text
+    min-height: 170px
     margin-bottom: 40px
 
 .sub_nav
@@ -767,7 +770,6 @@ div#sub_timeline::-webkit-scrollbar
 
 
 .evt_desc_p
-    white-space: pre-line
     margin-top: 40px
     display: block
     text-align: justify
@@ -818,7 +820,7 @@ div#sub_timeline::-webkit-scrollbar
     animation: fadein 1s
     user-select: none
     text-decoration: none
-    z-index: 4
+    z-index: 5
     position: fixed
     color: white
     letter-spacing: 2px
@@ -973,10 +975,10 @@ div#sub_timeline::-webkit-scrollbar
 #descr
     animation-timing-function: ease-in
     animation: fadein 1s
-    white-space: pre-line
     margin: 0 20%
     margin-top: 100px
     margin-bottom: 50px
+    min-height: 130px
     text-align: left
     font-family: 'Raleway-Regular'
     h1

@@ -93,6 +93,13 @@
         Timeline,
         DatePicker
     },
+    metaInfo() {
+        return {
+            title: 'Creator',
+            titleTemplate: '%s - Tline',
+            content: 'Explore new way to present your content based on timeline.'
+        }
+    },
     created () {
         var timelineApi = this.baseApi + 'timelines/public/' + this.$store.state.jwt.user.username
         this.axios.get(timelineApi)
@@ -850,7 +857,6 @@ h2
     display: none
 
 .tlong
-    white-space: pre-wrap
     resize: none
     font-size: 15px
     font-family: OpenSans-Regular

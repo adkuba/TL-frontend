@@ -22,6 +22,13 @@
 
   export default  {
     name: 'EmailChange',
+    metaInfo() {
+        return {
+            title: 'Email Change',
+            titleTemplate: '%s - Tline',
+            content: 'Explore new way to present your content based on timeline.'
+        }
+    },
     created() {
         this.scrollToTop()
     },

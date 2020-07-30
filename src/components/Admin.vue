@@ -10,7 +10,9 @@
                         Day: {{ stat.day }} Views(home, timeline, profile): {{ stat.mainPageViews }}+{{ stat.totalTimelinesViews }}+{{ stat.profileViews }}={{ stat.profileViews + stat.totalTimelinesViews + stat.mainPageViews }}  newUsers: {{ stat.numberOfUsers }} activeUsers: {{ stat.activeUsers }}
                     </div>
                 </div>
-                <LineChart v-if="allStatObject" :chartdata="allStatObject" :options="viewsOptions" class="stat-chart"/>
+                <div v-if="allStatObject && allStatObject.labels" class="chart-wrapper">
+                    <LineChart :chartdata="allStatObject" :options="viewsOptions" class="stat-chart" :style="{'width': (allStatObject.labels.length * 80) + 'px'}"/>
+                </div>
             </div>
             <div class="timelines" :class="$mq">
                 <h1>Timelines</h1>
@@ -60,8 +62,12 @@
                         Device details: {{ device.deviceDetails }} Location: {{ device.location }} Username: {{ device.username }} LastLogin: {{ device.lastLogged }}
                     </div>
                 </div>
-                <BarChart v-if="locationStat" :chartdata="locationStat" :options="viewsOptions" class="stat-chart" :class="$mq"/>
-                <BarChart v-if="devicesInfoChart" :chartdata="devicesInfoChart" :options="viewsOptions" class="stat-chart" :class="$mq"/>
+                <div v-if="locationStat && locationStat.labels" class="chart-wrapper">
+                    <BarChart :chartdata="locationStat" :options="viewsOptions" class="stat-chart" :class="$mq" :style="{'width': (locationStat.labels.length * 150) + 'px'}"/>
+                </div>
+                <div v-if="devicesInfoChart && devicesInfoChart.labels" class="chart-wrapper">
+                    <BarChart :chartdata="devicesInfoChart" :options="viewsOptions" class="stat-chart" :class="$mq" :style="{'width': (devicesInfoChart.labels.length * 150) + 'px'}"/>
+                </div>
             </div>
         </div>
         <div v-else>
@@ -79,6 +85,13 @@ import BarChart from './BarChart.vue'
     components: {
         LineChart,
         BarChart
+    },
+    metaInfo() {
+        return {
+            title: 'Admin',
+            titleTemplate: '%s - Tline',
+            content: 'Explore new way to present your content based on timeline.'
+        }
     },
     created () {
         this.axios.get(this.baseApi + 'statistics/all', {
@@ -204,6 +217,7 @@ import BarChart from './BarChart.vue'
         viewsOptions: {
             responsive: true,
             maintainAspectRatio: false,
+            responsiveAnimationDuration: 800, 
             legend: {
                 display: false,
             },
@@ -448,6 +462,7 @@ import BarChart from './BarChart.vue'
     margin-bottom: 20px
 
 .stat-chart
+    min-width: 100%
     margin-top: 50px
     margin-bottom: 80px
 
@@ -499,5 +514,23 @@ import BarChart from './BarChart.vue'
     color: red
     cursor: pointer
     margin-right: 30px
+
+.chart-wrapper
+    width: 100% 
+    overflow-x: auto
+
+.chart-wrapper::-webkit-scrollbar
+    height: 7px
+
+.chart-wrapper::-webkit-scrollbar-track
+    background: #e7e7e7
+    border-radius: 5px
+
+.chart-wrapper::-webkit-scrollbar-thumb
+    background: #c0c0c0
+    border-radius: 5px
+
+.chart-wrapper::-webkit-scrollbar-thumb:hover
+    background: #a3a3a3
 
 </style>

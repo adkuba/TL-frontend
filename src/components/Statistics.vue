@@ -37,11 +37,11 @@
                     More detailed charts only for premum users. Subscribe to see more.
                 </div>
                 <div v-else>
-                    <div v-if="chart==1 && user.viewsDetails">
-                        <LineChart :chartdata="user.viewsDetails" :options="viewsOptions" class="line-container"/>
+                    <div v-if="chart==1 && user.viewsDetails" class="chart-wrapper">
+                        <LineChart :chartdata="user.viewsDetails" :options="viewsOptions" class="line-container" :style="{'width': (user.viewsDetails.labels.length * 80) + 'px'}"/>
                         </div>
-                    <div v-if="chart==2 && user.viewsCountry">
-                        <BarChart :chartdata="user.viewsCountry" :options="viewsOptions" class="line-container"/>
+                    <div v-if="chart==2 && user.viewsCountry" class="chart-wrapper">
+                        <BarChart :chartdata="user.viewsCountry" :options="viewsOptions" class="line-container" :style="{'width': (user.viewsCountry.labels.length * 150) + 'px'}"/>
                     </div>
                 </div>
             </div>
@@ -78,11 +78,11 @@
                     More detailed charts only for premum users. Subscribe to see more.
                 </div>
                 <div v-else>
-                    <div v-if="chart==1 && timeline.viewsDetails">
-                        <LineChart :chartdata="timeline.viewsDetails" :options="viewsOptions" class="line-container"/>
+                    <div v-if="chart==1 && timeline.viewsDetails" class="chart-wrapper">
+                        <LineChart :chartdata="timeline.viewsDetails" :options="viewsOptions" class="line-container" :style="{'width': (timeline.viewsDetails.labels.length * 80) + 'px'}"/>
                         </div>
-                    <div v-if="chart==2 && timeline.viewsCountry">
-                        <BarChart :chartdata="timeline.viewsCountry" :options="viewsOptions" class="line-container"/>
+                    <div v-if="chart==2 && timeline.viewsCountry" class="chart-wrapper">
+                        <BarChart :chartdata="timeline.viewsCountry" :options="viewsOptions" class="line-container" :style="{'width': (timeline.viewsCountry.labels.length * 150) + 'px'}"/>
                     </div>
                 </div>
             </div>
@@ -95,11 +95,19 @@
 import LineChart from './LineChart.vue'
 import BarChart from './BarChart'
 
+
   export default  {
     name: 'Statistics',
     components: {
         LineChart,
         BarChart
+    },
+    metaInfo() {
+        return {
+            title: 'Statistics',
+            titleTemplate: '%s - Tline',
+            content: 'Explore new way to present your content based on timeline.'
+        }
     },
     created() {
         this.scrollToTop()
@@ -134,6 +142,7 @@ import BarChart from './BarChart'
             viewsOptions: {
                 responsive: true,
                 maintainAspectRatio: false,
+                responsiveAnimationDuration: 800, 
                 legend: {
                     display: false,
                 },
@@ -301,6 +310,24 @@ import BarChart from './BarChart'
 
 <style scoped lang="sass">
 
+.chart-wrapper
+    width: 100% 
+    overflow-x: auto
+
+.chart-wrapper::-webkit-scrollbar
+    height: 7px
+
+.chart-wrapper::-webkit-scrollbar-track
+    background: #e7e7e7
+    border-radius: 5px
+
+.chart-wrapper::-webkit-scrollbar-thumb
+    background: #c0c0c0
+    border-radius: 5px
+
+.chart-wrapper::-webkit-scrollbar-thumb:hover
+    background: #a3a3a3
+
 .normal-info
     text-align: center
     padding: 145px 5%
@@ -309,8 +336,10 @@ import BarChart from './BarChart'
 
 .line-container
     height: 310px
+    min-width: 100%
 
 .controler
+    user-select: none
     margin-top: 40px
     &.medium
         margin-top: 20px

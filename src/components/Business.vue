@@ -11,6 +11,13 @@
 
   export default  {
     name: 'Business',
+    metaInfo() {
+        return {
+            title: 'Business',
+            titleTemplate: '%s - Tline',
+            content: 'Explore new way to present your content based on timeline.'
+        }
+    },
     created(){
         this.scrollToTop()
     },

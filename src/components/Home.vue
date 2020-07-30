@@ -112,6 +112,13 @@
 
 export default {
     name: 'Home',
+    metaInfo() {
+        return {
+            title: 'Homepage',
+            titleTemplate: '%s - Tline',
+            content: 'Explore new way to present your content based on timeline.'
+        }
+    },
     created(){
         this.getTimelines(true)
         this.axios.post(this.baseApi + 'statistics/public', null)

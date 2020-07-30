@@ -56,6 +56,13 @@
 
   export default  {
     name: 'About',
+    metaInfo() {
+        return {
+            title: 'About',
+            titleTemplate: '%s - Tline',
+            content: 'Explore new way to present your content based on timeline.'
+        }
+    },
     created(){
         this.scrollToTop()
     },

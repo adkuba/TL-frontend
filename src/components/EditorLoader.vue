@@ -13,6 +13,13 @@ import Creator from './Creator.vue'
     components: {
         Creator
     },
+    metaInfo() {
+        return {
+            title: 'Editor Loader',
+            titleTemplate: '%s - Tline',
+            content: 'Explore new way to present your content based on timeline.'
+        }
+    },
     mounted() {
         document.getElementById("loader").style.display = "block"
         var timelineApi = this.baseApi + 'timelines/editor?id=' + this.$route.params.id

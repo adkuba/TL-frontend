@@ -11,6 +11,13 @@
     name: 'Ola',
     created() {
     },
+    metaInfo() {
+        return {
+            title: 'Ola',
+            titleTemplate: '%s - Tline',
+            content: 'Kocham cie ola'
+        }
+    },
     data () {
       return {
           baseApi: 'https://api.tline.site/api/',

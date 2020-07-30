@@ -24,6 +24,13 @@
     created() {
         this.scrollToTop()
     },
+    metaInfo() {
+        return {
+            title: 'Name Change',
+            titleTemplate: '%s - Tline',
+            content: 'Explore new way to present your content based on timeline.'
+        }
+    },
     data () {
       return {
           baseApi: 'https://api.tline.site/api/',

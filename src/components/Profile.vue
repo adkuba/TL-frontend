@@ -67,6 +67,13 @@
 
   export default  {
     name: 'Profile',
+    metaInfo() {
+        return {
+            title: this.$route.params.id,
+            titleTemplate: '%s - Tline',
+            content: 'Explore new way to present your content based on timeline.'
+        }
+    },
     created () {
         this.scrollToTop()
         this.axios.get(this.baseApi + 'users/public/' + this.$route.params.id + '?profile=true')

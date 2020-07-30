@@ -87,7 +87,7 @@ export default {
     bottom: 0
     padding: 20px 10px
     box-sizing: border-box
-    z-index: 5
+    z-index: 7
     background: $bg-color
 
 @keyframes fadein
@@ -133,7 +133,7 @@ export default {
     display: none
     position: fixed
     top: 25%
-    z-index: 5
+    z-index: 6
     width: 25%
     margin-left: 37%
     box-shadow: 0 0 0 1600px rgba(0,0,0,0.65)
@@ -201,7 +201,7 @@ html
         margin-left: 4%
 
 .menu
-    z-index: 3
+    z-index: 5
     position: fixed
     top: 0
     backdrop-filter: blur(2px)

@@ -6,6 +6,7 @@ import axios from 'axios'
 import VueAxios from 'vue-axios'
 import VueMq from 'vue-mq'
 import Vuex from 'vuex'
+import VueMeta from 'vue-meta'
 
 Vue.use(Vuex)
 Vue.config.productionTip = false
@@ -18,6 +19,7 @@ Vue.use(VueMq, {
     large: Infinity,
   }
 })
+Vue.use(VueMeta)
 
 const store = new Vuex.Store({
   state: {

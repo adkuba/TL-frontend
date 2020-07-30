@@ -43,6 +43,13 @@ import VueRecaptcha from 'vue-recaptcha'
     components: {
         'vue-recaptcha': VueRecaptcha
     },
+    metaInfo() {
+        return {
+            title: 'Login',
+            titleTemplate: '%s - Tline',
+            content: 'Explore new way to present your content based on timeline.'
+        }
+    },
     created(){
         this.scrollToTop()
         if(!this.path){
