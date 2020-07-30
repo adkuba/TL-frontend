@@ -470,7 +470,7 @@ input::-webkit-search-cancel-button
     width: 40%
     font-family: OpenSans-Regular
     position: fixed
-    z-index: 4
+    z-index: 5
     top: 0
     padding-top: 11px
     left: 30%
