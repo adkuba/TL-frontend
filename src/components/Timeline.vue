@@ -3,14 +3,14 @@
         <router-link :to="{ path: '/profile/' + timeline.user.username }" class="user_d" :class="$mq" v-if="!mockEvents"> {{ timeline.user.fullName }} </router-link>
 
         <div id="image-viewer" :class="$mq">
-            <div class="viewer-menu" :class="$mq">
-                <div class="left" :class="$mq">
+            <div class="left" :class="$mq">
                     <div v-on:click="imageViewerScroll(mainImageIndex-1)" class="arrow" :class="$mq"> &#10094; </div>
                     <div v-on:click="imageViewerScroll(mainImageIndex+1)" class="arrow" :class="$mq"> &#10095; </div>
                 </div>
-                <div class="center" :class="$mq" v-if="mainImages">{{ mainImageIndex+1 }}/{{ mainImages.length }}</div>
-                <div class="vm-item" :class="$mq" v-on:click="closeImage()"> x </div>
+            <div class="viewer-menu" :class="$mq">
             </div>
+            <div class="center" :class="$mq" v-if="mainImages">{{ mainImageIndex+1 }}/{{ mainImages.length }}</div>
+            <div class="vm-item" :class="$mq" v-on:click="closeImage()"> x </div>
             <img :src="mainImages[mainImageIndex]" id="main-image" v-if="mainImages">
         </div>
 
@@ -572,16 +572,26 @@ export default {
         margin-left: 5%
 
 .left
-    float: left
+    left: 35%
+    position: absolute
+    &.medium
+        left: 25%
+    &.small
+        left: 5%
 
 .vm-item
     padding: 0 15px
-    margin-top: 3px
+    top: 3px
     font-weight: bold
     border-radius: 5px
     font-size: 17px
     cursor: pointer
-    float: right
+    position: absolute
+    right: 35%
+    &.medium
+        right: 25%
+    &.small
+        right: 5%
 
 .center
     position: absolute
@@ -600,9 +610,6 @@ export default {
         margin-right: 5px
 
 .viewer-menu
-    color: #cccccc
-    font-size: 15px
-    font-family: Raleway-Regular
     width: 30%
     margin-left: 35%
     border-radius: 5px
@@ -623,6 +630,9 @@ export default {
     object-fit: contain
 
 #image-viewer
+    color: #cccccc
+    font-size: 15px
+    font-family: Raleway-Regular
     top: 40px
     user-select: none
     position: fixed
