@@ -180,6 +180,7 @@ html
     color: #303030
 
 .login_b
+    user-select: none
     text-decoration: none
     font-family: Raleway-Regular
     z-index: 4
@@ -193,6 +194,7 @@ html
 
 
 .home_b
+    user-select: none
     z-index: 4
     float: left
     margin-top: 16px

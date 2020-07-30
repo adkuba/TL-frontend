@@ -5,10 +5,10 @@
         <div id="image-viewer" :class="$mq">
             <div class="viewer-menu" :class="$mq">
                 <div class="left" :class="$mq">
-                    <div v-on:click="imageViewerScroll(mainImageIndex-1)" class="arrow" :class="$mq"> &#8249; </div>
-                    <div v-on:click="imageViewerScroll(mainImageIndex+1)" class="arrow" :class="$mq"> &#8250; </div>
+                    <div v-on:click="imageViewerScroll(mainImageIndex-1)" class="arrow" :class="$mq"> &#10094; </div>
+                    <div v-on:click="imageViewerScroll(mainImageIndex+1)" class="arrow" :class="$mq"> &#10095; </div>
                 </div>
-                <div class="center" :class="$mq" v-if="mainImages">Image {{ mainImageIndex+1 }} of {{ mainImages.length }}</div>
+                <div class="center" :class="$mq" v-if="mainImages">{{ mainImageIndex+1 }}/{{ mainImages.length }}</div>
                 <div class="vm-item" :class="$mq" v-on:click="closeImage()"> x </div>
             </div>
             <img :src="mainImages[mainImageIndex]" id="main-image" v-if="mainImages">
@@ -572,28 +572,28 @@ export default {
         margin-left: 5%
 
 .left
-    position: absolute
-    left: 0
+    float: left
 
 .vm-item
     padding: 0 15px
-    margin-top: 2px
+    margin-top: 3px
+    font-weight: bold
     border-radius: 5px
     font-size: 17px
-    position: absolute
     cursor: pointer
-    right: 0
+    float: right
 
 .center
     position: absolute
     left: 50%
-    top: 3px
+    top: 5px
     transform: translateX(-50%)
 
 .arrow
     cursor: pointer
     font-size: 20px
     padding: 0 20px
+    margin-top: 2px
     margin-right: 10px
     display: inline-block
     &.small
@@ -602,14 +602,14 @@ export default {
 .viewer-menu
     color: #cccccc
     font-size: 15px
-    font-family: OpenSans-Regular
+    font-family: Raleway-Regular
     width: 30%
     margin-left: 35%
     border-radius: 5px
     height: 30px
     margin-bottom: 5px
-    background: rgba(255, 255, 255, 0.25)
-    backdrop-filter: blur(7px)
+    background: rgb(83,83,83)
+    background: linear-gradient(0, rgba(83,83,83,1) 0%, rgba(61,61,61,1) 100%)
     &.medium
         width: 50%
         margin-left: 25%
@@ -619,7 +619,7 @@ export default {
 
 #main-image
     width: 100%
-    max-height: calc( 100vh - 150px )
+    max-height: calc( 100vh - 120px )
     object-fit: contain
 
 #image-viewer
@@ -630,7 +630,7 @@ export default {
     width: 80%
     height: 0
     left: 10%
-    box-shadow: 0px 0px 0px 1600px rgba(0,0,0,0.8)
+    box-shadow: 0px 0px 0px 1600px rgba(0,0,0,0.85)
     border-radius: 5px
     display: none
     &.small
@@ -753,6 +753,7 @@ div#sub_timeline::-webkit-scrollbar
     
 
 #sub_timeline
+    scrollbar-width: none
     overflow-x: auto
     overflow-y: hidden
     white-space: nowrap
