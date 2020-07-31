@@ -1,6 +1,6 @@
 <template lang="html">
     <div>
-        <div class="message" v-if="numberOfTimelines && numberOfTimelines >= 2 && !$store.state.jwt.user.subscriprionEnd && editTimeline == null">
+        <div class="message" v-if="numberOfTimelines && numberOfTimelines >= 2 && !$store.state.jwt.user.subscriptionEnd && editTimeline == null">
             You have reached your limit!<br><br> Buy subscription to create more than 2 timelines.
         </div>
         <div v-else>

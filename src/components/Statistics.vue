@@ -244,19 +244,45 @@ import BarChart from './BarChart'
                 this.user.viewsCountry = object
             })
         },
+        compareDates(date1, date2){
+            date1 = new Date(date1)
+            date2 = new Date(date2)
+            if (date1.getDate() === date2.getDate() && date1.getMonth() === date2.getMonth() && date1.getFullYear() === date2.getFullYear()){
+                return true
+            }
+            return false
+        },
+        missingDates(start, end, array){
+            var newArray = []
+            for (var d = start; d<=end; d.setDate(d.getDate()+1)){
+                var filtered = array.filter(a => this.compareDates(a.date, d))
+                if (filtered.length > 0){
+                    newArray.push(filtered[0])
+                } else {
+                    var dateObj = new Date(d)
+                    var obj = {
+                        date: dateObj.getFullYear() + '-' + (dateObj.getMonth() + 1) + '-' + dateObj.getDate(),
+                        number: 0
+                    }
+                    newArray.push(obj)
+                }
+            }
+            return newArray
+        },
         getViewsForTimeline(timeline){
             this.axios.get(this.baseApi + 'statistics/timeline-views/' + timeline.id, {
                 headers: {
                     'Authorization': 'Bearer ' + this.$store.state.jwt.token
                 }
             }).then(response => {
+                var parsed = this.missingDates(new Date(timeline.creationDate), new Date(), response.data)
                 var labels = []
-                for (var i=0, len=response.data.length; i<len; i++){
-                    labels.push(response.data[i].date)
+                for (var i=0, len=parsed.length; i<len; i++){
+                    labels.push(parsed[i].date)
                 }
                 var data = []
-                for (i=0, len=response.data.length; i<len; i++){
-                    data.push(response.data[i].number)
+                for (i=0, len=parsed.length; i<len; i++){
+                    data.push(parsed[i].number)
                 }
                 var object = {
                     labels: labels,
@@ -279,13 +305,14 @@ import BarChart from './BarChart'
                     'Authorization': 'Bearer ' + this.$store.state.jwt.token
                 }
             }).then(response => {
+                var parsed = this.missingDates(new Date(user.creationTime), new Date(), response.data)
                 var labels = []
-                for (var i=0, len=response.data.length; i<len; i++){
-                    labels.push(response.data[i].date)
+                for (var i=0, len=parsed.length; i<len; i++){
+                    labels.push(parsed[i].date)
                 }
                 var data = []
-                for (i=0, len=response.data.length; i<len; i++){
-                    data.push(response.data[i].number)
+                for (i=0, len=parsed.length; i<len; i++){
+                    data.push(parsed[i].number)
                 }
                 var object = {
                     labels: labels,

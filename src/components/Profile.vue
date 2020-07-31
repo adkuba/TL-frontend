@@ -26,8 +26,8 @@
         </div>
         <div class="timelines-container" v-if="selected && selected[0] && selected[0].id" :class="$mq">
             <transition-group class="fade">
-                <div class="timeline" v-for="(timeline, index) in selected" :key="timeline.id + index" v-bind:class="[{ shadow: !timeline.active}, $mq]" >
-                    <router-link :to="{ path: '/timeline/' + timeline.id }" class="tl-router">
+                <div class="timeline" v-for="(timeline, index) in selected" :key="timeline.id + index" :class="$mq" >
+                    <router-link :to="{ path: '/timeline/' + timeline.id }" class="tl-router" v-bind:class="[{ shadow: !timeline.active}, $mq]">
                         <div class="title">{{ timeline.descriptionTitle }}</div>
                         <div class="descr" :class="$mq">{{ timeline.description.replace(/ \[([^\]]+)\]\(([^\)]+)\)/g, '') }}...</div>
                         <div class="image-container">
@@ -35,17 +35,17 @@
                             <img :class="$mq" v-else class="image" :src="require('../assets/images/default/Default' + defaultImage + '.png')">
                         </div>
                     </router-link>
-                    <div class="views-container">
+                    <div class="views-container" v-bind:class="[{ shadow: !timeline.active}, $mq]">
                         <router-link :to="{ path: '/statistics/' + user.username }" class="stats" v-if="$store.state.jwt && $store.state.jwt.user.username == timeline.user.username">Statistics</router-link>
                         <div class="views" v-else>{{ timeline.views }} views &middot; {{ timeline.likes.length }} likes</div>
                     </div>
                     <div class="views-container user-edit">
                         <div class="views" v-if="$store.state.jwt && $store.state.jwt.user.username == timeline.user.username">
-                            <router-link style="text-decoration: none" :to="{ path: '/editorLoader/' + timeline.id }" class="edit">Edit</router-link>
-                            <div class="edit">&middot;</div>
+                            <router-link style="text-decoration: none" :to="{ path: '/editorLoader/' + timeline.id }" class="edit" v-bind:class="[{ shadow: !timeline.active}, $mq]">Edit</router-link>
+                            <div class="edit" v-bind:class="[{ shadow: !timeline.active}, $mq]">&middot;</div>
                             <div class="edit" v-on:click="deleteTimeline(timeline)">Delete</div>
                         </div>
-                        <div v-else class="views">{{ timeline.creationDate }}</div>
+                        <div v-else class="views" v-bind:class="[{ shadow: !timeline.active}, $mq]">{{ timeline.creationDate }}</div>
                     </div>
                 </div>
             </transition-group>

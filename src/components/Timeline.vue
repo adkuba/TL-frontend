@@ -25,7 +25,7 @@
                     <div id="evt_desc_text" v-if="openedSub">
                         <div class="evt_button" :style="'background: ' + mainColor" v-on:click="moveRight()">Back</div>
                         <h1 class="evt_h"> {{ eventsSub[openedSub].title }} </h1>
-                        <p class="evt_desc_p"> {{ eventsSub[openedSub].description.replace(/ \[([^\]]+)\]\(([^\)]+)\)/g, '') }} </p>
+                        <p class="evt_desc_p"> {{ eventsSub[openedSub].description.replace(/\[([^\]]+)\]\(([^\)]+)\)?/g, '') }} </p>
                         <div class="link-container" v-for="(value, lidx) in eventsSub[openedSub].description.match(/\[([^\]]+)\]\(([^\)]+)\)/g)" :key="lidx">
                             <a :href="'https://' + value.split('(')[1].slice(0, -1).replace(/(^\w+:|^)\/\//, '')" target="_blank" class="evt_desc_p2" > {{ value.split('(')[0].slice(1, -1) }} </a>
                         </div>
@@ -34,7 +34,7 @@
                     <div style="text-align: center">
                         <div class="sub" v-show="evt.title" v-for="(evt, index) in subTimelineEventsParsed" :key="index">
                             <div v-if="evt.type == 'circle'">
-                                <h1 class="sub_nav_h"  v-on:click="subScroll(index)"> {{ evt.title }} </h1>
+                                <h1 class="sub_nav_h"  v-on:click="subScroll(index, true)"> {{ evt.title }} </h1>
                                 <div class="hor-l"></div>
                             </div>
                         </div>
@@ -87,7 +87,7 @@
 
         <div id="descr" :class="$mq">
             <h1> {{ timeline.descriptionTitle }} </h1>
-            <p> {{ timeline.description.replace(/ \[([^\]]+)\]\(([^\)]+)\)/g, '') }} </p>
+            <p> {{ timeline.description.replace(/\[([^\]]+)\]\(([^\)]+)\)?/g, '') }} </p>
             <div class="link-container" v-for="(value, lidx) in timeline.description.match(/\[([^\]]+)\]\(([^\)]+)\)/g)" :key="lidx">
                 <a :href="'https://' + value.split('(')[1].slice(0, -1).replace(/(^\w+:|^)\/\//, '')" target="_blank" class="evt_desc_p2" > {{ value.split('(')[0].slice(1, -1) }} </a>
             </div>
@@ -330,13 +330,16 @@ export default {
             this.mainImageIndex = index
             document.getElementById("image-viewer").style.display = "block"
         },
-        subScroll(index){
+        subScroll(index, open=false){
             var subT = document.getElementById("sub_timeline")
             if (subT){
                 var searchedE = subT.children[index+3];
                 //subT.offsetLeft to margin sub timeline przy .large
                 var newScroll = searchedE.offsetLeft - subT.offsetWidth/2 + searchedE.offsetWidth/2 - subT.offsetLeft;
                 subT.scroll({top: 0, left: newScroll, behavior: 'smooth'});
+                if (open){
+                    this.subevent(index)
+                }
             }
         },
         parseTimeline(eventsList){
