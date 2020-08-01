@@ -160,9 +160,7 @@
                 this.$store.commit('setMessage', "Succces!")
                 var jwt = this.$store.state.jwt
                 jwt.user.subscriptionID = subscription.id
-                var today = new Date()
-                today.setMonth(today.getMonth() + 1)
-                jwt.user.subscriptionEnd = today.getFullYear() + '-' + (today.getMonth()+1) + '-' + today.getDate()
+                jwt.user.subscriptionEnd = 'Refresh'
                 this.$store.commit('set', jwt)
                 document.getElementById("modal").style.display = "block"
                 document.getElementById("ls").style.opacity = "0"
@@ -254,8 +252,8 @@
     padding-top: 60px
     padding-bottom: 80px
     &.medium
-        width: 90%
-        margin: 120px 5%
+        width: 80%
+        margin: 120px 10%
     &.small
         width: 100%
         margin: 100px 0
@@ -267,17 +265,14 @@ h1
     width: 60%
     &.small
         width: 90%
-    &.medium
-        width: 70%
 
 p
+    text-align: justify
     margin: 20px auto
     width: 60%
     margin-bottom: 50px
     &.small
         width: 90%
-    &.medium
-        width: 70%
 
 #subscription-form
     margin: 20px auto
@@ -285,8 +280,6 @@ p
     width: 60%
     &.small
         width: 90%
-    &.medium
-        width: 70%
 
 #card-element
     border-radius: 2px

@@ -14,7 +14,7 @@
             <img :src="mainImages[mainImageIndex]" id="main-image" v-if="mainImages">
         </div>
 
-        <div id="timeline" :class="$mq">
+        <div id="timeline" :class="$mq" v-if="timeline.active && mockTimeline == null || mockTimeline">
             <div v-if="mockTimeline == null">
                 <div class="moreG" :class="$mq" v-on:click="openMore()">&#9866;</div>
                 <div id="more" :class="$mq" v-on:click="report(timeline)">Report</div>
@@ -83,6 +83,9 @@
             <div id="l_line" class="line trans" :class="$mq"></div>
 
         </div>
+        <div id="timeline" style="padding-bottom: 100px" v-if="!timeline.active && mockTimeline == null">
+            <h1>Timeline not active!</h1>
+        </div>
 
 
         <div id="descr" :class="$mq">
@@ -99,7 +102,7 @@
                 </div>
             </div>
         </div>
-        <div class="like" :class="$mq">
+        <div class="like" v-bind:class="[{ shadow: !timeline.active}, $mq]">
             <div v-if="$store.state.jwt">
                 <div v-if="$store.state.jwt.user.likes.includes(timeline.id)">
                     <div v-if="timeline.likes != null" class="like-action" v-on:click="dislikeTimeline()" :class="$mq">Dislike &middot; {{ timeline.likes.length }} &middot; views {{ timeline.views }}</div>

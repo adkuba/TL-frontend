@@ -10,7 +10,7 @@
                 <div class="fsignup error" :class="$mq" v-if="errMessage">{{ errMessage }}</div><br>
                 <input v-if="firstStage" type="submit" :class="$mq" value="Submit" class="fsubmit" id="submit-button" v-on:click="sendEmail()">
                 <input v-else type="submit" :class="$mq" value="Submit" id="submit-button" class="fsubmit" v-on:click="resetPassword()"><br>
-                <div class="loader" id="ls"></div>
+                <div class="loader" id="ls" :class="$mq"></div>
             </form>
             <div class="login-desc" :class="$mq">
                 <h1>About</h1>

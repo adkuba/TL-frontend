@@ -9,7 +9,7 @@
                 <br v-if="!errMessage">
                 <div class="fsignup error" :class="$mq" v-if="errMessage">{{ errMessage }}</div>
                 <input type="submit" :class="$mq" value="Submit" class="fsubmit" id="submit-button" v-on:click="changePassword()">
-                <div class="loader" id="ls"></div>
+                <div class="loader" id="ls" :class="$mq"></div>
             </form>
             <div class="login-desc" :class="$mq">
                 <h1>About</h1>
