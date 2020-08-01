@@ -26,23 +26,34 @@
                 </div>
                 <div class="dane">{{ user.profileViewsNumber }}</div>
                 <div class="controler" :class="$mq">
+                    <div class="item" v-on:click="switchChart(0)">Foll.</div>
+                    <div class="item" style="cursor: default">&middot;</div>
                     <div class="item" v-on:click="switchChart(1)">Views</div>
                     <div class="item" style="cursor: default">&middot;</div>
-                    <div class="item" v-on:click="switchChart(2)">Location</div>
+                    <div class="item" v-on:click="switchChart(2)">Loc.</div>
                     <div class="desc">Click to change charts</div>
                 </div>
             </div>
             <div class="right" :class="$mq">
-                <div v-if="!$store.state.jwt.user.subscriptionEnd" class="normal-info">
-                    More detailed charts only for premum users. Subscribe to see more.
-                </div>
-                <div v-else>
-                    <div v-if="chart==1 && user.viewsDetails" class="chart-wrapper">
-                        <LineChart :chartdata="user.viewsDetails" :options="viewsOptions" class="line-container" :style="{'width': (user.viewsDetails.labels.length * 80) + 'px'}"/>
-                        </div>
-                    <div v-if="chart==2 && user.viewsCountry" class="chart-wrapper">
-                        <BarChart :chartdata="user.viewsCountry" :options="viewsOptions" class="line-container" :style="{'width': (user.viewsCountry.labels.length * 150) + 'px'}"/>
+                <div v-if="chart==1 && user.viewsDetails && $store.state.jwt.user.subscriptionEnd" class="chart-wrapper">
+                    <LineChart :chartdata="user.viewsDetails" :options="viewsOptions" class="line-container" :style="{'width': (user.viewsDetails.labels.length * 80) + 'px'}"/>
                     </div>
+                <div v-if="chart==2 && user.viewsCountry && $store.state.jwt.user.subscriptionEnd" class="chart-wrapper">
+                    <BarChart :chartdata="user.viewsCountry" :options="viewsOptions" class="line-container" :style="{'width': (user.viewsCountry.labels.length * 150) + 'px'}"/>
+                </div>
+                <div v-if="chart==0" class="user-interactions">
+                    <div v-if="user.followers.filter(e => e.userId != null).length == 0" class="in-empty">
+                        No followers
+                    </div>
+                    <div v-for="(user, useridx) in user.followers.filter(e => e.userId != null)" :key="useridx" class="interaction" :class="$mq">
+                        <router-link :to="{ path: '/profile/' + user.userId }" style="text-decoration: none">
+                            <div class="in-user">{{ user.userId }}</div>
+                            <div class="in-day">{{ user.date }}</div>
+                        </router-link>
+                    </div>
+                </div>
+                <div v-if="!$store.state.jwt.user.subscriptionEnd && chart != 0" class="normal-info">
+                    More detailed charts only for premum users. Subscribe to see more.
                 </div>
             </div>
         </div>
@@ -67,26 +78,36 @@
                 
                 <div class="daneh">Views</div><div class="dane">{{ timeline.views }}</div>
                 <div class="controler" :class="$mq">
+                    <div class="item" v-on:click="switchChart(0)">Likes</div>
+                    <div class="item" style="cursor: default">&middot;</div>
                     <div class="item" v-on:click="switchChart(1)">Views</div>
                     <div class="item" style="cursor: default">&middot;</div>
-                    <div class="item" v-on:click="switchChart(2)">Location</div>
+                    <div class="item" v-on:click="switchChart(2)">Loc.</div>
                     <div class="desc">Click to change charts</div>
                 </div>
             </div>
             <div class="right" :class="$mq">
-                <div v-if="!$store.state.jwt.user.subscriptionEnd" class="normal-info">
-                    More detailed charts only for premum users. Subscribe to see more.
+                <div v-if="chart==1 && timeline.viewsDetails && $store.state.jwt.user.subscriptionEnd" class="chart-wrapper">
+                    <LineChart :chartdata="timeline.viewsDetails" :options="viewsOptions" class="line-container" :style="{'width': (timeline.viewsDetails.labels.length * 80) + 'px'}"/>
+                    </div>
+                <div v-if="chart==2 && timeline.viewsCountry && $store.state.jwt.user.subscriptionEnd" class="chart-wrapper">
+                    <BarChart :chartdata="timeline.viewsCountry" :options="viewsOptions" class="line-container" :style="{'width': (timeline.viewsCountry.labels.length * 150) + 'px'}"/>
                 </div>
-                <div v-else>
-                    <div v-if="chart==1 && timeline.viewsDetails" class="chart-wrapper">
-                        <LineChart :chartdata="timeline.viewsDetails" :options="viewsOptions" class="line-container" :style="{'width': (timeline.viewsDetails.labels.length * 80) + 'px'}"/>
-                        </div>
-                    <div v-if="chart==2 && timeline.viewsCountry" class="chart-wrapper">
-                        <BarChart :chartdata="timeline.viewsCountry" :options="viewsOptions" class="line-container" :style="{'width': (timeline.viewsCountry.labels.length * 150) + 'px'}"/>
+                <div v-if="chart==0" class="user-interactions">
+                    <div v-if="timeline.likes.length == 0" class="in-empty">
+                        No likes
+                    </div>
+                    <div v-for="(user, useridx) in timeline.likes" :key="useridx" class="interaction" :class="$mq">
+                        <router-link :to="{ path: '/profile/' + user.userId }" style="text-decoration: none">
+                            <div class="in-user">{{ user.userId }}</div>
+                            <div class="in-day">{{ user.date }}</div>
+                        </router-link>
                     </div>
                 </div>
+                <div v-if="!$store.state.jwt.user.subscriptionEnd && chart != 0" class="normal-info">
+                    More detailed charts only for premum users. Subscribe to see more.
+                </div>
             </div>
-
         </div>
     </div>
 </template>
@@ -138,7 +159,7 @@ import BarChart from './BarChart'
             baseApi: 'https://api.tline.site/api/',
             user: null,
             timelines: [],
-            chart: 1,
+            chart: 0,
             viewsOptions: {
                 responsive: true,
                 maintainAspectRatio: false,
@@ -337,6 +358,33 @@ import BarChart from './BarChart'
 
 <style scoped lang="sass">
 
+.in-empty
+    text-align: center
+    margin-top: 130px
+
+.in-user
+    color: #303030
+    font-family: Raleway-Regular
+    font-size: 18px
+
+.in-day
+    font-size: 12px
+    color: #7e7e7e
+
+.interaction
+    width: 100%
+    display: block
+    padding: 10px 40px
+    box-sizing: border-box
+    &.small
+        padding: 10px 0
+
+.user-interactions
+    overflow: auto
+    height: 290px
+    margin: 0 5%
+    border-radius: 5px
+
 .chart-wrapper
     width: 100% 
     overflow-x: auto
@@ -375,7 +423,7 @@ import BarChart from './BarChart'
 
 .item
     display: inline-block
-    margin-right: 20px
+    margin-right: 15px
     cursor: pointer
 
 .desc
