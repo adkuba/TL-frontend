@@ -1,10 +1,33 @@
 <template>
   <div id="app">
     <div class="menu" :class="$mq">
-      <router-link :to="{ name: 'home' }" class="home_b" :class="$mq">
-          <img src="./assets/images/Logo.png" width="27" height="27">
-      </router-link>
-      <router-link :to="{ name: 'settings' }" class="login_b" :class="$mq">&#9868;</router-link>
+        <router-link :to="{ name: 'home' }" class="home_b" :class="$mq">
+            <img src="./assets/images/Logo.png" width="27" height="27">
+        </router-link>
+        <div class="login_b" :class="[{ 'notification-anim': !$store.state.notifications.read }, $mq]" v-on:click="dropdown()">&#9868;</div>
+        <div id="dropdown" :class="$mq">
+            <div class="quit" v-on:click="dropdown()">x</div>
+            <router-link :to="{ name: 'settings' }" style="text-decoration: none">
+                <div v-if="$store.state.jwt" class="account">Settings</div>
+                <div v-else class="account">Login</div>
+            </router-link>
+            <h1 class="notifications-h1">Notifications:</h1>
+            <div v-for="(message, idx) in $store.state.notifications.messages" :key="idx" class="notification">
+                <div class="notif-user">{{ message.username }}</div>
+                <div>{{ message.text }}</div>
+                <div class="date">{{ message.date }}</div>
+            </div>
+            <div v-if="$store.state.notifications.messages.length == 0" class="notification">
+                <div class="notif-user">tline</div>
+                <div>Login to create!</div>
+                <div class="date">now</div>
+            </div>
+            <div v-if="$store.state.notifications.messages.length == 0" class="notification">
+                <div class="notif-user">tline</div>
+                <div>Sign up and get more features.</div>
+                <div class="date">now</div>
+            </div>
+        </div>
     </div>
     <div id="modal" :class="$mq">
         <div class="message" :class="$mq">{{ $store.state.message }}</div>
@@ -36,15 +59,47 @@ export default {
         }
     },
     methods: {
+        dropdown(){
+            var dropdown = document.getElementById("dropdown")
+            if (dropdown.style.display == "block"){
+                dropdown.style.display = "none"
+            } else {
+                var notifications = {
+                    read: true,
+                    messages: this.$store.state.notifications.messages
+                }
+                this.$store.commit('setNotifications', notifications)
+                dropdown.style.display = "block"
+            }
+        },
         refreshToken(){
             var refreshApi = this.baseApi + 'auth/refreshToken'
             this.axios.post(refreshApi, {}, {withCredentials: true})
                     .then(response => {
                         this.$store.commit('set', response.data)
+                        this.$store.commit('setRefresh', true)
+                        this.getNotifications()
                     })
                     .catch(error => {
+                        this.$store.commit('setRefresh', true)
+                        var notifications = {
+                            read: false,
+                            messages: this.$store.state.notifications.messages
+                        }
+                        this.$store.commit('setNotifications', notifications)
                         console.log(error)
                     })
+        },
+        getNotifications(){
+            this.axios.get(this.baseApi + "users/notifications", {
+                headers: {
+                    'Authorization': 'Bearer ' + this.$store.state.jwt.token
+                }
+            }).then(response => {
+                this.$store.commit('setNotifications', response.data)
+            }).catch(error => {
+                console.log(error)
+            })
         },
         closeModal(){
             document.getElementById("modal").style.display = "none"
@@ -66,6 +121,73 @@ export default {
 
 <style lang="sass">
 @import './assets/saas-vars.sass'
+
+.notifications-h1
+    font-family: Raleway-Regular
+    font-size: 20px
+    text-align: left
+    padding: 0 30px
+
+.quit
+    position: absolute
+    right: 10px
+    padding: 10px
+    top: 0
+    cursor: pointer
+    font-family: OpenSans-Regular
+
+.notif-user
+    font-family: Raleway-Regular
+    font-size: 20px
+    font-weight: bold
+    letter-spacing: 1px
+
+.date
+    color: #14426B
+    font-size: 13px
+
+.notification
+    padding: 11px 30px
+    font-family: OpenSans-Regular
+    text-align: left
+    font-size: 14px
+
+#dropdown::-webkit-scrollbar
+    width: 7px
+
+#dropdown::-webkit-scrollbar-track
+    background: #e7e7e7
+
+#dropdown::-webkit-scrollbar-thumb
+    background: #c0c0c0
+
+#dropdown::-webkit-scrollbar-thumb:hover
+    background: #a3a3a3
+
+.account
+    margin-bottom: 30px
+    padding: 15px 40px
+    color: #303030
+    font-family: Raleway-Regular
+    letter-spacing: 1px
+    font-weight: bold
+    font-size: 35px
+
+#dropdown
+    overflow: auto
+    display: none
+    position: absolute
+    top: 80px
+    right: 20px
+    width: 20%
+    height: 400px
+    box-shadow: 0 0 0 1600px rgba(0,0,0,0.65)
+    border-radius: 10px 0 0 10px
+    background: $bg2-color
+    &.medium
+        width: 30%
+    &.small
+        width: 70%
 
 .close-info
     font-size: 13px
@@ -179,9 +301,17 @@ html
     text-align: center
     color: #303030
 
+@keyframes notify
+    0%
+        color: white
+    50%
+        color: #B8352D
+    100%
+        color: white
+
 .login_b
+    cursor: pointer
     user-select: none
-    text-decoration: none
     font-family: Raleway-Regular
     z-index: 4
     color: white
@@ -192,6 +322,8 @@ html
     &.small
         margin-right: 4%
 
+.notification-anim
+    animation: notify 3s linear infinite
 
 .home_b
     user-select: none

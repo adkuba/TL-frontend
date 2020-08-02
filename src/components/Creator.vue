@@ -1,7 +1,8 @@
 <template lang="html">
     <div>
         <div class="message" v-if="numberOfTimelines && numberOfTimelines >= 2 && !$store.state.jwt.user.subscriptionEnd && editTimeline == null">
-            You have reached your limit!<br><br> Buy subscription to create more than 2 timelines.
+            <h1 class="limit-h1">You have reached your limit!</h1>
+            <a href="https://www.tline.site/about#subscription" style="text-decoration: none; color: #303030">Buy subscription to create more than 2 timelines.</a>
         </div>
         <div v-else>
             <div id="mainPicturesContainer" class="file-selector" :class="$mq">
@@ -584,6 +585,10 @@
 <style scoped lang="sass">
 
 @import '../assets/saas-vars.sass'
+
+.limit-h1
+    text-align: center
+    font-size: 35px
 
 .file-desc
     position: absolute

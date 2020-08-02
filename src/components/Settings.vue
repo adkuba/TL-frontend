@@ -112,6 +112,9 @@
           timelinesNumber: null,
       }
     },
+    mounted() {
+        document.getElementById("dropdown").style.display = "none"
+    },
     methods: {
         scrollToTop() {
             const c = document.documentElement.scrollTop || document.body.scrollTop;
@@ -123,7 +126,14 @@
         logout(){
             var logoutApi = this.baseApi + 'auth/logout'
             this.axios.post(logoutApi, {}, {withCredentials: true})
-                    .then(() => {this.$store.commit('set', null)})
+                    .then(() => {
+                        this.$store.commit('set', null)
+                        var notifications = {
+                            read: true,
+                            messages: []
+                        }
+                        this.$store.commit('setNotifications', notifications)
+                    })
                     .catch(error => {console.log(error)})
             this.$router.push({ path: '/home' })
         },

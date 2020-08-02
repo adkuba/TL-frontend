@@ -15,7 +15,7 @@ Vue.use(VueAxios, axios)
 Vue.use(VueMq, {
   breakpoints: {
     small: 750,
-    medium: 1450,
+    medium: 1430,
     large: Infinity,
   }
 })
@@ -25,7 +25,12 @@ const store = new Vuex.Store({
   state: {
     jwt: '',
     timelines: [],
-    message: ''
+    message: '',
+    refreshTry: false,
+    notifications: {
+      read: true,
+      messages: []
+    }
   },
   mutations: {
     set (state, newJwt) {
@@ -44,7 +49,13 @@ const store = new Vuex.Store({
     },
     setMessage(state, newMessage){
       state.message = newMessage
-    }
+    },
+    setRefresh(state, newRefresh){
+      state.refreshTry = newRefresh
+    },
+    setNotifications(state, newNotifications){
+      state.notifications = newNotifications
+    },
   }
 })
 

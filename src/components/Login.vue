@@ -1,6 +1,6 @@
 <template lang="html">
     <div>
-        <div v-if="!$store.state.jwt && ready" id="login" :class="$mq">
+        <div v-if="!$store.state.jwt && $store.state.refreshTry" id="login" :class="$mq">
             <form action="javascript:void(0);" class="login_form" :class="$mq">
                 <h1 :class="$mq">{{action}}</h1>
                 <input class="fin" :class="$mq" type="text" id="username" autocorrect="off" spellcheck="false" placeholder="Username"><br>
@@ -29,7 +29,7 @@
                 <p>The best way to showcase your projects, ideas, thinking process. Social features boosts views.</p>
             </div>
         </div>
-        <div v-else id="login" class="login-pulse"></div>
+        <div v-else id="login" class="login-pulse" :class="$mq"></div>
     </div>
 </template>
 
@@ -60,7 +60,9 @@ import VueRecaptcha from 'vue-recaptcha'
             this.routerPath = this.path.path
         }
         this.redirect()
-        this.interValRef = setInterval(() => this.checkState(), 200)
+    },
+    mounted() {
+        document.getElementById("dropdown").style.display = "none"
     },
     data () {
       return {
@@ -69,18 +71,10 @@ import VueRecaptcha from 'vue-recaptcha'
           routerPath: null,
           action: 'Sign in',
           signupText: 'Sign up',
-          status: 'ok',
-          ready: false,
-          interValRef: null
+          status: 'ok'
       }
     },
     methods: {
-        checkState(){
-            if(document.readyState == 'complete'){
-                clearInterval(this.interValRef);
-                this.ready = true
-            }
-        },
         scrollToTop() {
             const c = document.documentElement.scrollTop || document.body.scrollTop;
             if (c > 0) {
@@ -113,6 +107,7 @@ import VueRecaptcha from 'vue-recaptcha'
                     {withCredentials: true})
                     .then(response => {
                         this.$store.commit('set', response.data)
+                        this.getNotifications()
                         this.clearData()
                         self.$router.push({ path: this.routerPath })
                     })
@@ -176,6 +171,17 @@ import VueRecaptcha from 'vue-recaptcha'
                 }
             }
             
+        },
+        getNotifications(){
+            this.axios.get(this.baseApi + "users/notifications", {
+                headers: {
+                    'Authorization': 'Bearer ' + this.$store.state.jwt.token
+                }
+            }).then(response => {
+                this.$store.commit('setNotifications', response.data)
+            }).catch(error => {
+                console.log(error)
+            })
         },
         redirect(){
             if(this.$store.state.jwt){

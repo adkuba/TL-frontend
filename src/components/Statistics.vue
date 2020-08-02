@@ -385,6 +385,18 @@ import BarChart from './BarChart'
     margin: 0 5%
     border-radius: 5px
 
+.user-interactions::-webkit-scrollbar
+    width: 7px
+
+.user-interactions::-webkit-scrollbar-track
+    background: #e7e7e7
+
+.user-interactions::-webkit-scrollbar-thumb
+    background: #c0c0c0
+
+.user-interactions::-webkit-scrollbar-thumb:hover
+    background: #a3a3a3
+
 .chart-wrapper
     width: 100% 
     overflow-x: auto
