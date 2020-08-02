@@ -360,7 +360,7 @@ import BarChart from './BarChart'
 
 .in-empty
     text-align: center
-    margin-top: 130px
+    margin-top: 110px
 
 .in-user
     color: #303030
@@ -381,7 +381,7 @@ import BarChart from './BarChart'
 
 .user-interactions
     overflow: auto
-    height: 290px
+    height: 310px
     margin: 0 5%
     border-radius: 5px
 

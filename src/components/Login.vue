@@ -1,6 +1,6 @@
 <template lang="html">
     <div>
-        <div v-if="!$store.state.jwt" id="login" :class="$mq">
+        <div v-if="!$store.state.jwt && ready" id="login" :class="$mq">
             <form action="javascript:void(0);" class="login_form" :class="$mq">
                 <h1 :class="$mq">{{action}}</h1>
                 <input class="fin" :class="$mq" type="text" id="username" autocorrect="off" spellcheck="false" placeholder="Username"><br>
@@ -29,6 +29,7 @@
                 <p>The best way to showcase your projects, ideas, thinking process. Social features boosts views.</p>
             </div>
         </div>
+        <div v-else id="login" class="login-pulse"></div>
     </div>
 </template>
 
@@ -58,8 +59,8 @@ import VueRecaptcha from 'vue-recaptcha'
         } else {
             this.routerPath = this.path.path
         }
-
-        this.redirect();
+        this.redirect()
+        this.interValRef = setInterval(() => this.checkState(), 200)
     },
     data () {
       return {
@@ -68,10 +69,18 @@ import VueRecaptcha from 'vue-recaptcha'
           routerPath: null,
           action: 'Sign in',
           signupText: 'Sign up',
-          status: 'ok'
+          status: 'ok',
+          ready: false,
+          interValRef: null
       }
     },
     methods: {
+        checkState(){
+            if(document.readyState == 'complete'){
+                clearInterval(this.interValRef);
+                this.ready = true
+            }
+        },
         scrollToTop() {
             const c = document.documentElement.scrollTop || document.body.scrollTop;
             if (c > 0) {
@@ -215,6 +224,18 @@ import VueRecaptcha from 'vue-recaptcha'
 
 <style lang="sass">
 @import '../assets/saas-vars.sass'
+
+.login-pulse
+    height: 717px
+    animation: pulse 1.5s linear infinite
+
+@keyframes pulse
+    0%
+        background: rgba(0, 0, 0, 0.04)
+    50%
+        background: rgba(0, 0, 0, 0.1)
+    100%
+        background: rgba(0, 0, 0, 0.04)
 
 .regulations-inf
     margin-top: 5px

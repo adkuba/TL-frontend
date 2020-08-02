@@ -29,7 +29,7 @@ import Creator from './Creator.vue'
             }
         }).then(response => {
                 var tl = response.data
-                if (tl.user.username != this.$store.state.jwt.user.username){
+                if (tl.user.username != this.$store.state.jwt.user.username || !tl.active){
                     this.$router.push({ path: "/home" })
                 }
                 this.timeline = response.data
