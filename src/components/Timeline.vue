@@ -83,8 +83,8 @@
             <div id="l_line" class="line trans" :class="$mq"></div>
 
         </div>
-        <div id="timeline" style="padding-bottom: 100px" v-if="!timeline.active && mockTimeline == null">
-            <h1>Timeline not active!</h1>
+        <div id="timeline" style="padding-bottom: 100px; width: 90%; margin-left: 5%" v-if="!timeline.active && mockTimeline == null">
+            <h1 style="margin: 10px">Timeline not active!</h1>
         </div>
 
 

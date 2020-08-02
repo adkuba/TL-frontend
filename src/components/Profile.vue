@@ -44,6 +44,8 @@
                             <router-link style="text-decoration: none" :to="{ path: '/editorLoader/' + timeline.id }" class="edit" v-bind:class="[{ shadow: !timeline.active}, $mq]">Edit</router-link>
                             <div class="edit" v-bind:class="[{ shadow: !timeline.active}, $mq]">&middot;</div>
                             <div class="edit" v-on:click="deleteTimeline(timeline)">Delete</div>
+                            <div class="edit" v-if="!timeline.active">&middot;</div>
+                            <div v-if="!timeline.active" class="edit" v-on:click="quitOpenActive(1)">Make active</div>
                         </div>
                         <div v-else class="views" v-bind:class="[{ shadow: !timeline.active}, $mq]">{{ timeline.creationDate }}</div>
                     </div>
@@ -60,6 +62,20 @@
                 <div class="fuser-desc">@{{ fuser.username }} &middot; {{ fuser.followers.filter(e => e.userId != null).length }} followers</div>
             </router-link>
         </div>
+
+        <div id="make-active" :class="$mq">
+            <div style="margin-bottom: 10px; width: 90%">Select max 2 active timelines:</div>
+            <div class="quit" v-on:click="quitOpenActive(0)">x</div>
+            <div v-for="(timeline, idx) in timelines" :key="idx">
+                <input type="checkbox" :name="idx" :id="'active_' + timeline.id">
+                <label :for="idx"> {{ timeline.id }}</label><br>
+            </div>
+            <div v-if="!activeError" style="height: 40px"></div>
+            <div class="active-error" v-else>{{ activeError }}</div>
+            <div class="fsubmit" id="activeSubmit" v-on:click="makeActive()">Submit</div>
+            <div class="loader" id="loader" :class="$mq"></div>
+        </div>
+
     </div>
 </template>
 
@@ -100,6 +116,7 @@
           baseApi: 'https://api.tline.site/api/',
           timelines: null,
           user: null,
+          activeError: "",
           likes: [],
           selected: null,
           details: [{username: 'kuba'}],
@@ -107,6 +124,46 @@
       }
     },
     methods: {
+        makeActive(){
+            var activeTimelines = []
+            for (var i=0, len=this.timelines.length; i<len; i++){
+                if (document.getElementById("active_" + this.timelines[i].id).checked){
+                    activeTimelines.push(this.timelines[i].id)
+                }
+            }
+            if (activeTimelines.length != 2){
+                this.activeError = "Select 2 timelines!"
+                return
+
+            } else {
+                document.getElementById("loader").style.opacity = 1
+                document.getElementById("activeSubmit").style.background = "#932a24"
+                this.axios.post(this.baseApi + "timelines/make-active", activeTimelines, {
+                    headers: {
+                        'Authorization': 'Bearer ' + this.$store.state.jwt.token
+                    }
+                }).then(() => {
+                    document.getElementById("loader").style.opacity = 0
+                    document.getElementById("activeSubmit").style.background = "#B8352D"
+                    this.quitOpenActive(0)
+                    window.location.reload()
+
+                }).catch(error => {
+                    document.getElementById("loader").style.opacity = 0
+                    document.getElementById("activeSubmit").style.background = "#B8352D"
+                    this.activeError = error.response.data.message
+                    console.log(error)
+                })
+            }
+        },
+        quitOpenActive(action){
+            if (action == 0){
+                this.activeError = ""
+                document.getElementById("make-active").style.display = "none"
+            } else {
+                document.getElementById("make-active").style.display = "block"
+            }
+        },
         scrollToTop() {
             const c = document.documentElement.scrollTop || document.body.scrollTop;
             if (c > 0) {
@@ -213,6 +270,49 @@
 
 <style scoped lang="sass">
 @import '../assets/saas-vars.sass'
+
+#loader
+    opacity: 0
+    position: absolute
+    bottom: 32px
+    right: 7%
+
+.active-error
+    text-align: center
+    color: #B8352D
+    margin-bottom: 5px
+    margin-top: 13px
+
+.quit
+    position: absolute
+    top: 0
+    padding: 10px
+    right: 10px
+    cursor: pointer
+
+.fsubmit
+    margin: 0 auto
+    margin-bottom: 5px
+
+#make-active
+    display: none
+    position: fixed
+    background: $bg-color
+    top: 30%
+    box-shadow: 0 0 0 1600px rgba(0,0,0,0.65)
+    padding: 20px 40px
+    box-sizing: border-box
+    text-align: left
+    font-family: OpenSans-Regular
+    border-radius: 20px
+    width: 24%
+    left: 38%
+    &.medium
+        width: 44%
+        left: 28%
+    &.small
+        width: 80%
+        left: 10%
 
 .fade-leave-active
     transition: all 1ms
