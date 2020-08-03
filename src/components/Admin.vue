@@ -102,25 +102,29 @@ import BarChart from './BarChart.vue'
         .then(response => {
             this.allStats = response.data
 
+            this.allStats.sort(function(a,b){
+                return new Date(a.day) - new Date(b.day);
+            });
+
             var labels = []
-            for (var i=0, len=response.data.length; i<len; i++){
-                labels.push(response.data[i].day)
+            for (var i=0, len=this.allStats.length; i<len; i++){
+                labels.push(this.allStats[i].day)
             }
             var totalViews = []
-            for (i=0, len=response.data.length; i<len; i++){
-                totalViews.push(response.data[i].mainPageViews + response.data[i].totalTimelinesViews + response.data[i].profileViews)
+            for (i=0, len=this.allStats.length; i<len; i++){
+                totalViews.push(this.allStats[i].mainPageViews + this.allStats[i].totalTimelinesViews + this.allStats[i].profileViews)
             }
             var totalUsers = []
-            for (i=0, len=response.data.length; i<len; i++){
+            for (i=0, len=this.allStats.length; i<len; i++){
                 var usersNumber = 0
                 for (var j=0, len2=i; j<=len2; j++){
-                    usersNumber += response.data[j].numberOfUsers
+                    usersNumber += this.allStats[j].numberOfUsers
                 }
                 totalUsers.push(usersNumber)
             }
             var activeUsers = []
-            for (i=0, len=response.data.length; i<len; i++){
-                activeUsers.push(response.data[i].activeUsers)
+            for (i=0, len=this.allStats.length; i<len; i++){
+                activeUsers.push(this.allStats[i].activeUsers)
             }
 
             var object = {

@@ -15,10 +15,9 @@
                 <br v-if="!errMessage">
                 <div class="fsignup error" :class="$mq" v-if="errMessage">{{ errMessage }}</div>
                 <input v-if="action=='Sign in'" id="submit-button" type="submit" value="Submit" class="fsubmit" :class="$mq" v-on:click="signin()">
-                <vue-recaptcha v-else sitekey="6LcwcqwZAAAAAGHazabCBGXKndRustjOflfOFQSX" ref="recaptcha" @verify="onCaptchaVerified" @expired="onCaptchaExpired" size="invisible">
-                    <input :disabled="status==='submitting'" type="submit" value="Submit" id="submit-button" class="fsubmit" :class="$mq" v-on:click="signUp()">
-                    <div class="regulations-inf" :class="$mq">By clicking submit you agree to our <a href="https://www.tline.site/about#regulations" style="color: #14426b">regulations</a></div>
-                </vue-recaptcha>
+                <vue-recaptcha v-else sitekey="6LcwcqwZAAAAAGHazabCBGXKndRustjOflfOFQSX" ref="recaptcha" @verify="onCaptchaVerified" @expired="onCaptchaExpired" size="invisible"></vue-recaptcha>
+                <input v-if="action!='Sign in'" :disabled="status==='submitting'" type="submit" value="Submit" id="submit-button" class="fsubmit" :class="$mq" v-on:click="signUp()">
+                <div v-if="action!='Sign in'" class="regulations-inf" :class="$mq">By clicking submit you agree to our <a href="https://www.tline.site/about#regulations" style="color: #14426b">regulations</a></div>
                 <br>
                 <div class="fsignup" :class="$mq" v-on:click="signupShow()">{{signupText}}</div>
                 <router-link class="p-reset" :class="$mq" :to="{ path: '/passwordReset/true' }">Forgot password?</router-link>
