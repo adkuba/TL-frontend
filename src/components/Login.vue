@@ -85,7 +85,9 @@ import VueRecaptcha from 'vue-recaptcha'
             }
         },
         signUp(){
-            this.$refs.recaptcha.execute()
+            if (this.checkData()){
+                this.$refs.recaptcha.execute()
+            }
         },
         onCaptchaVerified(recaptchaToken){
             this.$refs.recaptcha.reset()
@@ -95,13 +97,44 @@ import VueRecaptcha from 'vue-recaptcha'
         onCaptchaExpired(){
             this.$refs.recaptch.reset()
         },
+        checkData(){
+            if (document.getElementById("full-name").value.length < 2){
+                this.errMessage = "Full name needs to be at least 2 characters long"
+                return false
+            }
+
+            var passwordValue = document.getElementById("password").value
+
+            if (passwordValue != document.getElementById("repeat-password").value){
+                this.errMessage = "Passwords not matching"
+                this.clearData(true)
+                return false
+            }
+
+            if (document.getElementById("username").value.length < 3 || document.getElementById("username").value.length > 20){
+                this.errMessage = "Username needs to be between 3 and 20 characters long."
+                document.getElementById("username").value = ""
+                return false
+            }
+
+            if (document.getElementById("password").value.length < 6 || document.getElementById("password").value.length > 40){
+                this.errMessage = "Password needs to be between 6 and 40 characters long."
+                this.clearData(true)
+                return false
+            }
+
+            if (!this.validEmail(document.getElementById("email").value)){
+                this.errMessage = "Wrong email!"
+                return false
+            }
+
+            return true
+        },
         signin(recaptchaToken = null){
             let self = this;
 
             if(this.action == "Sign in"){
                 var loginApi = this.baseApi + 'auth/signin'
-                document.getElementById("ls").style.opacity = "1"
-                document.getElementById("submit-button").style.background = "#932a24"
 
                 if (document.getElementById("username").value.length == 0){
                     this.errMessage = "Type username!"
@@ -114,6 +147,9 @@ import VueRecaptcha from 'vue-recaptcha'
                     this.clearData(true)
                     return
                 }
+
+                document.getElementById("ls").style.opacity = "1"
+                document.getElementById("submit-button").style.background = "#932a24"
 
                 this.axios.post(loginApi, {
                     username: document.getElementById("username").value, 
@@ -134,66 +170,35 @@ import VueRecaptcha from 'vue-recaptcha'
                         console.log(error)
                     })
             } else {
-                var signupApi = this.baseApi + 'auth/signup'
                 var passwordValue = document.getElementById("password").value
+                var signupApi = this.baseApi + 'auth/signup'    
+                document.getElementById("ls").style.opacity = "1"
+                document.getElementById("submit-button").style.background = "#932a24"
 
-                if (document.getElementById("full-name").value.length < 2){
-                    this.errMessage = "Full name needs to be at least 2 characters long"
-                    this.clearData(true)
-                    return
-                }
-
-                if (passwordValue != document.getElementById("repeat-password").value){
-                    this.errMessage = "Passwords not matching"
-                    this.clearData(true)
-                    return
-                }
-
-                if (document.getElementById("username").value.length < 3 || document.getElementById("username").value.length > 20){
-                    this.errMessage = "Username needs to be between 3 and 20 characters long."
-                    document.getElementById("username").value = ""
-                    return
-                }
-
-                if (document.getElementById("password").value.length < 6 || document.getElementById("password").value.length > 40){
-                    this.errMessage = "Password needs to be between 6 and 40 characters long."
-                    this.clearData(true)
-                    return
-                }
-
-                if (this.validEmail(document.getElementById("email").value)){
-                    document.getElementById("ls").style.opacity = "1"
-                    document.getElementById("submit-button").style.background = "#932a24"
-
-                    this.axios.post(signupApi, {
-                        username: document.getElementById("username").value,
-                        password: passwordValue,
-                        fullName: document.getElementById("full-name").value,
-                        email: document.getElementById("email").value,
-                        recaptchaToken: recaptchaToken
-                    }, {
-                        withCredentials: true
-                    })
-                    .then(() => {
-                        document.getElementById("ls").style.opacity = "0"
-                        this.$store.commit('setMessage', "Created!")
-                        document.getElementById("modal").style.display = "block"
-                        self.signupShow()
-                        self.clearData()
-                    })
-                    .catch(error => {
-                        console.log(error)
-                        self.errMessage = error.response.data.message
-                        document.getElementById("ls").style.opacity = "0"
-                        document.getElementById("submit-button").style.background = "#B8352D"
-                        self.clearData()
-                    })
-                } else{
-                    this.errMessage = "Wrong email."
-                }   
-                
+                this.axios.post(signupApi, {
+                    username: document.getElementById("username").value,
+                    password: passwordValue,
+                    fullName: document.getElementById("full-name").value,
+                    email: document.getElementById("email").value,
+                    recaptchaToken: recaptchaToken
+                }, {
+                    withCredentials: true
+                })
+                .then(() => {
+                    document.getElementById("ls").style.opacity = "0"
+                    this.$store.commit('setMessage', "Created!")
+                    document.getElementById("modal").style.display = "block"
+                    self.signupShow()
+                    self.clearData()
+                })
+                .catch(error => {
+                    console.log(error)
+                    self.errMessage = error.response.data.message
+                    document.getElementById("ls").style.opacity = "0"
+                    document.getElementById("submit-button").style.background = "#B8352D"
+                    self.clearData()
+                })  
             }
-            
         },
         getNotifications(){
             this.axios.get(this.baseApi + "users/notifications", {
