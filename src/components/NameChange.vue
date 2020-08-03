@@ -1,9 +1,9 @@
 <template lang="html">
     <div>
         <div id="login" :class="$mq">
-            <form action="javascript:void(0);" class="login_form" :class="$mq">
+            <form action="javascript:void(0);" class="login_form" :class="$mq" id="name-form">
                 <h1 :class="$mq">Change name</h1>
-                <input class="fin" :class="$mq" type="text" id="name" autocorrect="off" spellcheck="false" placeholder="New name">
+                <input class="fin" :class="$mq" type="text" id="name" autocorrect="off" spellcheck="false" maxlength="20" placeholder="New name">
                 <br v-if="!errMessage">
                 <div class="fsignup error" :class="$mq" v-if="errMessage">{{ errMessage }}</div>
                 <input type="submit" :class="$mq" value="Submit" id="submit-button" class="fsubmit" v-on:click="changeName()">
@@ -46,29 +46,31 @@
             }
         },
         changeName(){
-            let self = this
-            var nameApi = this.baseApi + 'users/name'
-            document.getElementById("ls").style.opacity = "1"
-            document.getElementById("submit-button").style.background = "#932a24"
+            if(document.getElementById("name-form").checkValidity()){
+                let self = this
+                var nameApi = this.baseApi + 'users/name'
+                document.getElementById("ls").style.opacity = "1"
+                document.getElementById("submit-button").style.background = "#932a24"
 
-            this.axios.put(nameApi, null, {
-                headers: {
-                    'Authorization': 'Bearer ' + this.$store.state.jwt.token
-                },
-                params: {
-                    name: document.getElementById("name").value
-                }
-            })
-            .then(()=>{
-                this.refreshToken()
-                self.$router.push({ name: 'settings' })
-            })
-            .catch(error => {
-                document.getElementById("ls").style.opacity = "0"
-                document.getElementById("submit-button").style.background = "#B8352D"
-                console.log(error)
-                this.errMessage = error
-            })
+                this.axios.put(nameApi, null, {
+                    headers: {
+                        'Authorization': 'Bearer ' + this.$store.state.jwt.token
+                    },
+                    params: {
+                        name: document.getElementById("name").value
+                    }
+                })
+                .then(()=>{
+                    this.refreshToken()
+                    self.$router.push({ name: 'settings' })
+                })
+                .catch(error => {
+                    document.getElementById("ls").style.opacity = "0"
+                    document.getElementById("submit-button").style.background = "#B8352D"
+                    console.log(error)
+                    this.errMessage = error
+                })
+            }
         },
         refreshToken(){
             var refreshApi = this.baseApi + 'auth/refreshToken'

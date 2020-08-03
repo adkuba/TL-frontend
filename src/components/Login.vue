@@ -1,10 +1,11 @@
 <template lang="html">
     <div>
         <div v-if="!$store.state.jwt && $store.state.refreshTry" id="login" :class="$mq">
-            <form action="javascript:void(0);" class="login_form" :class="$mq">
+            <form action="javascript:void(0);" class="login_form" :class="$mq" id="signin-form">
                 <h1 :class="$mq">{{action}}</h1>
                 <input class="fin" :class="$mq" type="text" id="username" autocorrect="off" spellcheck="false" placeholder="Username"><br>
                 <div v-if="action=='Sign up'">
+                    <input class="fin" :class="$mq" type="text" id="full-name" autocorrect="off" spellcheck="false" maxlength="20" required minlength="2" placeholder="Full name"><br>
                     <input class="fin" :class="$mq" type="text" id="email" autocorrect="off" spellcheck="false" placeholder="Email"><br>
                 </div>
                 <input class="fin" :class="$mq" type="password" id="password" autocorrect="off" spellcheck="false" placeholder="Password"><br>
@@ -120,55 +121,58 @@ import VueRecaptcha from 'vue-recaptcha'
                         console.log(error)
                     })
             } else {
-                var signupApi = this.baseApi + 'auth/signup'
-                var passwordValue = document.getElementById("password").value
+                if (document.getElementById("signin-form").checkValidity()){
+                    var signupApi = this.baseApi + 'auth/signup'
+                    var passwordValue = document.getElementById("password").value
 
-                if (passwordValue != document.getElementById("repeat-password").value){
-                    this.errMessage = "Passwords not matching"
-                    this.clearData(true)
-                    return
-                }
+                    if (passwordValue != document.getElementById("repeat-password").value){
+                        this.errMessage = "Passwords not matching"
+                        this.clearData(true)
+                        return
+                    }
 
-                if (document.getElementById("username").value.length < 3 || document.getElementById("username").value.length > 20){
-                    this.errMessage = "Username needs to be between 3 and 20 characters long."
-                    document.getElementById("username").value = ""
-                    return
-                }
+                    if (document.getElementById("username").value.length < 3 || document.getElementById("username").value.length > 20){
+                        this.errMessage = "Username needs to be between 3 and 20 characters long."
+                        document.getElementById("username").value = ""
+                        return
+                    }
 
-                if (document.getElementById("password").value.length < 6 || document.getElementById("password").value.length > 40){
-                    this.errMessage = "Password needs to be between 6 and 40 characters long."
-                    this.clearData(true)
-                    return
-                }
+                    if (document.getElementById("password").value.length < 6 || document.getElementById("password").value.length > 40){
+                        this.errMessage = "Password needs to be between 6 and 40 characters long."
+                        this.clearData(true)
+                        return
+                    }
 
-                if (this.validEmail(document.getElementById("email").value)){
-                    document.getElementById("ls").style.opacity = "1"
-                    document.getElementById("submit-button").style.background = "#932a24"
+                    if (this.validEmail(document.getElementById("email").value)){
+                        document.getElementById("ls").style.opacity = "1"
+                        document.getElementById("submit-button").style.background = "#932a24"
 
-                    this.axios.post(signupApi, {
-                        username: document.getElementById("username").value,
-                        password: passwordValue,
-                        email: document.getElementById("email").value,
-                        recaptchaToken: recaptchaToken
-                    }, {
-                        withCredentials: true
-                    })
-                    .then(() => {
-                        document.getElementById("ls").style.opacity = "0"
-                        this.$store.commit('setMessage', "Created!")
-                        document.getElementById("modal").style.display = "block"
-                        self.signupShow()
-                        self.clearData()
-                    })
-                    .catch(error => {
-                        console.log(error)
-                        self.errMessage = error.response.data.message
-                        document.getElementById("ls").style.opacity = "0"
-                        document.getElementById("submit-button").style.background = "#B8352D"
-                        self.clearData()
-                    })
-                } else{
-                    this.errMessage = "Wrong email."
+                        this.axios.post(signupApi, {
+                            username: document.getElementById("username").value,
+                            password: passwordValue,
+                            fullName: document.getElementById("full-name").value,
+                            email: document.getElementById("email").value,
+                            recaptchaToken: recaptchaToken
+                        }, {
+                            withCredentials: true
+                        })
+                        .then(() => {
+                            document.getElementById("ls").style.opacity = "0"
+                            this.$store.commit('setMessage', "Created!")
+                            document.getElementById("modal").style.display = "block"
+                            self.signupShow()
+                            self.clearData()
+                        })
+                        .catch(error => {
+                            console.log(error)
+                            self.errMessage = error.response.data.message
+                            document.getElementById("ls").style.opacity = "0"
+                            document.getElementById("submit-button").style.background = "#B8352D"
+                            self.clearData()
+                        })
+                    } else{
+                        this.errMessage = "Wrong email."
+                    }   
                 }
             }
             
