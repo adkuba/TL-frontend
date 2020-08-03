@@ -106,6 +106,9 @@
                 console.log(error)
             })
     },
+    mounted() {
+        document.getElementById("dropdown").style.display = "none"
+    },
     watch: {
         '$route.params.id': function(){
             window.location.reload()

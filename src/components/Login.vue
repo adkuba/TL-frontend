@@ -178,7 +178,9 @@ import VueRecaptcha from 'vue-recaptcha'
                     'Authorization': 'Bearer ' + this.$store.state.jwt.token
                 }
             }).then(response => {
-                this.$store.commit('setNotifications', response.data)
+                var notification = response.data
+                notification.messages.reverse()
+                this.$store.commit('setNotifications', notification)
             }).catch(error => {
                 console.log(error)
             })

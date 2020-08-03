@@ -5,28 +5,34 @@
             <img src="./assets/images/Logo.png" width="27" height="27">
         </router-link>
         <div class="login_b" :class="[{ 'notification-anim': !$store.state.notifications.read }, $mq]" v-on:click="dropdown()">&#9868;</div>
-        <div id="dropdown" :class="$mq">
-            <div class="quit" v-on:click="dropdown()">x</div>
-            <router-link :to="{ name: 'settings' }" style="text-decoration: none">
-                <div v-if="$store.state.jwt" class="account">Settings</div>
-                <div v-else class="account">Login</div>
-            </router-link>
-            <h1 class="notifications-h1">Notifications:</h1>
-            <div v-for="(message, idx) in $store.state.notifications.messages" :key="idx" class="notification">
+    </div>
+    <div id="dropdown" :class="$mq">
+        <div class="quit" v-on:click="dropdown()">x</div>
+        <router-link :to="{ name: 'settings' }" style="text-decoration: none">
+            <div v-if="$store.state.jwt" class="account">Settings</div>
+            <div v-else class="account">Sign in</div>
+        </router-link>
+        <div class="notifications-h1">NOTIFICATIONS</div>
+        <div v-for="(message, idx) in $store.state.notifications.messages" :key="idx" class="notification">
+            <router-link :to="{ path: '/profile/' + message.username }" style="text-decoration: none; color: #303030">
                 <div class="notif-user">{{ message.username }}</div>
                 <div>{{ message.text }}</div>
                 <div class="date">{{ message.date }}</div>
-            </div>
-            <div v-if="$store.state.notifications.messages.length == 0" class="notification">
+            </router-link>
+        </div>
+        <div v-if="$store.state.notifications.messages.length == 0" class="notification">
+            <router-link :to="{ path: '/profile/tline' }" style="text-decoration: none; color: #303030">
                 <div class="notif-user">tline</div>
                 <div>Login to create!</div>
                 <div class="date">now</div>
-            </div>
-            <div v-if="$store.state.notifications.messages.length == 0" class="notification">
+            </router-link>
+        </div>
+        <div v-if="$store.state.notifications.messages.length == 0" class="notification">
+            <router-link :to="{ path: '/profile/tline' }" style="text-decoration: none; color: #303030">
                 <div class="notif-user">tline</div>
                 <div>Sign up and get more features.</div>
                 <div class="date">now</div>
-            </div>
+            </router-link>
         </div>
     </div>
     <div id="modal" :class="$mq">
@@ -96,7 +102,9 @@ export default {
                     'Authorization': 'Bearer ' + this.$store.state.jwt.token
                 }
             }).then(response => {
-                this.$store.commit('setNotifications', response.data)
+                var notification = response.data
+                notification.messages.reverse()
+                this.$store.commit('setNotifications', notification)
             }).catch(error => {
                 console.log(error)
             })
@@ -123,10 +131,12 @@ export default {
 @import './assets/saas-vars.sass'
 
 .notifications-h1
-    font-family: Raleway-Regular
-    font-size: 20px
+    font-family: OpenSans-Regular
+    font-size: 16px
+    color: #7e7e7e
     text-align: left
     padding: 0 30px
+    margin-bottom: 10px
 
 .quit
     position: absolute
@@ -165,7 +175,7 @@ export default {
     background: #a3a3a3
 
 .account
-    margin-bottom: 30px
+    margin-bottom: 40px
     padding: 15px 40px
     color: #303030
     font-family: Raleway-Regular
@@ -176,18 +186,21 @@ export default {
 #dropdown
     overflow: auto
     display: none
-    position: absolute
+    position: fixed
     top: 80px
-    right: 20px
-    width: 20%
+    z-index: 3
+    right: 30px
+    width: 25%
     height: 400px
-    box-shadow: 0 0 0 1600px rgba(0,0,0,0.65)
+    box-shadow: 0 0 0 2000px rgba(0,0,0,0.65)
     border-radius: 10px 0 0 10px
     background: $bg2-color
+    animation-timing-function: ease-in
+    animation: fadein 0.2s
     &.medium
-        width: 30%
+        width: 45%
     &.small
-        width: 70%
+        width: 80%
 
 .close-info
     font-size: 13px
