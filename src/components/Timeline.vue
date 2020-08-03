@@ -520,7 +520,7 @@ export default {
 
 #more
     position: absolute
-    top: 160px
+    top: 120px
     right: calc(10% + 20px)
     font-size: 14px
     display: none
@@ -533,7 +533,7 @@ export default {
 .moreG
     position: absolute
     right: calc(10% + 20px)
-    top: 130px
+    top: 90px
     color: #7e7e7e
     cursor: pointer
     &.medium
