@@ -120,11 +120,13 @@ export default {
         }
     },
     created(){
-        this.getTimelines(true)
-        this.axios.post(this.baseApi + 'statistics/public', null)
-        .catch(error => {
-            console.log(error)
-        })
+        if (this.$store.state.timelines.length == 0){
+            this.getTimelines(true)
+            this.axios.post(this.baseApi + 'statistics/public', null)
+            .catch(error => {
+                console.log(error)
+            })
+        }
     },
     data() {
         return {
