@@ -6,6 +6,7 @@
         </router-link>
         <div class="login_b" :class="[{ 'notification-anim': !$store.state.notifications.read }, $mq]" v-on:click="dropdown()">&#9868;</div>
     </div>
+    <div id="dropdown-bg" v-on:click="dropdown()"></div>
     <div id="dropdown" :class="$mq">
         <div class="quit" v-on:click="dropdown()">x</div>
         <router-link :to="{ name: 'settings' }" style="text-decoration: none">
@@ -69,6 +70,7 @@ export default {
             var dropdown = document.getElementById("dropdown")
             if (dropdown.style.display == "block"){
                 dropdown.style.display = "none"
+                document.getElementById("dropdown-bg").style.display = "none"
             } else {
                 var notifications = {
                     read: true,
@@ -76,6 +78,7 @@ export default {
                 }
                 this.$store.commit('setNotifications', notifications)
                 dropdown.style.display = "block"
+                document.getElementById("dropdown-bg").style.display = "block"
             }
         },
         refreshToken(){
@@ -129,6 +132,15 @@ export default {
 
 <style lang="sass">
 @import './assets/saas-vars.sass'
+
+#dropdown-bg
+    position: fixed
+    width: 100%
+    height: 100%
+    top: 0
+    left: 0
+    z-index: 3
+    display: none
 
 .notifications-h1
     font-family: OpenSans-Regular
@@ -184,6 +196,7 @@ export default {
     font-size: 35px
 
 #dropdown
+    outline: none
     overflow: auto
     display: none
     position: fixed
@@ -198,8 +211,10 @@ export default {
     animation-timing-function: ease-in
     animation: fadein 0.2s
     &.medium
+        right: 20px
         width: 45%
     &.small
+        right: 10px
         width: 80%
 
 .close-info

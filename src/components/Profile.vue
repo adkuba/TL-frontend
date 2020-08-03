@@ -56,7 +56,7 @@
             <div class="empty-element" :class="$mq"></div>
         </div>
         <div class="fusers-container" v-if="selected && selected[0] && selected[0].email">
-            <router-link :to="{ path: '/profile/' + fuser.username }" class="fusers" v-for="(fuser, idx) in selected" :key="idx">
+            <router-link :to="{ path: '/profile/' + fuser.username }" class="fusers" v-for="(fuser, idx) in selected" :key="idx" :class="$mq">
                 <div v-if="fuser.fullName" class="fuser-name">{{ fuser.fullName }}</div>
                 <div v-else class="fuser-name">New User</div>
                 <div class="fuser-desc">@{{ fuser.username }} &middot; {{ fuser.followers.filter(e => e.userId != null).length }} followers</div>
@@ -108,6 +108,7 @@
     },
     mounted() {
         document.getElementById("dropdown").style.display = "none"
+        document.getElementById("dropdown-bg").style.display = "none"
     },
     watch: {
         '$route.params.id': function(){
@@ -390,6 +391,10 @@
     display: inline-block
     width: 27%
     margin: 20px 3%
+    &.medium
+        width: 44%
+    &.small
+        width: 94%
 
 .timelines-container
     text-align: left

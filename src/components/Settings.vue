@@ -114,6 +114,7 @@
     },
     mounted() {
         document.getElementById("dropdown").style.display = "none"
+        document.getElementById("dropdown-bg").style.display = "none"
     },
     methods: {
         scrollToTop() {
