@@ -10,9 +10,16 @@
     <div id="dropdown" :class="$mq">
         <div class="quit" v-on:click="dropdown()">x</div>
         <router-link :to="{ name: 'settings' }" style="text-decoration: none">
-            <div v-if="$store.state.jwt" class="account">Settings</div>
-            <div v-else class="account">Sign in</div>
+            <div v-if="$store.state.jwt" class="account first">Settings</div>
+            <div v-else class="account first">Sign in</div>
         </router-link>
+        <router-link v-if="$store.state.jwt" :to="{ path: 'profile/' + $store.state.jwt.user.username }" style="text-decoration: none">
+            <div v-if="$store.state.jwt" class="account">Profile</div>
+        </router-link>
+        <router-link v-if="$store.state.jwt" :to="{ name: 'creator' }" style="text-decoration: none">
+            <div v-if="$store.state.jwt" class="account">Create</div>
+        </router-link>
+        
         <div class="notifications-h1">NOTIFICATIONS</div>
         <div v-for="(message, idx) in $store.state.notifications.messages" :key="idx" class="notification">
             <router-link :to="{ path: '/profile/' + message.username }" style="text-decoration: none; color: #303030">
@@ -133,6 +140,9 @@ export default {
 <style lang="sass">
 @import './assets/saas-vars.sass'
 
+.first
+    margin-top: 25px
+
 #dropdown-bg
     position: fixed
     width: 100%
@@ -143,6 +153,7 @@ export default {
     display: none
 
 .notifications-h1
+    margin-top: 60px
     font-family: OpenSans-Regular
     font-size: 16px
     color: #7e7e7e
@@ -151,6 +162,7 @@ export default {
     margin-bottom: 10px
 
 .quit
+    color: #7e7e7e
     position: absolute
     right: 10px
     padding: 10px
@@ -175,7 +187,7 @@ export default {
     font-size: 14px
 
 #dropdown::-webkit-scrollbar
-    width: 7px
+    width: 0px
 
 #dropdown::-webkit-scrollbar-track
     background: #e7e7e7
@@ -187,12 +199,13 @@ export default {
     background: #a3a3a3
 
 .account
-    margin-bottom: 40px
-    padding: 15px 40px
+    margin-bottom: 5px
+    padding: 0 30px
     color: #303030
     font-family: Raleway-Regular
     letter-spacing: 1px
     font-weight: bold
+    text-align: left
     font-size: 35px
 
 #dropdown
@@ -201,21 +214,19 @@ export default {
     overflow: auto
     display: none
     position: fixed
-    top: 80px
+    top: 70px
     z-index: 3
-    right: 30px
+    right: 10px
     width: 25%
-    height: 400px
+    height: 450px
     box-shadow: 0 0 0 2000px rgba(0,0,0,0.65)
-    border-radius: 10px 0 0 10px
+    border-radius: 10px
     background: $bg2-color
     animation-timing-function: ease-in
     animation: fadein 0.2s
     &.medium
-        right: 20px
         width: 45%
     &.small
-        right: 10px
         width: 80%
 
 .close-info

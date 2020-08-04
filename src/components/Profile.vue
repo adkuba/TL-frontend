@@ -1,20 +1,16 @@
 <template lang="html">
     <div id="profile" :class="$mq">
         <div v-if="user" class="user" :class="$mq">
-            <h1 v-if="user.fullName">{{ user.fullName }}</h1>
-            <h1 v-else>New User</h1>
-            <p class="email"> {{ user.email }} </p>
-            <p class="username">@{{ user.username }} </p>
+            <h1 :class="$mq">{{ user.fullName }}</h1>
+            <div class="followers" :class="$mq">{{ user.followers.filter(e => e.userId != null).length }} FOLLOWERS &middot; @{{ user.username }}</div>
+            <p class="email" :class="$mq"> {{ user.email }} </p>
             <div class="follow" :class="$mq" v-if="$store.state.jwt">
-                <div class="follower-item" v-on:click="follow()" v-if="$store.state.jwt.user.followers.filter(e => e.follow === user.username).length == 0">Follow </div>
-                <div class="follower-item" v-on:click="follow()" v-else>Unfollow</div>
-                <div class="follower-item" v-on:click="openDetails(user.followers.filter(e => e.userId != null))">&middot; {{ user.followers.filter(e => e.userId != null).length }}</div>
+                <div class="follower-item" :class="{free: !user.subscriptionEnd}" v-on:click="follow()" v-if="$store.state.jwt.user.followers.filter(e => e.follow === user.username).length == 0">Follow</div>
+                <div class="follower-item" :class="{free: !user.subscriptionEnd}" v-on:click="follow()" v-else>Unfollow</div>
             </div>
             <div v-else class="follow" :class="$mq">
-                <div class="follower-item" :class="$mq">Login to follow &middot; {{ user.followers.filter(e => e.userId != null).length }}</div>
+                <div class="follower-item" :class="{free: !user.subscriptionEnd}">Login to follow</div>
             </div>
-            <div class="premium-sign" :class="$mq" v-if="user.subscriptionEnd">PREMIUM</div>
-            <div v-else class="premium-sign free" :class="$mq">FREE</div>
         </div>
         <div v-else>
             <div class="empty-profile" :class="$mq"></div>
@@ -39,7 +35,7 @@
                         <router-link :to="{ path: '/statistics/' + $store.state.jwt.user.username }" class="stats" v-if="$store.state.jwt && $store.state.jwt.user.username == timeline.user.username">Statistics</router-link>
                         <div class="views" v-else>{{ timeline.views }} views &middot; {{ timeline.likes.length }} likes</div>
                     </div>
-                    <div class="views-container user-edit">
+                    <div class="views-container user-edit" :class="$mq">
                         <div class="views" v-if="$store.state.jwt && $store.state.jwt.user.username == timeline.user.username">
                             <router-link style="text-decoration: none" :to="{ path: '/editorLoader/' + timeline.id }" class="edit" v-bind:class="[{ shadow: !timeline.active}, $mq]">Edit</router-link>
                             <div class="edit" v-bind:class="[{ shadow: !timeline.active}, $mq]">&middot;</div>
@@ -368,10 +364,6 @@
     font-size: 14px
     color: #14426B
 
-.email
-    margin-top: 10px !important
-    color: #14426B
-
 .fuser-desc
     font-family: OpenSans-Regular
     font-size: 14px
@@ -404,8 +396,11 @@
     color: #303030
 
 .follower-item
-    display: inline-block
-    margin-left: 5px
+    background: #ff7f51
+    color: white
+    padding: 5px 10px
+    font-size: 14px
+    border-radius: 5px
 
 .controls
     font-family: Raleway-Regular
@@ -415,7 +410,8 @@
     font-weight: bold
     letter-spacing: 1px
     &.small
-        margin-top: 80px
+        margin-top: 60px
+        margin-bottom: 10px
         font-size: 20px
 
 .menu-item
@@ -435,6 +431,8 @@
     float: right
     text-align: right
     margin-right: 5%
+    &.small
+        margin-right: 2%
 
 .edit
     color: #14426B
@@ -452,6 +450,8 @@
     margin-left: 5%
     margin-top: 15px
     display: inline-block
+    &.small
+        margin-left: 2%
 
 .timeline
     box-shadow: 0px 2px 15px 4px rgba(0,0,0,0.09)
@@ -476,47 +476,26 @@
     font-family: OpenSans-Regular
     &.large
         position: absolute
+        top: 130px
         right: 15%
-        top: 200px
     &.medium
         position: absolute
-        right: 5%
-        top: 200px
+        top: 130px
+        right: 3%
     &.small
-        position: relative
         display: inline-block
-        vertical-align: top
-        margin-top: 10px
+        margin-left: 5px
+        margin-top: 15px
 
-.premium-sign
-    border-radius: 5px
-    font-family: Raleway-Regular
-    text-align: center
-    padding: 5px 40px
+.followers
+    margin-top: 5px
+    font-family: OpenSans-Regular
     letter-spacing: 1px
-    font-size: 14px
-    background: #ff7f51
-    color: white
-    &.large
-        position: absolute
-        right: 15%
-        top: 150px
-    &.medium
-        position: absolute
-        right: 5%
-        top: 150px
+    font-size: 15px
+    margin-left: 5px
+    color: #7e7e7e
     &.small
-        position: relative
-        float: right
-        margin-right: 5%
-        margin-top: 10px
-
-.free
-    padding: 5px 50px
-    background: #9cafb7
-
-.followers-item
-    display: inline-block
+        font-size: 14px
 
 .title
     width: 90%
@@ -524,6 +503,8 @@
     font-family: Raleway-Regular
     font-size: 35px
     font-weight: bold
+    &.small
+        margin-left: 2%
 
 .descr
     width: 90%
@@ -533,11 +514,16 @@
     height: 70px
     text-align: justify
     overflow: hidden
+    &.small
+        margin-left: 2%
 
 .image-container
     width: 90%
     margin-top: 20px
     margin-left: 5%
+    &.small
+        width: 96%
+        margin-left: 2%
 
 .image
     animation-timing-function: ease-in
@@ -564,12 +550,11 @@ h1
     margin-bottom: 0
     font-family: Raleway-Regular
     font-size: 45px
+    &.small
+        font-size: 35px
 
-.username
-    color: #7e7e7e
-    margin-top: 0px
-    font-size: 14px
-    margin-left: 5px
+.free
+    background: #9cafb7
 
 #profile
     width: 70%
@@ -583,11 +568,11 @@ h1
         width: 98%
 
 .email
-    display: inline-block
     margin-top: 5px
-    margin-bottom: 5px
     color: #14426B
     margin-left: 5px
+    &.small
+        font-size: 14px
 
 .s_line
     width: 70%

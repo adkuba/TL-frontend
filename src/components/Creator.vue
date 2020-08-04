@@ -21,7 +21,7 @@
                     <h1>Creator</h1>
                     <div class="errorID">{{ errorMessage }}</div>
                     <input class="ttitle tlid" autocorrect="off" spellcheck="false" :class="$mq" type="text" id="timelineId" placeholder="ID" maxlength="40" required pattern="[^/]*" title="Don't use /" v-model="timeline.id">
-                    <div class="opis">Create your timeline. See in preview how it looks. If you want to add links, type: <div class="desc-link">[Tline](www.tline.site)</div> </div>
+                    <div class="opis">Create your timeline. See in preview how it looks. If you want to add links, type: <div class="desc-link">[Tline](www.tline.site)</div>. Be careful about new lines!</div>
 
                     <div id="mainData">
                         <input class="ttitle main-tl" autocorrect="off" spellcheck="false" :class="$mq" type="text" id="mainTitle" required maxlength="60" minlength="3" placeholder="Title" v-model="timeline.descriptionTitle">
@@ -110,6 +110,10 @@
                 console.log(err)
                 this.$router.push({ path: "/home" })
             })
+    },
+    mounted() {
+        document.getElementById("dropdown").style.display = "none"
+        document.getElementById("dropdown-bg").style.display = "none"
     },
     data () {
       return {

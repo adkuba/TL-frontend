@@ -195,7 +195,7 @@ import VueRecaptcha from 'vue-recaptcha'
                     self.errMessage = error.response.data.message
                     document.getElementById("ls").style.opacity = "0"
                     document.getElementById("submit-button").style.background = "#B8352D"
-                    self.clearData()
+                    this.status = "ok"
                 })  
             }
         },
@@ -234,6 +234,9 @@ import VueRecaptcha from 'vue-recaptcha'
                 document.getElementById("repeat-password").value = ''
 
             } else {
+                if (document.getElementById("full-name")){
+                    document.getElementById("full-name").value = ''
+                }
                 document.getElementById("password").value = ''
                 if (document.getElementById("email")){
                     document.getElementById("email").value = ''

@@ -24,6 +24,7 @@
                 <div id="evt_desc" class="fade evt_trans">
                     <div id="evt_desc_text" v-if="openedSub">
                         <div class="evt_button" :style="'background: ' + mainColor" v-on:click="moveRight()">Back</div>
+                        <div v-if="eventsParsed && sub" class="master-title">{{ eventsParsed[openedEvent].title.toUpperCase() }}</div>
                         <h1 class="evt_h"> {{ eventsSub[openedSub].title }} </h1>
                         <p class="evt_desc_p"> {{ eventsSub[openedSub].description.replace(/\[([^\]]+)\]\(([^\)]+)\)?/g, '') }} </p>
                         <div class="link-container" v-for="(value, lidx) in eventsSub[openedSub].description.match(/\[([^\]]+)\]\(([^\)]+)\)/g)" :key="lidx">
@@ -105,18 +106,18 @@
         <div class="like" v-bind:class="[{ shadow: !timeline.active}, $mq]">
             <div v-if="$store.state.jwt">
                 <div v-if="$store.state.jwt.user.likes.includes(timeline.id)">
-                    <div v-if="timeline.likes != null" class="like-action" v-on:click="dislikeTimeline()" :class="$mq">Dislike &middot; {{ timeline.likes.length }} &middot; views {{ timeline.views }}</div>
+                    <div v-if="timeline.likes != null" class="like-action" v-on:click="dislikeTimeline()" :class="$mq"><div class="like-button" :class="{free: !timeline.user.subscriptionEnd}">Dislike</div>&middot; {{ timeline.likes.length }} &middot; views {{ timeline.views }}</div>
                     <div class="trending" :class="$mq">{{ timeline.creationDate }} &middot; &#8593;{{ timeline.trendingViews }}</div>
                     <div v-if="timeline.user" class="email" :class="$mq">{{ timeline.user.email }}</div>
                 </div>
                 <div v-else>
-                    <div v-if="timeline.likes != null" class="like-action" v-on:click="likeTimeline()" :class="$mq">Like &middot; {{ timeline.likes.length }} &middot; views {{ timeline.views }}</div> 
+                    <div v-if="timeline.likes != null" class="like-action" v-on:click="likeTimeline()" :class="$mq"><div class="like-button" :class="{free: !timeline.user.subscriptionEnd}">Like</div>&middot; {{ timeline.likes.length }} &middot; views {{ timeline.views }}</div> 
                     <div class="trending" :class="$mq">{{ timeline.creationDate }} &middot; &#8593;{{ timeline.trendingViews }}</div>
                     <div v-if="timeline.user" class="email" :class="$mq">{{ timeline.user.email }}</div>
                 </div>
             </div>
             <div v-else>
-                <router-link v-if="timeline.likes != null" class="login-like like-action" :to="{ name: 'login', params: {path: {path: '/timeline/' + timeline.id}}}" :class="$mq">Login to like &middot; {{ timeline.likes.length }} &middot; views {{ timeline.views }}</router-link>
+                <router-link v-if="timeline.likes != null" class="login-like like-action" :to="{ name: 'login', params: {path: {path: '/timeline/' + timeline.id}}}" :class="$mq"><div class="like-button" :class="{free: !timeline.user.subscriptionEnd}">Login to like</div> &middot; {{ timeline.likes.length }} &middot; views {{ timeline.views }}</router-link>
                 <div class="trending" :class="$mq">{{ timeline.creationDate }} &middot; &#8593;{{ timeline.trendingViews }}</div>
                 <div v-if="timeline.user" class="email" :class="$mq">{{ timeline.user.email }}</div>
             </div>
@@ -179,6 +180,7 @@ export default {
 
         mainImages: null,
         mainImageIndex: null,
+        padding: 150,
 
         eventsParsed: null,
         eventsSub: null,
@@ -442,6 +444,7 @@ export default {
 
                 this.eventsSub = this.eventsParsed;
                 this.openedSub = index;
+                this.computeTimeline()
             }
         },
         moveRight(){
@@ -451,8 +454,11 @@ export default {
                 this.eventsSub = this.eventsParsed
                 this.openedSub = this.openedEvent
                 window.scroll({top: this.newPos-100, left: 0, behavior: 'smooth'})
+                this.computeTimeline()
 
             } else {
+                document.getElementById("timeline").style.paddingBottom = '150px'
+                this.padding = 150
                 document.getElementsByClassName("line").forEach(function centerLines(line) {line.classList.remove('line_open');});
                 document.getElementsByClassName("circle").forEach(function centerCircles(circle) {circle.classList.remove('circle_open');});
                 document.getElementsByClassName("year").forEach(function centerYears(year) {year.classList.remove('year_open');});
@@ -471,16 +477,30 @@ export default {
             this.eventsSub = this.subTimelineEventsParsed
             this.openedSub = index
             window.scroll({top: this.newPos-100, left: 0, behavior: 'smooth'})
+            this.computeTimeline()
         },
         sortByDate(array){
             return array.sort(function(a, b){
                 return new Date(a.date) - new Date(b.date)
             })
         },
+        computeTimeline(){
+            var timelineElem = document.getElementById("timeline")
+            var evtElem = document.getElementById("evt_container")
+            var difference = (evtElem.offsetTop + evtElem.offsetHeight + 60) - (timelineElem.offsetTop + timelineElem.offsetHeight)
+            //console.log("difference" + difference)
+            if (difference > 0){
+                timelineElem.style.paddingBottom = (this.padding + difference) + 'px'
+                this.padding += difference
+            }
+        }
     },
     updated() {
         if (this.openedSub == this.openedEvent){
             this.subScroll(2)
+        }
+        if (this.openedEvent){
+            this.computeTimeline()
         }
     },
     destroyed () {
@@ -494,6 +514,22 @@ export default {
 
 <style scoped lang="sass">
 @import '../assets/saas-vars.sass'
+
+.master-title
+    position: absolute
+    transform: translateY(-22px) translateX(+2px)
+    color: #7e7e7e
+
+.like-button
+    margin-right: 5px
+    padding: 5px 10px
+    border-radius: 5px
+    display: inline-block
+    color: white
+    background: #ff7f51
+
+.free
+    background: #9cafb7
 
 .like-action
     display: inline-block
@@ -674,6 +710,8 @@ export default {
     margin-bottom: 5px
 
 .image
+    animation-timing-function: ease-in
+    animation: fadein 1s
     cursor: pointer
     height: 100px
     width: 120px
@@ -799,6 +837,7 @@ div#sub_timeline::-webkit-scrollbar
 
 
 .evt_desc_p
+    white-space: pre-line
     margin-top: 40px
     display: block
     text-align: justify
@@ -935,6 +974,8 @@ div#sub_timeline::-webkit-scrollbar
     transform: translateX(-50%)
     font-size: 19px
     letter-spacing: 2px
+    &.medium
+        white-space: pre-line
     &.small
         white-space: pre-line
         margin: 40px 15%
@@ -986,23 +1027,17 @@ div#sub_timeline::-webkit-scrollbar
     box-shadow: 0px 2px 15px 4px rgba(0,0,0,0.09)
     border-radius: 30px
     background: $bg-color
-    //wyskokosc evt desc to ok 866 desktop, 1149 mobile
-    //pojawia sie 100px nad circle, po circle musza byc dwie linie czyli 160px
-    //czyli 866-260px = 606 padding bottom
-    //w praktyce gdzies 450 starczy
     padding-top: 100px
     margin-top: 80px
-    padding-bottom: 500px
+    padding-bottom: 150px
     font-family: 'Raleway-Regular'
+    transition: padding 1s
     &.large
         margin-left: 10%
         margin-right: 10%
-    &.small
-        padding-bottom: 800px
-    &.medium
-        padding-bottom: 570px
 
 #descr
+    white-space: pre-line
     animation-timing-function: ease-in
     animation: fadein 1s
     margin: 0 20%
