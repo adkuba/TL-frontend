@@ -22,14 +22,14 @@
             </router-link>
         </div>
         <div v-if="$store.state.notifications.messages.length == 0" class="notification">
-            <router-link :to="{ path: '/profile/tline' }" style="text-decoration: none; color: #303030">
+            <router-link :to="{ path: '/login' }" style="text-decoration: none; color: #303030">
                 <div class="notif-user">tline</div>
                 <div>Login to create!</div>
                 <div class="date">now</div>
             </router-link>
         </div>
         <div v-if="$store.state.notifications.messages.length == 0" class="notification">
-            <router-link :to="{ path: '/profile/tline' }" style="text-decoration: none; color: #303030">
+            <router-link :to="{ path: '/login' }" style="text-decoration: none; color: #303030">
                 <div class="notif-user">tline</div>
                 <div>Sign up and get more features.</div>
                 <div class="date">now</div>
@@ -196,6 +196,7 @@ export default {
     font-size: 35px
 
 #dropdown
+    max-height: calc( 100vh - 90px)
     outline: none
     overflow: auto
     display: none

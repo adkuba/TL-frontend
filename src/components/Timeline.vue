@@ -359,11 +359,17 @@ export default {
                 fullEvent.type = "circle";
                 yearsParsed.push(fullEvent);
                 
-                for (var j=0, len2 = secondDate.getFullYear() - firstDate.getFullYear(); j < len2; j++){
-                    //ZMIENIC POTEM text na year???? uwaga data roku jest zawsze z 31 grudnia poprzedniego!!
-                    var yearDate = firstDate.getFullYear() + '-12-31T00:00:00';
-                    var year = {type: 'text', message: 0, date: yearDate};
-                    year.message = firstDate.getFullYear() + (j + 1);
+                if (firstDate.getFullYear() < secondDate.getFullYear()){
+                    var year = {type: 'text', message: '', date: '', startDate: ''};
+                    if ((firstDate.getFullYear() + 1) < secondDate.getFullYear()){
+                        year.date = secondDate.getFullYear() + '-01-01T00:00:00';
+                        year.startDate = firstDate.getFullYear() + '-12-31T00:00:00';
+                        year.message = secondDate.getFullYear() +  '\n-\n'  + (firstDate.getFullYear() + 1)
+                    } else {
+                        year.date = firstDate.getFullYear() + '-12-31T00:00:00';
+                        year.startDate = year.date
+                        year.message = firstDate.getFullYear() + 1
+                    }
                     yearsParsed.push(year);
                 }
             }
@@ -380,15 +386,21 @@ export default {
                 output.push(linePrefab);
                 output.push(yearsParsed[i]);
 
-                firstDate = new Date(yearsParsed[i].date);
-                secondDate = new Date(yearsParsed[i+1].date);
+                if (yearsParsed[i+1].startDate != null){
+                    firstDate = new Date(yearsParsed[i].date);
+                    secondDate = new Date(yearsParsed[i+1].startDate);
 
+                } else {
+                    firstDate = new Date(yearsParsed[i].date);
+                    secondDate = new Date(yearsParsed[i+1].date);
+                }
+                
                 var monthDiff = (secondDate.getFullYear() - firstDate.getFullYear()) * 12;
                 monthDiff -= firstDate.getMonth();
                 monthDiff += secondDate.getMonth();
 
                 //additional lines based on months
-                for (j = 0, len2 = monthDiff; j < len2; j++){
+                for (var j = 0, len2 = monthDiff; j < len2; j++){
                     output.push(linePrefab);
                 }
             }
@@ -924,6 +936,7 @@ div#sub_timeline::-webkit-scrollbar
     font-size: 19px
     letter-spacing: 2px
     &.small
+        white-space: pre-line
         margin: 40px 15%
 
 .circle_open

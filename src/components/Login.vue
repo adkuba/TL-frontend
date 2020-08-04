@@ -3,12 +3,12 @@
         <div v-if="!$store.state.jwt && $store.state.refreshTry" id="login" :class="$mq">
             <form action="javascript:void(0);" class="login_form" :class="$mq" id="signin-form">
                 <h1 :class="$mq">{{action}}</h1>
-                <input class="fin" :class="$mq" type="text" id="username" autocorrect="off" spellcheck="false" placeholder="Username"><br>
+                <input class="fin" :class="$mq" type="text" id="username" autocorrect="off" spellcheck="false" maxlength="40" placeholder="Username"><br>
                 <div v-if="action=='Sign up'">
                     <input class="fin" :class="$mq" type="text" id="full-name" autocorrect="off" spellcheck="false" maxlength="20" placeholder="Full name"><br>
                     <input class="fin" :class="$mq" type="text" id="email" autocorrect="off" spellcheck="false" placeholder="Email"><br>
                 </div>
-                <input class="fin" :class="$mq" type="password" id="password" autocorrect="off" spellcheck="false" placeholder="Password"><br>
+                <input class="fin" :class="$mq" type="password" id="password" autocorrect="off" spellcheck="false" maxlength="40" placeholder="Password"><br>
                 <div v-if="action=='Sign up'">
                     <input class="fin" :class="$mq" type="password" id="repeat-password" autocorrect="off" spellcheck="false" placeholder="Repeat password"><br>
                 </div>

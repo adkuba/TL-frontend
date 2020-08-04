@@ -126,6 +126,11 @@ export default {
             .catch(error => {
                 console.log(error)
             })
+        } else {
+            var filtered = this.$store.state.timelines.filter(obj => obj.data != null)
+            if (filtered != null){
+                this.special = filtered.reverse()[0]
+            }
         }
     },
     data() {
@@ -184,7 +189,8 @@ export default {
             })
         },
         search(){
-            if (document.getElementById("search-input").value){
+            if (document.getElementById("search-input").value.length > 2){
+                document.getElementById("search-input").placeholder = 'Search'
                 this.searchResults = ['loading']
                 var timelinesApi = this.baseApi + 'timelines/public/search'
                 this.axios.get(timelinesApi, {
@@ -201,7 +207,10 @@ export default {
                 .catch(error => {
                     console.log(error)
                 })
-            } 
+            } else {
+                document.getElementById("search-input").value = ''
+                document.getElementById("search-input").placeholder = "Type at least 3 characters"
+            }
         },
         quit(){
             document.getElementById("search-input").value = ''

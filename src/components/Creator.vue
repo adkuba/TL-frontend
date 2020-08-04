@@ -42,7 +42,7 @@
                                     <div class="control_item down" v-on:click="changeIndex(index, index+1)" v-if="index!=events.length-1">&lang;</div>
                                 </div>
                                 <div class="s_left">
-                                    <input class="ttitle" autocorrect="off" spellcheck="false" :class="$mq" type="text" :id="'title'+index" required maxlength="40" minlength="3" placeholder="Title" v-model="evt.title">
+                                    <input class="ttitle" autocorrect="off" spellcheck="false" :class="$mq" type="text" :id="'title'+index" required maxlength="40" minlength="2" placeholder="Title" v-model="evt.title">
                                      <date-picker class="tdate" :class="$mq" :input-attr="{ id: 'date' + index, required: true  }" placeholder="Select date" v-model="evt.date" value-type="format"></date-picker>
                                     <div v-if="timeline.pictures" :class="$mq" class="file-container" v-on:click="open(index)">Files {{evt.pictures.length}}</div>
                                     <textarea class="ttitle tlong" autocorrect="off" spellcheck="false" :class="$mq" :id="'long'+index" required maxlength="1500" placeholder="Description" v-model="evt.description"></textarea>
@@ -57,7 +57,7 @@
                                         <div class="control_item down" v-on:click="changeSubIndex(index, subindex, subindex+1)" v-if="subindex!=evt.sub.length-1">&lang;</div>
                                     </div>
                                     <div class="s_left">
-                                        <input class="ttitle" autocorrect="off" spellcheck="false" :class="$mq" :id="'sub'+index+'title'+subindex" required maxlength="40" minlength="3" type="text" placeholder="Title" v-model="subevt.title">
+                                        <input class="ttitle" autocorrect="off" spellcheck="false" :class="$mq" :id="'sub'+index+'title'+subindex" required maxlength="40" minlength="2" type="text" placeholder="Title" v-model="subevt.title">
                                         <date-picker class="tdate" :class="$mq" :input-attr="{ id: 'sub'+index+'date'+subindex, required: true }" placeholder="Select date" v-model="subevt.date" value-type="format"></date-picker>
                                         <div v-if="timeline.pictures" :class="$mq" class="file-container" v-on:click="open(index, subindex)">Files {{subevt.pictures.length}}</div>
                                         <textarea class="ttitle tlong" autocorrect="off" spellcheck="false" :class="$mq" :id="'sub'+index+'long'+subindex" required maxlength="1500" placeholder="Description" v-model="subevt.description"></textarea>
