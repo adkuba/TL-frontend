@@ -215,13 +215,15 @@
                 })
         },
         openLikes(){
-            this.selected = this.likes
+            this.selected = []
+            setTimeout(() => {this.selected = this.likes}, 200);
             document.getElementById("1").style.opacity = 0
             document.getElementById("3").style.opacity = 0
             document.getElementById("2").style.opacity = 1
         },
         openTimelines(){
-            this.selected = this.timelines
+            this.selected = []
+            setTimeout(() => {this.selected = this.timelines}, 200);
             document.getElementById("1").style.opacity = 1
             document.getElementById("3").style.opacity = 0
             document.getElementById("2").style.opacity = 0
@@ -378,6 +380,8 @@
     text-align: left
     
 .fusers
+    animation-timing-function: ease-in
+    animation: fadein 0.5s
     text-decoration: none
     color: #303030
     display: inline-block
@@ -454,6 +458,8 @@
         margin-left: 2%
 
 .timeline
+    animation-timing-function: ease-in
+    animation: fadein 0.5s
     box-shadow: 0px 2px 15px 4px rgba(0,0,0,0.09)
     box-sizing: border-box
     padding: 30px 10px

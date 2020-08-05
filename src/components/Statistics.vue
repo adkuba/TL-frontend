@@ -52,7 +52,7 @@
                         </router-link>
                     </div>
                 </div>
-                <div v-if="!$store.state.jwt.user.subscriptionEnd && chart != 0" class="normal-info">
+                <div v-if="!$store.state.jwt.user.subscriptionEnd && chart != 0" class="normal-info" :class="$mq">
                     More detailed charts only for premum users. Subscribe to see more.
                 </div>
             </div>
@@ -104,7 +104,7 @@
                         </router-link>
                     </div>
                 </div>
-                <div v-if="!$store.state.jwt.user.subscriptionEnd && chart != 0" class="normal-info">
+                <div v-if="!$store.state.jwt.user.subscriptionEnd && chart != 0" class="normal-info" :class="$mq">
                     More detailed charts only for premum users. Subscribe to see more.
                 </div>
             </div>
@@ -417,7 +417,8 @@ import BarChart from './BarChart'
 
 .normal-info
     text-align: center
-    padding: 145px 5%
+    padding: 140px 5%
+    height: 28px
     border: 1px solid #d8d8d8
     border-radius: 7px
 

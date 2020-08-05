@@ -24,7 +24,7 @@
                 <div id="evt_desc" class="fade evt_trans">
                     <div id="evt_desc_text" v-if="openedSub">
                         <div class="evt_button" :style="'background: ' + mainColor" v-on:click="moveRight()">Back</div>
-                        <div v-if="eventsParsed && sub" class="master-title">{{ eventsParsed[openedEvent].title.toUpperCase() }}</div>
+                        <div v-if="eventsParsed && sub && eventsParsed[openedEvent]" class="master-title">{{ eventsParsed[openedEvent].title.toUpperCase() }}</div>
                         <h1 class="evt_h"> {{ eventsSub[openedSub].title }} </h1>
                         <p class="evt_desc_p"> {{ eventsSub[openedSub].description.replace(/\[([^\]]+)\]\(([^\)]+)\)?/g, '') }} </p>
                         <div class="link-container" v-for="(value, lidx) in eventsSub[openedSub].description.match(/\[([^\]]+)\]\(([^\)]+)\)/g)" :key="lidx">
@@ -516,8 +516,7 @@ export default {
 @import '../assets/saas-vars.sass'
 
 .master-title
-    position: absolute
-    transform: translateY(-22px) translateX(+2px)
+    font-size: 14px
     color: #7e7e7e
 
 .like-button

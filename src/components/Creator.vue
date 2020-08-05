@@ -66,8 +66,8 @@
                             </transition-group>
                         </div>
                     </transition-group>
-                    <input type="submit" :class="$mq" class="masterC" v-on:click="preview()" value="Preview">
-                    <input type="submit" :class="$mq" class="masterC" v-on:click="submit()" value="Submit">
+                    <input type="submit" :class="$mq" class="masterC" v-on:click="preview()" :disabled="status=='sending'" value="Preview">
+                    <input type="submit" :class="$mq" class="masterC" v-on:click="submit()" :disabled="status=='sending'" value="Submit">
                     <div class="ls-container"><div class="loader" id="ls" :class="$mq"></div></div>
                 </form>
                 
@@ -127,6 +127,7 @@
 
           mainTimelineSubmit: {},
           subTimelinesSubmitted: [],
+          status: 'ok',
 
           openedPictures: -1,
           openedSubPictures: -1,
@@ -182,6 +183,7 @@
                 .catch(error => {
                     document.getElementById("ls").style.opacity = "0"
                     console.log(error)
+                    this.status = "ok"
                 })
             }
         },
@@ -219,6 +221,7 @@
                     .catch(error => {
                         document.getElementById("ls").style.opacity = "0"
                         console.log(error)
+                        this.status = "ok"
                     })
                 }
             }
@@ -255,6 +258,7 @@
                             .catch(error =>{
                                 document.getElementById("ls").style.opacity = "0"
                                 console.log(error)
+                                this.status = "ok"
                             })
                     }
                 }
@@ -351,6 +355,7 @@
                 delete timelineCopy["pictures"]
                 delete timelineCopy["picturesRaw"]
                 delete timelineCopy["user"]
+                this.status = "sending"
 
                 this.axios.post(timelinesApi, timelineCopy, {
                         headers: {
@@ -370,6 +375,7 @@
                             this.errorMessage = 'This ID is taken!'
                             document.getElementById("timelineId").scrollIntoView({behavior: "smooth", block: "end", inline: "nearest"})
                         }
+                        this.status = "ok"
                     })
                 if (this.deletedPictures.length > 0){
                     var formData = new FormData()
@@ -417,10 +423,13 @@
                 .catch(error => {
                     document.getElementById("ls").style.opacity = "0"
                     console.log(error)
+                    this.status = "ok"
                 })
             })
             .catch(error => {
+                document.getElementById("ls").style.opacity = "0"
                 console.log(error)
+                this.status = "ok"
             })
         },
         preview() {

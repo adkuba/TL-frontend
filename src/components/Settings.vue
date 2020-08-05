@@ -2,8 +2,7 @@
     <div>
         <div id="settings" :class="$mq">
             <div class="controler" :class="$mq">
-                <router-link :to="{ path: '/profile/' + $store.state.jwt.user.username}" class="menu-element" :class="$mq">Profile</router-link>
-                <router-link :to="{ name: 'creator' }" class="menu-element" :class="$mq">Create</router-link>
+                <router-link :to="{ path: '/statistics/' + $store.state.jwt.user.username }" class="menu-element" :class="$mq">Statistics</router-link>
                 <div class="menu-element" :class="$mq" v-on:click="logout()">Logout</div>
             </div>
             <div class="data-settings" :class="$mq">
@@ -189,7 +188,7 @@
     color: #303030
     cursor: pointer
     font-size: 30px
-    width: 33%
+    width: 50%
     letter-spacing: 1px
     &.small
         font-size: 27px

@@ -13,7 +13,7 @@
             <div v-if="$store.state.jwt" class="account first">Settings</div>
             <div v-else class="account first">Sign in</div>
         </router-link>
-        <router-link v-if="$store.state.jwt" :to="{ path: 'profile/' + $store.state.jwt.user.username }" style="text-decoration: none">
+        <router-link v-if="$store.state.jwt" :to="{ path: '/profile/' + $store.state.jwt.user.username }" style="text-decoration: none">
             <div v-if="$store.state.jwt" class="account">Profile</div>
         </router-link>
         <router-link v-if="$store.state.jwt" :to="{ name: 'creator' }" style="text-decoration: none">
