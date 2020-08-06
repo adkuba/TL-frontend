@@ -366,10 +366,10 @@ export default {
     margin-top: 10px
     margin-left: 0
     letter-spacing: 1px
-    margin-bottom: 50px
+    margin-bottom: 25px
     &.small
         margin-left: 0
-        margin-bottom: 20px
+        margin-bottom: 15px
 
 .special-about-next
     font-family: OpenSans-Regular
@@ -381,13 +381,13 @@ export default {
 .special-about
     color: #14426B
     text-decoration: none
-    margin-top: 80px
+    margin-top: 40px
     display: inline-block
     margin-left: 8%
     font-family: OpenSans-Regular
     font-size: 14px
     &.small
-        margin-top: 40px
+        margin-top: 25px
         margin-left: 5%
 
 .special-pc-users
@@ -424,8 +424,13 @@ export default {
     right: 5%
     width: 25%
     padding-top: 15px
+    overflow-y: auto
+    max-height: calc( 100vh - 160px )
     &.medium
-        width: 23%
+        right: 3%
+        width: 25%
+        top: 90px
+        max-height: calc( 100vh - 150px )
 
 .empty
     font-family: OpenSans-Regular

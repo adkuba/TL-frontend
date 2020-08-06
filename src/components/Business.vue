@@ -3,7 +3,9 @@
         <h1>Business</h1>
         <p>Display ads on Tline!</p>
         <p>We are currently working on ads system. Ads will display on homepage in form of current timelines or on user profile and their created timelines - only non premium users. With our built in system we can avoid adblocks and personalize ads to logged in users.</p>
-        <img src="../assets/images/about/ads.png" class="image">
+        <div style="text-align: center">
+            <img src="../assets/images/about/ads.png" class="image">
+        </div>
     </div>
 </template>
 
@@ -45,11 +47,10 @@
 .image
     image-rendering: crisp-edges
     margin-top: 70px
-    width: 100%
+    height: 400px
+    max-width: 100%
+    object-fit: contain
     border-radius: 10px
-
-p
-    text-align: justify
 
 h1
     margin-top: 70px
