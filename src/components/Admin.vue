@@ -2,6 +2,11 @@
     <div class="admin">
         <div v-if="$store.state.jwt.user.roles.includes('ROLE_ADMIN')">
             JESTES ADMINEM
+            <div class="restore">
+                <div class="restore-button" v-on:click="createBackup()">Create backup</div><br><br>
+                <div class="restore-button" v-on:click="restoreBackup()">Restore from backup</div><br><br>
+                <div style="cursor: pointer" v-on:click="updateGeolocation()">Update geolocation</div>
+            </div>
             <div class="stats" :class="$mq">
                 <h1>Stats</h1>
                 <p class="download" v-on:click="download(allStats, 'stats.csv')">Download</p>
@@ -354,6 +359,46 @@ import BarChart from './BarChart.vue'
             document.body.appendChild(link); // Required for FF
             link.click()
         },
+        updateGeolocation(){
+            this.axios.post(this.baseApi + 'statistics/update-geolocation', null, {
+                    headers: {
+                        'Authorization': 'Bearer ' + this.$store.state.jwt.token
+                    },
+                }).then(() => {
+                    alert("Succes!")
+                }).catch(error => {
+                    alert("Error!")
+                    console.log(error)
+                })
+        },
+        restoreBackup(){
+            if (confirm("Restore from backup?")){
+                this.axios.get(this.baseApi + 'statistics/restore-backup', {
+                    headers: {
+                        'Authorization': 'Bearer ' + this.$store.state.jwt.token
+                    },
+                }).then(() => {
+                    alert("Succes!")
+                }).catch(error => {
+                    alert("Error!")
+                    console.log(error)
+                })
+            }
+        },
+        createBackup(){
+            if (confirm("Create backup?")){
+                this.axios.get(this.baseApi + 'statistics/create-backup', {
+                    headers: {
+                        'Authorization': 'Bearer ' + this.$store.state.jwt.token
+                    },
+                }).then(() => {
+                    alert("Succes!")
+                }).catch(error => {
+                    alert("Error!")
+                    console.log(error)
+                })
+            }
+        },
         deleteTimeline(timeline){
             if (confirm("Delete " + timeline.id + '?')){
                 var reason = window.prompt("Why you are deleting this timeline?")
@@ -457,6 +502,18 @@ import BarChart from './BarChart.vue'
 </script>
 
 <style scoped lang="sass">
+
+.restore-button
+    cursor: pointer
+    color: red
+    display: inline
+
+.restore
+    width: 80%
+    text-align: left
+    margin: 50px auto
+    &.small
+        width: 95%
 
 .container
     height: 200px
