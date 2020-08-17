@@ -7,9 +7,11 @@
             <div class="follow" :class="$mq" v-if="$store.state.jwt">
                 <div class="follower-item" :class="{free: !user.subscriptionEnd}" v-on:click="follow()" v-if="$store.state.jwt.user.followers.filter(e => e.follow === user.username).length == 0">Follow</div>
                 <div class="follower-item" :class="{free: !user.subscriptionEnd}" v-on:click="follow()" v-else>Unfollow</div>
+                <div class="desc-p" v-if="user.subscriptionEnd && $mq!='small'">PREMIUM</div>
             </div>
             <div v-else class="follow" :class="$mq">
-                <div class="follower-item" :class="{free: !user.subscriptionEnd}">Login to follow</div>
+                <router-link class="follower-item" style="text-decoration: none; display: block" :class="{free: !user.subscriptionEnd}" :to="{ name: 'login', params: {path: {path: '/profile/' + user.username}}}">Login to follow</router-link>
+                <div class="desc-p" v-if="user.subscriptionEnd && $mq!='small'">PREMIUM</div>
             </div>
         </div>
         <div v-else>
@@ -273,6 +275,10 @@
 <style scoped lang="sass">
 @import '../assets/saas-vars.sass'
 
+.desc-p
+    font-size: 11px
+    color: #7e7e7e
+
 #loader
     opacity: 0
     position: absolute
@@ -478,6 +484,7 @@
         width: 100%
 
 .follow
+    text-align: center
     cursor: pointer
     font-family: OpenSans-Regular
     &.large

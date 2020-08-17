@@ -4,29 +4,32 @@
             <h1 id="about">About</h1>
             <p>Welcome on Tline! <br><br> Here users can create content based on timeline. Present your projects, achievements, inspire others and develop connections!</p>
         </div>
-        <div class="element" :class="$mq">
-            <img src="../assets/images/about/signup.png" class="image" :class="$mq">
-            <p class="img-desc">Create free account</p>
-        </div>
-        <div class="element" :class="$mq">
-            <img src="../assets/images/about/settings.png" class="image" :class="$mq">
-            <p class="img-desc">Fill your details in settings</p>
-        </div>
-        <div class="element" :class="$mq">
-            <img src="../assets/images/about/creator.png" class="image" :class="$mq">
-            <p class="img-desc">Create your timeline</p>
-        </div>
-        <div class="element" :class="$mq">
-            <img src="../assets/images/about/timeline.png" class="image" :class="$mq">
-            <p class="img-desc">Ready timeline</p>
-        </div>
-        <div class="element" :class="$mq">
-            <img src="../assets/images/about/homepage.png" class="image" :class="$mq">
-            <p class="img-desc">Timelines display on homepage</p>
-        </div>
-        <div class="element" :class="$mq">
-            <img src="../assets/images/about/profile.png" class="image" :class="$mq">
-            <p class="img-desc">Take advantage of your profile</p>
+        <div class="images-container" :class="$mq">
+            <div class="element" :class="$mq">
+                <img src="../assets/images/about/signup.png" class="image" :class="$mq">
+                <p class="img-desc">Create free account</p>
+            </div>
+            <div class="element" :class="$mq">
+                <img src="../assets/images/about/settings.png" class="image" :class="$mq">
+                <p class="img-desc">Fill your details in settings</p>
+            </div>
+            <div class="element" :class="$mq">
+                <img src="../assets/images/about/creator.png" class="image" :class="$mq">
+                <p class="img-desc">Create your timeline</p>
+            </div>
+            <div class="element" :class="$mq">
+                <img src="../assets/images/about/timeline.png" class="image" :class="$mq">
+                <p class="img-desc">Ready timeline</p>
+            </div>
+            <div class="element" :class="$mq">
+                <img src="../assets/images/about/homepage.png" class="image" :class="$mq">
+                <p class="img-desc">Timelines display on homepage</p>
+            </div>
+            <div class="element" :class="$mq">
+                <img src="../assets/images/about/profile.png" class="image" :class="$mq">
+                <p class="img-desc">Take advantage of your profile</p>
+            </div>
+            <router-link class="login-button" :to="{ path: '/login'}">Create account</router-link>
         </div>
 
         <div id="subscription" :class="$mq">
@@ -111,6 +114,28 @@
 
 <style scoped lang="sass">
 
+.login-button
+    background: #B8352D
+    text-decoration: none
+    color: white
+    font-family: Raleway-Regular
+    font-size: 17px
+    padding: 12px 40px
+    border-radius: 5px
+
+.images-container
+    text-align: center
+    width: 60%
+    margin-left: 20%
+    margin-bottom: 150px
+    &.medium
+        width: 80%
+        margin-left: 10%
+    &.small
+        width: 96%
+        margin-left: 2%
+        margin-bottom: 100px
+
 .subs-elem
     width: 90% !important
 
@@ -129,7 +154,7 @@
     vertical-align: bottom
     text-align: center
     width: 44%
-    margin: 50px 3%
+    margin: 90px 3%
     display: inline-block
     &.small
         display: block
@@ -187,7 +212,7 @@
     image-rendering: crisp-edges
     object-fit: contain
     margin-bottom: 20px
-    height: 200px
+    height: 120px
     border-radius: 10px
     &.medium
         height: 150px
