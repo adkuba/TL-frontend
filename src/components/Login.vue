@@ -3,7 +3,7 @@
         <div v-if="!$store.state.jwt && $store.state.refreshTry" id="login" :class="$mq">
             <form action="javascript:void(0);" class="login_form" :class="$mq" id="signin-form">
                 <h1 :class="$mq">{{action}}</h1>
-                <input class="fin" :class="$mq" type="text" id="username" autocorrect="off" spellcheck="false" maxlength="40" placeholder="Username"><br>
+                <input class="fin" :class="$mq" type="text" id="username" autocorrect="off" spellcheck="false" maxlength="20" placeholder="Username"><br>
                 <div v-if="action=='Sign up'">
                     <input class="fin" :class="$mq" type="text" id="full-name" autocorrect="off" spellcheck="false" maxlength="20" placeholder="Full name"><br>
                     <input class="fin" :class="$mq" type="text" id="email" autocorrect="off" spellcheck="false" placeholder="Email"><br>
@@ -117,7 +117,7 @@ import VueRecaptcha from 'vue-recaptcha'
             }
 
             //alphanumerical underscore dot, (_. only inside, no duplicates)
-            var re=/^(?=.{3,40}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/
+            var re=/^(?=[a-zA-Z0-9._]{3,20}$)(?!.*[_.]{2})[^_.].*[^_.]$/
             if (!re.test(document.getElementById("username").value)){
                 this.errMessage = "Username only alphanumerical, underscore, dot (_ . only inside no duplicates)"
                 document.getElementById("username").value = ""
