@@ -116,6 +116,14 @@ import VueRecaptcha from 'vue-recaptcha'
                 return false
             }
 
+            //alphanumerical underscore dot, (_. only inside, no duplicates)
+            var re=/^(?=.{3,40}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/
+            if (!re.test(document.getElementById("username").value)){
+                this.errMessage = "Username only alphanumerical, underscore, dot (_ . only inside no duplicates)"
+                document.getElementById("username").value = ""
+                return false
+            }
+
             if (document.getElementById("password").value.length < 6 || document.getElementById("password").value.length > 40){
                 this.errMessage = "Password needs to be between 6 and 40 characters long."
                 this.clearData(true)

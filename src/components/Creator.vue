@@ -20,7 +20,7 @@
                 <form action="javascript:void(0);" id="tform" :class="$mq">
                     <h1>Creator</h1>
                     <div class="errorID">{{ errorMessage }}</div>
-                    <input class="ttitle tlid" autocorrect="off" spellcheck="false" :class="$mq" type="text" id="timelineId" placeholder="ID" maxlength="40" required pattern="[^/]*" title="Don't use /" v-model="timeline.id">
+                    <input class="ttitle tlid" autocorrect="off" spellcheck="false" :class="$mq" type="text" id="timelineId" placeholder="ID" maxlength="40" minlength="3" required pattern="^(?=.{3,40}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$" title="Alphanumerical and _ . (no duplicates, only inside) max 40 min 3 characters" v-model="timeline.id">
                     <div class="opis">Create your timeline. See in preview how it looks. If you want to add links, type: <div class="desc-link">[Tline](www.tline.site)</div>. Be careful about new lines!</div>
 
                     <div id="mainData">

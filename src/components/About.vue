@@ -2,7 +2,7 @@
     <div id="about-container" :class="$mq">
         <div id="intro" :class="$mq">
             <h1 id="about">About</h1>
-            <p>Welcome on Tline! <br><br> Here users can create content based on timeline. Present your projects, achievements, inspire others and develop connections!</p>
+            <p>Welcome on Tline! <br><br> Create content based on timeline. Present your projects, achievements, inspire others and develop connections!</p>
         </div>
         <div class="images-container" :class="$mq">
             <div class="element" :class="$mq">
