@@ -4,7 +4,7 @@
             <form action="javascript:void(0);" class="login_form" :class="$mq">
                 <h1 :class="$mq">Reset password</h1>
                 <input v-if="firstStage" class="fin" autocorrect="off" spellcheck="false" :class="$mq" type="text" id="email" placeholder="Your email">
-                <input v-else class="fin" :class="$mq" autocorrect="off" spellcheck="false" type="password" id="password" placeholder="New password">
+                <input v-else class="fin" :class="$mq" autocorrect="off" spellcheck="false" type="password" id="password" placeholder="New password"><br>
                 <input v-if="!firstStage" class="fin" :class="$mq" autocorrect="off" spellcheck="false" type="password" id="password-repeat" placeholder="Repeat password">
                 <br v-if="errMessage">
                 <div class="fsignup error" :class="$mq" v-if="errMessage">{{ errMessage }}</div><br>
@@ -125,7 +125,12 @@
 
 #ls
     display: none
-    margin-left: calc(20% - 5px)
+    margin-left: calc(20% - 10px)
     opacity: 1
+    &.medium
+        margin-left: calc(30% - 10px)
+    &.small
+        margin-left: calc(15% - 10px)
+
 
 </style>
