@@ -117,9 +117,9 @@ import VueRecaptcha from 'vue-recaptcha'
             }
 
             //alphanumerical underscore dot, (_. only inside, no duplicates)
-            var re=/^(?=[a-zA-Z0-9._]{3,20}$)(?!.*[_.]{2})[^_.].*[^_.]$/
+            var re=/^(?=[a-zA-Z0-9-]{3,20}$)(?!.*[-]{2})[^-].*[^-]$/
             if (!re.test(document.getElementById("username").value)){
-                this.errMessage = "Username only alphanumerical, underscore, dot (_ . only inside no duplicates)"
+                this.errMessage = "Username only alphanumerical and '-' (inside, no duplicates)"
                 document.getElementById("username").value = ""
                 return false
             }

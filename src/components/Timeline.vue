@@ -3,16 +3,13 @@
         <router-link :to="{ path: '/profile/' + timeline.user.username }" class="user_d" :class="$mq" v-if="!mockEvents"> {{ timeline.user.fullName }} </router-link>
 
         <div id="image-viewer" :class="$mq">
-            <div class="left" :class="$mq">
-                    <div v-on:click="imageViewerScroll(mainImageIndex-1)" class="arrow" :class="$mq"> &#10094; </div>
-                    <div v-on:click="imageViewerScroll(mainImageIndex+1)" class="arrow" :class="$mq"> &#10095; </div>
-                </div>
-            <div class="viewer-menu" :class="$mq">
+            <div id="img-container">
+                <img :src="mainImages[mainImageIndex]" id="main-image" v-if="mainImages">
+                <div id="left-control" v-on:click="imageViewerScroll(mainImageIndex-1)"></div>
+                <div id="right-control" v-on:click="imageViewerScroll(mainImageIndex+1)"></div>
             </div>
-            <div class="center" :class="$mq" v-if="mainImages">{{ mainImageIndex+1 }}/{{ mainImages.length }}</div>
-            <div class="vm-item" :class="$mq" v-on:click="closeImage()"> x </div>
-            <img :src="mainImages[mainImageIndex]" id="main-image" v-if="mainImages">
         </div>
+        <div id="image-full-bg" v-on:click="closeImage()"></div>
 
         <div id="timeline" :class="$mq" v-if="timeline.active && mockTimeline == null || mockTimeline">
             <div v-if="mockTimeline == null">
@@ -163,6 +160,7 @@ export default {
         } else {
             this.mocking = true
         }
+        window.addEventListener("resize", this.resize)
     },
     data() {
         return {
@@ -254,6 +252,11 @@ export default {
         }
     },
     methods: {
+        resize(){
+            if (this.mainImages){
+                this.changeImageContainerSize()
+            }
+        },
         scrollToTop() {
             const c = document.documentElement.scrollTop || document.body.scrollTop;
             if (c > 0) {
@@ -323,17 +326,65 @@ export default {
                     newIndex = 0
                 }
                 this.mainImageIndex = newIndex
+                this.changeImageContainerSize()
             }
         },
         closeImage(){
             document.getElementById("image-viewer").style.display = "none"
+            document.getElementById("image-full-bg").style.display = "none"
             this.mainImages = null
             this.mainImageIndex = null
         },
         openImage(images, index){
+            document.getElementById("image-viewer").style.display = "block"
+            document.getElementById("image-full-bg").style.display = "block"
             this.mainImages = images
             this.mainImageIndex = index
-            document.getElementById("image-viewer").style.display = "block"
+            this.changeImageContainerSize()
+        },
+        changeImageContainerSize(){
+            var imageObject = new Image()
+            imageObject.src = this.mainImages[this.mainImageIndex]
+            var self = this
+            imageObject.onload = function() {
+                if (imageObject.width > imageObject.height){
+                    var container = document.getElementById("img-container")
+                    var width = (window.innerWidth * 0.9)
+                    var height = width * (imageObject.height/imageObject.width)
+                    if (height > window.innerHeight * 0.8){
+                        height = window.innerHeight * 0.8
+                        width = height * (imageObject.width/imageObject.height)
+                    }
+                    container.setAttribute("style", "width:" + width + 'px')
+                    container.style.width = width + 'px'
+                    container.style.height = height + 'px'
+                    self.setControlsSize(width, height)
+                    
+                } else {
+                    container = document.getElementById("img-container")
+                    height = (window.innerHeight * 0.8)
+                    width = height * (imageObject.width/imageObject.height)
+                    if (width > window.innerWidth * 0.9){
+                        width = window.innerWidth * 0.9
+                        height = width * (imageObject.height/imageObject.width)
+                    }
+                    container.style.height = height + 'px'
+                    container.setAttribute("style", "width:" + width + 'px')
+                    container.style.width = width + 'px'
+                    self.setControlsSize(width, height)
+                }
+            }
+        },
+        setControlsSize(width, height){
+            var leftControl = document.getElementById("left-control")
+            leftControl.setAttribute("style", "width:" + width/2 + 'px')
+            leftControl.style.width = width/2 + 'px'
+            leftControl.style.height = height + 'px'
+            var rightControl = document.getElementById("right-control")
+            rightControl.setAttribute("style", "width:" + width/2 + 'px')
+            rightControl.style.width = width/2 + 'px'
+            rightControl.style.height = height + 'px'
+            rightControl.style.marginLeft = width/2 + 'px'
         },
         subScroll(index, open=false){
             var subT = document.getElementById("sub_timeline")
@@ -515,6 +566,25 @@ export default {
 <style scoped lang="sass">
 @import '../assets/saas-vars.sass'
 
+#left-control
+    position: absolute
+    z-index: 7
+    top: 0
+
+#right-control
+    position: absolute
+    z-index: 7
+    top: 0
+
+#image-full-bg
+    z-index: 5
+    display: none
+    top: 0
+    left: 0
+    position: fixed
+    width: 100%
+    height: 100%
+
 .master-title
     cursor: pointer
     font-size: 14px
@@ -678,19 +748,21 @@ export default {
         width: 90%
         margin-left: 5%
 
+#img-container
+    margin: 0 auto
+
 #main-image
     width: 100%
-    max-height: calc( 100vh - 120px )
-    object-fit: contain
+    height: 100%
 
 #image-viewer
     color: #cccccc
     font-size: 15px
     font-family: Raleway-Regular
-    top: 40px
+    top: 10%
     user-select: none
     position: fixed
-    z-index: 5
+    z-index: 6
     width: 80%
     height: 0
     left: 10%
