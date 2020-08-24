@@ -23,7 +23,7 @@
 
   export default  {
     name: 'PasswordChange',
-    created() {
+    mounted() {
         this.scrollToTop()
     },
     metaInfo() {

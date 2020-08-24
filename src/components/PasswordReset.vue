@@ -29,6 +29,8 @@
         if (this.$route.params.id != 'true'){
             this.firstStage = false
         }
+    },
+    mounted(){
         this.scrollToTop()
     },
     metaInfo() {

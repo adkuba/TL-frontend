@@ -52,7 +52,6 @@ import VueRecaptcha from 'vue-recaptcha'
         }
     },
     created(){
-        this.scrollToTop()
         if(!this.path){
             this.routerPath = '/settings'
 
@@ -62,6 +61,7 @@ import VueRecaptcha from 'vue-recaptcha'
         this.redirect()
     },
     mounted() {
+        this.scrollToTop()
         document.getElementById("dropdown").style.display = "none"
         document.getElementById("dropdown-bg").style.display = "none"
     },

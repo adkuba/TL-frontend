@@ -21,17 +21,10 @@
     </div>
 </template>
 
-<script src="https://js.stripe.com/v3/"></script>
 <script lang="js">
-
-    var stripe = Stripe('pk_live_51GvlqGG6mQST9KMbJSmkP6ioKcyjlte02LEnYbiQcj5R1GFzwjgOm320AWXpt7w1FXdkcmUZtAOpexVVBRHiI9BI009xUuT25J');
-    var elements = stripe.elements()
 
     export default  {
     name: 'Subscription',
-    created() {
-        this.scrollToTop()
-    },
     metaInfo() {
         return {
             title: 'Subscription',
@@ -40,7 +33,10 @@
         }
     },
     mounted() {
-        var elements = stripe.elements({
+        this.scrollToTop()
+        this.stripe = Stripe('pk_live_51GvlqGG6mQST9KMbJSmkP6ioKcyjlte02LEnYbiQcj5R1GFzwjgOm320AWXpt7w1FXdkcmUZtAOpexVVBRHiI9BI009xUuT25J')
+        this.elements = this.stripe.elements()
+        var elements = this.stripe.elements({
             fonts: [
             {
                 cssSrc: 'https://fonts.googleapis.com/css2?family=Open+Sans',
@@ -66,9 +62,9 @@
         };
 
         try {
-            this.cardElement = elements.create("cardNumber", { showIcon: true, style: style })
-            this.cardCvc = elements.create('cardCvc', { style: style})
-            this.cardExpiry = elements.create('cardExpiry', { style: style})
+            this.cardElement = this.elements.create("cardNumber", { showIcon: true, style: style })
+            this.cardCvc = this.elements.create('cardCvc', { style: style})
+            this.cardExpiry = this.elements.create('cardExpiry', { style: style})
             
         } catch (error){
             //czasem jest error ze nie mozna stworzyc dwoch card element - to zalatwia sprawe
@@ -87,6 +83,8 @@
             cardCvc: null,
             cardExpiry: null,
             baseApi: 'https://api.tline.site/api/',
+            stripe: null,
+            elements: null
         }
     },
     methods: {

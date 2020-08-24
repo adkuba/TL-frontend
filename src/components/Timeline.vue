@@ -142,8 +142,11 @@ export default {
             content: this.timeline.description
         }
     },
-    created () {
+    mounted() {
         this.scrollToTop()
+        window.addEventListener("resize", this.resize)
+    },
+    created () {
         this.mainColor = this.circleColors[Math.floor(Math.random() * this.circleColors.length)]
         if (!this.mockEvents){
             var username = null
@@ -160,7 +163,6 @@ export default {
         } else {
             this.mocking = true
         }
-        window.addEventListener("resize", this.resize)
     },
     data() {
         return {

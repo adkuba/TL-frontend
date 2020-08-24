@@ -130,8 +130,10 @@ import BarChart from './BarChart'
             content: 'Explore new way to present your content based on timeline.'
         }
     },
-    created() {
+    mounted() {
         this.scrollToTop()
+    },
+    created() {
         if (this.$store.state.jwt.user.username != this.$route.params.id){
             this.$router.push({ name: "home" })
         }

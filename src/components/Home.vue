@@ -161,9 +161,9 @@ export default {
         },
         scroll() {
             window.onscroll = () => {
-                let bottomOfWindow = document.documentElement.scrollTop + window.innerHeight === document.documentElement.offsetHeight;
+                let bottomOfwindow = document.documentElement.scrollTop + window.innerHeight === document.documentElement.offsetHeight;
 
-                if (bottomOfWindow) {
+                if (bottomOfwindow) {
                     if (this.counter == 2){
                         this.counter = 0
                         this.getTimelines(true)

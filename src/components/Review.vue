@@ -19,7 +19,7 @@
 
   export default  {
     name: 'Review',
-    created() {
+    mounted() {
         this.scrollToTop()
     },
     metaInfo() {

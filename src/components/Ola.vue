@@ -9,8 +9,6 @@
 
   export default  {
     name: 'Ola',
-    created() {
-    },
     metaInfo() {
         return {
             title: 'Ola',

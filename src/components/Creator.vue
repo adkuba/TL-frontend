@@ -249,7 +249,7 @@
                                 }
                             })
                             .then(response => {
-                                //i sie nie zmienia bo jest await? O KURWA CHYBA DZIALA
+                                //i sie nie zmienia bo jest await? O window CHYBA DZIALA
                                 var subEvtsTemp = this.subEventsParsed.find(x => x.id === this.eventsParsed[i].id).subEvents.slice()
                                 for (var k=0, len3=subEvtsTemp.length; k<len3; k++){
                                     this.sendPictures(this.baseApi + 'events/' + response.data[k].id, subEvtsTemp[k].pictures, subEvtsTemp[k].picturesRaw)

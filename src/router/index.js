@@ -1,8 +1,157 @@
 import VueRouter from 'vue-router';
-import routes from './routes';
+import Vue from 'vue';
 
-export default new VueRouter({
-    mode: 'history',
-    base: '/',
-    routes,
-});
+import Home from '../components/Home.vue';
+import Timeline from '../components/Timeline.vue';
+import Login from '../components/Login.vue';
+import Creator from '../components/Creator.vue';
+import Settings from '../components/Settings.vue';
+import EmailChange from '../components/EmailChange.vue';
+import NameChange from '../components/NameChange.vue';
+import PasswordChange from '../components/PasswordChange.vue';
+import EditorLoader from '../components/EditorLoader.vue'
+import Admin from '../components/Admin.vue'
+import Subscription from '../components/Subscription.vue'
+import Profile from '../components/Profile.vue'
+import Review from '../components/Review.vue'
+import About from '../components/About.vue'
+import PasswordReset from '../components/PasswordReset.vue'
+import Statistics from '../components/Statistics.vue'
+import Business from '../components/Business.vue'
+import Ola from '../components/Ola.vue'
+
+Vue.use(VueRouter)
+
+export function createRouter() {
+    return new VueRouter({
+        mode: 'history',
+        base: '/',
+        routes: [
+            {
+                path: '/',
+                redirect: '/home'
+            },
+            {
+                path: '/home',
+                name: 'home',
+                component: Home
+            },
+            {
+                path: '/timeline/:id',
+                name: 'timeline',
+                component: Timeline
+            },
+            {
+                path: '/login',
+                name: 'login',
+                component: Login,
+                props: true,
+            },
+            {
+                path: '/creator',
+                name: 'creator',
+                component: Creator,
+                meta: {
+                    requiresAuth: true
+                  }
+            },
+            {
+                path: '/settings',
+                name: 'settings',
+                component: Settings,
+                meta: {
+                    requiresAuth: true
+                  }
+            },
+            {
+                path: '/emailChange',
+                name: 'emailChange',
+                component: EmailChange,
+                meta: {
+                    requiresAuth: true
+                  }
+            },
+            {
+                path: '/nameChange',
+                name: 'nameChange',
+                component: NameChange,
+                meta: {
+                    requiresAuth: true
+                  }
+            },
+            {
+                path: '/passwordChange',
+                name: 'passwordChange',
+                component: PasswordChange,
+                meta: {
+                    requiresAuth: true
+                  }
+            },
+            {
+                path: '/editorLoader/:id',
+                name: 'editorLoader',
+                component: EditorLoader,
+                meta: {
+                    requiresAuth: true
+                  }
+            },
+            {
+                path: '/admin',
+                name: 'admin',
+                component: Admin,
+                meta: {
+                    requiresAuth: true
+                  }
+            },
+            {
+                path: '/subscription',
+                name: 'subscription',
+                component: Subscription,
+                meta: {
+                    requiresAuth: true
+                  }
+            },
+            {
+                path: '/profile/:id',
+                name: 'profile',
+                component: Profile,
+            },
+            {
+                path: '/review',
+                name: 'review',
+                component: Review,
+                meta: {
+                    requiresAuth: true
+                  }
+            },
+            {
+                path: '/about',
+                name: 'about',
+                component: About,
+            },
+            {
+                path: '/passwordReset/:id',
+                name: 'passwordReset',
+                component: PasswordReset,
+            },
+            {
+                path: '/statistics/:id',
+                name: 'statistics',
+                component: Statistics,
+                meta: {
+                    requiresAuth: true
+                  }
+            },
+            {
+                path: '/business',
+                name: 'business',
+                component: Business
+            },
+            {
+                path: '/ola',
+                name: 'ola',
+                component: Ola
+            },
+        ],
+    });
+}

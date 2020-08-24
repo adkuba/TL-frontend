@@ -21,7 +21,7 @@
 
   export default  {
     name: 'NameChange',
-    created() {
+    mounted() {
         this.scrollToTop()
     },
     metaInfo() {

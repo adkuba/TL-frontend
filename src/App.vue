@@ -127,10 +127,10 @@ export default {
             localStorage.setItem("regulations", true)
         },
         checkLocalStorage(){
-            if (this.$store.state.jwt || localStorage.getItem("regulations")){
-                return false
-            }
-            return true
+            //if (this.$store.state.jwt || localStorage.getItem("regulations")){
+                //return false
+            //}
+            return false
         }
     }
 }

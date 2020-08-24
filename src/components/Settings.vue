@@ -84,7 +84,6 @@
   export default  {
     name: 'Settings',
     created() {
-        this.scrollToTop()
         this.axios.get(this.baseApi + 'users/check-subscription', {
             headers: {
                     'Authorization': 'Bearer ' + this.$store.state.jwt.token
@@ -112,6 +111,7 @@
       }
     },
     mounted() {
+        this.scrollToTop()
         document.getElementById("dropdown").style.display = "none"
         document.getElementById("dropdown-bg").style.display = "none"
     },

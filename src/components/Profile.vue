@@ -89,7 +89,6 @@
         }
     },
     created () {
-        this.scrollToTop()
         this.axios.get(this.baseApi + 'users/public/' + this.$route.params.id + '?profile=true')
             .then(response => {
                 if (response.data){
@@ -105,6 +104,7 @@
             })
     },
     mounted() {
+        this.scrollToTop()
         document.getElementById("dropdown").style.display = "none"
         document.getElementById("dropdown-bg").style.display = "none"
     },
