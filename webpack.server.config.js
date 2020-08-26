@@ -1,6 +1,6 @@
- var path = require('path')
+var path = require('path')
 var webpack = require('webpack')
-const { merge } = require('webpack-merge')
+var { merge } = require('webpack-merge')
 var baseWebpackConfig = require('./webpack.config')
 var webpackConfig = merge(baseWebpackConfig, {
     target: 'node',

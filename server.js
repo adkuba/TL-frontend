@@ -8,7 +8,7 @@ const bundle =  require('./dist/server.bundle.js');
 //get renderer from vue server renderer
 const renderer = require('vue-server-renderer').createRenderer({
     //set template
-    template: fs.readFileSync('./public/index.html', 'utf-8')
+    template: fs.readFileSync('./index.html', 'utf-8')
 });
 
 server.use('/dist', express.static(path.join(__dirname, './dist')));
@@ -19,11 +19,9 @@ server.get('*', (req, res) => {
     bundle.default({ url: req.url }).then((app) => {    
         //context to use as data source
         //in the template for interpolation
+        
         const context = {
             title: 'Vue JS - Server Render',
-            meta: `
-                <meta description="vuejs server side render">
-            `
         };
 
         renderer.renderToString(app, context, function (err, html) {   

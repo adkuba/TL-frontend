@@ -1,4 +1,3 @@
-// store.js
 import Vue from 'vue'
 import Vuex from 'vuex'
 
@@ -26,9 +25,6 @@ export function createStore () {
           }
         },
         addSpecial(state, special){
-          //state.timelines = state.timelines.filter(function(obj){
-            //return obj.data == null
-          //})
           state.timelines.push(special)
         },
         setMessage(state, newMessage){

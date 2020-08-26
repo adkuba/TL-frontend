@@ -116,7 +116,9 @@ export default {
         return {
             title: 'Homepage',
             titleTemplate: '%s - Tline',
-            content: 'Explore new way to present your content based on timeline.'
+            meta: [
+                { name: 'description', content: 'Explore new way to present your content based on timeline.'}
+            ]
         }
     },
     created(){
@@ -140,7 +142,7 @@ export default {
             details: null,
             counter: 0,
             special: null,
-            defaultImage: (Math.floor(Math.random() * 10) + 1),
+            defaultImage: (Math.floor(Math.random() * 10) + 1)
         }
     },
     methods: {

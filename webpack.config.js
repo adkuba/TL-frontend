@@ -1,9 +1,8 @@
 var path = require('path')
 var webpack = require('webpack')
-
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-//const isProduction = process.env.NODE_ENV === 'production'
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   entry: './src/entry-client.js',
@@ -14,48 +13,18 @@ module.exports = {
   },
   module: {
     rules: [
-      {
-        test: /\.css$/,
+      { 
+        test: /\.(s*)[a|c]ss$/,
         use: [
-          'vue-style-loader',
-          MiniCssExtractPlugin.loader,
-          'css-loader',
-          'postcss-loader'
-        ],
-      },
-      {
-        test: /\.scss$/,
-        use: [
-          'vue-style-loader',
-          MiniCssExtractPlugin.loader,
-          'css-loader',
-          'sass-loader',
-        ],
-      },
-      {
-        test: /\.sass$/,
-        use: [
-          'vue-style-loader',
-          MiniCssExtractPlugin.loader,
-          'css-loader',
-          'postcss-loader',
-          {
-            loader: 'sass-loader',
-            options: {
-                sassOptions: {
-                    indentedSyntax: true
-                }
-            }
-          }
-        ],
-      },
+            MiniCssExtractPlugin.loader,
+            "css-loader",
+            'postcss-loader',
+            "sass-loader?indentedSyntax"
+        ]
+    },
       {
         test: /\.vue$/,
         loader: 'vue-loader',
-        options: {
-          // enable CSS extraction
-          extractCSS: true,
-        }
       },
       {
         test: /\.js$/,
@@ -63,12 +32,12 @@ module.exports = {
         exclude: /node_modules/
       },
       {
-        test: /\.(png|jpg|gif|svg|ttf)$/,
+        test: /\.(png|jpg|gif|svg|ttf|ico)$/,
         loader: 'file-loader',
         options: {
           name: '[name].[ext]?[hash]'
         }
-      },
+      }
     ]
   },
   resolve: {
@@ -87,8 +56,13 @@ module.exports = {
   },
   devtool: '#eval-source-map',
   plugins: [
+    // make sure to include the plugin!
     new VueLoaderPlugin(),
-    new MiniCssExtractPlugin({ filename: 'common.[chunkhash].css' })
+    new MiniCssExtractPlugin({
+      filename: "[name].css",
+      chunkFilename: '[id].css',
+  }),
+  //new HtmlWebpackPlugin()
   ]
 }
 
@@ -103,7 +77,6 @@ if (process.env.NODE_ENV === 'production') {
     }),
     new webpack.LoaderOptionsPlugin({
       minimize: true
-    }),
-
+    })
   ])
 }

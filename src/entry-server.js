@@ -6,9 +6,11 @@ export default context => {
     // everything is ready before rendering.
     return new Promise((resolve, reject) => {
         const { app, router, store } = createApp();
+        const meta = app.$meta()
 
         // set server-side router's location
         router.push(context.url);
+        context.meta = meta
         
         // wait until router has resolved possible async components and hooks
         router.onReady(() => {
@@ -25,7 +27,7 @@ export default context => {
                 // is used for the renderer, the state will automatically be
                 // serialized and injected into the HTML as `window.__INITIAL_STATE__`.
                 context.state = store.state
-              }
+            }
     
             // the Promise should resolve to the app instance so it can be rendered
             resolve(app);
