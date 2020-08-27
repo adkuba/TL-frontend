@@ -87,10 +87,21 @@
         return {
             title: 'About',
             titleTemplate: '%s - Tline',
-            content: 'Explore new way to present your content based on timeline.'
+            meta: [
+                { name: 'description', content: 'Create content based on timeline! Present your projects, achievements, inspire others and develop connections! About, regulations.'},
+                { property: 'og:url', content: 'https://www.tline.site/about'},
+                { property: 'og:title', content: 'About - Tline' },
+                { property: 'og:descriprion', content: 'Create content based on timeline! Present your projects, achievements, inspire others and develop connections! About, regulations.'},
+                { property: 'og:image', content: 'https://storage.googleapis.com/tline-files/meta.png' },
+                { property: 'twitter:card', content: 'summary_large_image'},
+                { property: 'twitter:url', content: 'https://www.tline.site/about'},
+                { property: 'twitter:title', content: 'About - Tline'},
+                { property: 'twitter:description', content: 'Create content based on timeline! Present your projects, achievements, inspire others and develop connections! About, regulations.'},
+                { property: 'twitter:image', content: 'https://storage.googleapis.com/tline-files/meta.png'}
+            ]
         }
     },
-    created(){
+    mounted(){
         this.scrollToTop()
     },
     data () {
@@ -153,7 +164,7 @@
 .element
     vertical-align: bottom
     text-align: center
-    width: 44%
+    width: 43%
     margin: 90px 3%
     display: inline-block
     &.small

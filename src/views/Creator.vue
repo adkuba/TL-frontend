@@ -98,7 +98,18 @@
         return {
             title: 'Creator',
             titleTemplate: '%s - Tline',
-            content: 'Explore new way to present your content based on timeline.'
+            meta: [
+                { name: 'description', content: 'Create your timeline!'},
+                { property: 'og:url', content: 'https://www.tline.site/creator'},
+                { property: 'og:title', content: 'Creator - Tline' },
+                { property: 'og:descriprion', content: 'Create your timeline!'},
+                { property: 'og:image', content: 'https://storage.googleapis.com/tline-files/creator.png' },
+                { property: 'twitter:card', content: 'summary_large_image'},
+                { property: 'twitter:url', content: 'https://www.tline.site/creator'},
+                { property: 'twitter:title', content: 'Creator - Tline'},
+                { property: 'twitter:description', content: 'Create your timeline!'},
+                { property: 'twitter:image', content: 'https://storage.googleapis.com/tline-files/creator.png'}
+            ]
         }
     },
     created () {
@@ -457,7 +468,6 @@
         },
         addEvent(index){
             this.saveData()
-            //DOPRACOWAC dziala dodawanie tylko jednego sub eventu
             var event = {id: '', type: 'normal', title: '', pictures: [], picturesRaw: [], description: '', date: '', links: new Map(), sub: []}
             event.id = '_' + Math.random().toString(36).substr(2, 9)
             if (index == this.events.length){
@@ -730,7 +740,7 @@ h2
 .opis
     margin-left: 2px
     font-family: OpenSans-Regular  
-    text-align: justify
+    text-align: left
 
 #mainData
     text-align: left

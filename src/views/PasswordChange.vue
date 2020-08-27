@@ -23,14 +23,25 @@
 
   export default  {
     name: 'PasswordChange',
-    created() {
+    mounted() {
         this.scrollToTop()
     },
     metaInfo() {
         return {
-            title: 'Password Change',
+            title: 'PasswordChange',
             titleTemplate: '%s - Tline',
-            content: 'Explore new way to present your content based on timeline.'
+            meta: [
+                { name: 'description', content: 'Change your password!'},
+                { property: 'og:url', content: 'https://www.tline.site/passwordChange'},
+                { property: 'og:title', content: 'PasswordChange - Tline' },
+                { property: 'og:descriprion', content: 'Change your password!'},
+                { property: 'og:image', content: 'https://storage.googleapis.com/tline-files/signup.png' },
+                { property: 'twitter:card', content: 'summary_large_image'},
+                { property: 'twitter:url', content: 'https://www.tline.site/passwordChange'},
+                { property: 'twitter:title', content: 'PasswordChange - Tline'},
+                { property: 'twitter:description', content: 'Change your password!'},
+                { property: 'twitter:image', content: 'https://storage.googleapis.com/tline-files/signup.png'}
+            ]
         }
     },
     data () {

@@ -15,9 +15,20 @@ import Creator from './Creator.vue'
     },
     metaInfo() {
         return {
-            title: 'Editor Loader',
+            title: 'Creator',
             titleTemplate: '%s - Tline',
-            content: 'Explore new way to present your content based on timeline.'
+            meta: [
+                { name: 'description', content: 'Create your timeline!'},
+                { property: 'og:url', content: 'https://www.tline.site/creator'},
+                { property: 'og:title', content: 'Creator - Tline' },
+                { property: 'og:descriprion', content: 'Create your timeline!'},
+                { property: 'og:image', content: 'https://storage.googleapis.com/tline-files/creator.png' },
+                { property: 'twitter:card', content: 'summary_large_image'},
+                { property: 'twitter:url', content: 'https://www.tline.site/creator'},
+                { property: 'twitter:title', content: 'Creator - Tline'},
+                { property: 'twitter:description', content: 'Create your timeline!'},
+                { property: 'twitter:image', content: 'https://storage.googleapis.com/tline-files/creator.png'}
+            ]
         }
     },
     mounted() {

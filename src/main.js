@@ -1,81 +1,55 @@
 import Vue from 'vue'
-import VueRouter from 'vue-router'
 import App from './App.vue'
-import router from './router'
-import axios from 'axios'
-import VueAxios from 'vue-axios'
 import VueMq from 'vue-mq'
-import Vuex from 'vuex'
-import VueMeta from 'vue-meta'
+import { createRouter } from './router/router.js'
+import { createStore } from './store/store'
+import { sync } from 'vuex-router-sync'
+import VueAxios from 'vue-axios'
+import axios from 'axios'
+import VueMeta from 'vue-meta';
 
-Vue.use(Vuex)
-Vue.config.productionTip = false
-Vue.use(VueRouter)
 Vue.use(VueAxios, axios)
+Vue.use(VueMeta);
 Vue.use(VueMq, {
-  breakpoints: {
-    small: 750,
-    medium: 1430,
-    large: Infinity,
-  }
-})
-Vue.use(VueMeta)
-
-const store = new Vuex.Store({
-  state: {
-    jwt: '',
-    timelines: [],
-    message: '',
-    refreshTry: false,
-    notifications: {
-      read: true,
-      messages: []
-    }
-  },
-  mutations: {
-    set (state, newJwt) {
-      state.jwt = newJwt;
+    breakpoints: {
+        small: 750,
+        medium: 1430,
+        large: Infinity,
     },
-    addTimelines(state, newTimelines){
-      for (var i=0, len=newTimelines.length; i<len; i++){
-        state.timelines.push(newTimelines[i])
-      }
-    },
-    addSpecial(state, special){
-      //state.timelines = state.timelines.filter(function(obj){
-        //return obj.data == null
-      //})
-      state.timelines.push(special)
-    },
-    setMessage(state, newMessage){
-      state.message = newMessage
-    },
-    setRefresh(state, newRefresh){
-      state.refreshTry = newRefresh
-    },
-    setNotifications(state, newNotifications){
-      state.notifications = newNotifications
-    },
-  }
+    defaultBreakpoint: 'large'
 })
 
-router.beforeEach((to, from, next) => {
-  if (to.matched.some(record => record.meta.requiresAuth)) {
-    // this route requires auth, check if logged in
-    // if not, redirect to login page.
-    if (!store.state.jwt) {
-      next({ name: 'login', params: {path: to} })
-    } else {
-      next() // go to wherever I'm going
-    }
-  } else {
-    next() // does not require auth, make sure to always call next()!
-  }
-})
+// export a factory function for creating fresh app, router and store
+// instances
+export function createApp() {
+    // create router instance
+    const router = createRouter();
+    const store = createStore();
 
-new Vue({
-  store: store,
-  router,
-  render: h => h(App),
-}).$mount('#app')
+    // sync so that route state is available as part of the store
+    sync(store, router)
 
+    router.beforeEach((to, from, next) => {
+        if (to.matched.some(record => record.meta.requiresAuth)) {
+            // this route requires auth, check if logged in
+            // if not, redirect to login page.
+            if (!store.state.jwt) {
+                next({ name: 'login', params: {path: to} })
+            } else {
+                next() // go to wherever I'm going
+            }
+        } else {
+            next() // does not require auth, make sure to always call next()!
+        }
+    })
+
+    const app = new Vue({
+        router,
+        store,
+        // the root instance simply renders the App component.
+        render: h => h(App),
+        //metaInfo: {}
+    });
+
+    return { app, router };
+}

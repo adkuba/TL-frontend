@@ -48,11 +48,21 @@ import VueRecaptcha from 'vue-recaptcha'
         return {
             title: 'Login',
             titleTemplate: '%s - Tline',
-            content: 'Explore new way to present your content based on timeline.'
+            meta: [
+                { name: 'description', content: 'Login to create content based on timeline!'},
+                { property: 'og:url', content: 'https://www.tline.site/login'},
+                { property: 'og:title', content: 'Login - Tline' },
+                { property: 'og:descriprion', content: 'Login to create content based on timeline!'},
+                { property: 'og:image', content: 'https://storage.googleapis.com/tline-files/signup.png' },
+                { property: 'twitter:card', content: 'summary_large_image'},
+                { property: 'twitter:url', content: 'https://www.tline.site/login'},
+                { property: 'twitter:title', content: 'Login - Tline'},
+                { property: 'twitter:description', content: 'Login to create content based on timeline!'},
+                { property: 'twitter:image', content: 'https://storage.googleapis.com/tline-files/signup.png'}
+            ]
         }
     },
     created(){
-        this.scrollToTop()
         if(!this.path){
             this.routerPath = '/settings'
 
@@ -62,6 +72,7 @@ import VueRecaptcha from 'vue-recaptcha'
         this.redirect()
     },
     mounted() {
+        this.scrollToTop()
         document.getElementById("dropdown").style.display = "none"
         document.getElementById("dropdown-bg").style.display = "none"
     },

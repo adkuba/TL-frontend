@@ -19,14 +19,25 @@
 
   export default  {
     name: 'Review',
-    created() {
+    mounted() {
         this.scrollToTop()
     },
     metaInfo() {
         return {
             title: 'Review',
             titleTemplate: '%s - Tline',
-            content: 'Explore new way to present your content based on timeline.'
+            meta: [
+                { name: 'description', content: 'Tell us what you think!'},
+                { property: 'og:url', content: 'https://www.tline.site/review'},
+                { property: 'og:title', content: 'Review - Tline' },
+                { property: 'og:descriprion', content: 'Tell us what you think!'},
+                { property: 'og:image', content: 'https://storage.googleapis.com/tline-files/signup.png' },
+                { property: 'twitter:card', content: 'summary_large_image'},
+                { property: 'twitter:url', content: 'https://www.tline.site/signup'},
+                { property: 'twitter:title', content: 'Review - Tline'},
+                { property: 'twitter:description', content: 'Tell us what you think!'},
+                { property: 'twitter:image', content: 'https://storage.googleapis.com/tline-files/signup.png'}
+            ]
         }
     },
     data () {

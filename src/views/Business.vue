@@ -4,7 +4,7 @@
         <p>Display ads on Tline!</p>
         <p>We are currently working on ads system. Ads will display on homepage in form of current timelines or on user profile and their created timelines - only non premium users. With our built in system we can avoid adblocks and personalize ads to logged in users.</p>
         <div style="text-align: center">
-            <img src="../assets/images/about/ads.png" class="image">
+            <img src="../assets/images/about/desc-a.png" class="image">
         </div>
     </div>
 </template>
@@ -17,10 +17,21 @@
         return {
             title: 'Business',
             titleTemplate: '%s - Tline',
-            content: 'Explore new way to present your content based on timeline.'
+            meta: [
+                { name: 'description', content: 'Create content based on timeline! Present your projects, achievements, inspire others and develop connections! Business page'},
+                { property: 'og:url', content: 'https://www.tline.site/business'},
+                { property: 'og:title', content: 'Business - Tline' },
+                { property: 'og:descriprion', content: 'Create content based on timeline! Present your projects, achievements, inspire others and develop connections! Business page'},
+                { property: 'og:image', content: 'https://storage.googleapis.com/tline-files/meta.png' },
+                { property: 'twitter:card', content: 'summary_large_image'},
+                { property: 'twitter:url', content: 'https://www.tline.site/business'},
+                { property: 'twitter:title', content: 'Business - Tline'},
+                { property: 'twitter:description', content: 'Create content based on timeline! Present your projects, achievements, inspire others and develop connections! Business page'},
+                { property: 'twitter:image', content: 'https://storage.googleapis.com/tline-files/meta.png'}
+            ]
         }
     },
-    created(){
+    mounted(){
         this.scrollToTop()
     },
     data () {

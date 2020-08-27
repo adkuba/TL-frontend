@@ -82,21 +82,14 @@
 </template>
 
 <script lang="js">
-import LineChart from './LineChart.vue'
-import BarChart from './BarChart.vue'
+import LineChart from '../components/LineChart.vue'
+import BarChart from '../components/BarChart.vue'
 
   export default  {
     name: 'Admin',
     components: {
         LineChart,
         BarChart
-    },
-    metaInfo() {
-        return {
-            title: 'Admin',
-            titleTemplate: '%s - Tline',
-            content: 'Explore new way to present your content based on timeline.'
-        }
     },
     created () {
         this.axios.get(this.baseApi + 'statistics/all', {

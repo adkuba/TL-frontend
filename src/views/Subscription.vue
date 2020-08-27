@@ -21,26 +21,32 @@
     </div>
 </template>
 
-<script src="https://js.stripe.com/v3/"></script>
 <script lang="js">
-
-    var stripe = Stripe('pk_live_51GvlqGG6mQST9KMbJSmkP6ioKcyjlte02LEnYbiQcj5R1GFzwjgOm320AWXpt7w1FXdkcmUZtAOpexVVBRHiI9BI009xUuT25J');
-    var elements = stripe.elements()
-
     export default  {
     name: 'Subscription',
-    created() {
-        this.scrollToTop()
-    },
     metaInfo() {
         return {
             title: 'Subscription',
             titleTemplate: '%s - Tline',
-            content: 'Explore new way to present your content based on timeline.'
+            meta: [
+                { name: 'description', content: 'Subscribe to premium Tline!'},
+                { property: 'og:url', content: 'https://www.tline.site/subscription'},
+                { property: 'og:title', content: 'Subscription - Tline' },
+                { property: 'og:descriprion', content: 'Subscribe to premium Tline!'},
+                { property: 'og:image', content: 'https://storage.googleapis.com/tline-files/signup.png' },
+                { property: 'twitter:card', content: 'summary_large_image'},
+                { property: 'twitter:url', content: 'https://www.tline.site/subscription'},
+                { property: 'twitter:title', content: 'Subscription - Tline'},
+                { property: 'twitter:description', content: 'Subscribe to premium Tline!'},
+                { property: 'twitter:image', content: 'https://storage.googleapis.com/tline-files/signup.png'}
+            ]
         }
     },
     mounted() {
-        var elements = stripe.elements({
+        this.scrollToTop()
+        this.stripe = Stripe('pk_live_51GvlqGG6mQST9KMbJSmkP6ioKcyjlte02LEnYbiQcj5R1GFzwjgOm320AWXpt7w1FXdkcmUZtAOpexVVBRHiI9BI009xUuT25J')
+        this.elements = this.stripe.elements()
+        var elements = this.stripe.elements({
             fonts: [
             {
                 cssSrc: 'https://fonts.googleapis.com/css2?family=Open+Sans',
@@ -87,6 +93,8 @@
             cardCvc: null,
             cardExpiry: null,
             baseApi: 'https://api.tline.site/api/',
+            stripe: null,
+            elements: null
         }
     },
     methods: {
@@ -296,7 +304,7 @@ p
     border-radius: 2px
     margin-top: 5px
     background: #e6e6e6
-    width: 45%
+    width: 44%
     margin-right: 10%
     padding: 10px 20px
     box-sizing: border-box
@@ -308,7 +316,7 @@ p
     padding: 10px 20px
     background: #e6e6e6
     display: inline-block
-    width: 45%
+    width: 44%
 
 .fsubmit
     width: 100%

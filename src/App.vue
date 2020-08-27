@@ -2,7 +2,7 @@
   <div id="app">
     <div class="menu" :class="$mq">
         <router-link :to="{ name: 'home' }" class="home_b" :class="$mq">
-            <img src="./assets/images/Logo.png" width="27" height="27">
+            <img src="./assets/images/logo.png" width="27" height="27">
         </router-link>
         <div class="login_b" :class="[{ 'notification-anim': !$store.state.notifications.read }, $mq]" v-on:click="dropdown()">&#9868;</div>
     </div>
@@ -47,7 +47,7 @@
         <div class="message" :class="$mq">{{ $store.state.message }}</div>
         <div id="modal-button" v-on:click="closeModal()" class="ok-button" :class="$mq">OK</div>
     </div>
-    <div id="regulations-info" v-if="checkLocalStorage()">
+    <div id="regulations-info" v-if="local">
         <div>
             <div style="display: inline-block; margin-right: 5px">By using our site you agree to </div>
             <a href="https://www.tline.site/about#regulations" style="color: #14426b; display: inline-block"> regulations</a>
@@ -57,12 +57,12 @@
     <router-view></router-view>
   </div>
 </template>
-
 <script>
 
 export default {
     name: 'App',
     mounted(){
+        this.checkLocalStorage()
         this.refreshToken()
         this.tokenRefresh = setInterval(() => this.refreshToken(), 840000) //14min
     },
@@ -70,6 +70,7 @@ export default {
         return {
             baseApi: 'https://api.tline.site/api/',
             tokenRefresh: null,
+            local: true
         }
     },
     methods: {
@@ -123,19 +124,20 @@ export default {
             document.getElementById("modal").style.display = "none"
         },
         closeInfo(){
-            document.getElementById("regulations-info").style.display = "none"
             localStorage.setItem("regulations", true)
+            this.local = false
         },
         checkLocalStorage(){
             if (this.$store.state.jwt || localStorage.getItem("regulations")){
-                return false
+                this.local = false
+            } else {
+                this.local = true
             }
-            return true
         }
     }
 }
-
 </script>
+
 
 <style lang="sass">
 @import './assets/saas-vars.sass'

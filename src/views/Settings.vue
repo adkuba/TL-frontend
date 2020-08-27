@@ -1,7 +1,7 @@
 <template lang="html">
     <div>
         <div id="settings" :class="$mq">
-            <div class="controler" :class="$mq">
+            <div class="controler-settings" :class="$mq">
                 <router-link :to="{ path: '/statistics/' + $store.state.jwt.user.username }" class="menu-element" :class="$mq">Statistics</router-link>
                 <div class="menu-element" :class="$mq" v-on:click="logout()">Logout</div>
             </div>
@@ -84,7 +84,6 @@
   export default  {
     name: 'Settings',
     created() {
-        this.scrollToTop()
         this.axios.get(this.baseApi + 'users/check-subscription', {
             headers: {
                     'Authorization': 'Bearer ' + this.$store.state.jwt.token
@@ -102,7 +101,18 @@
         return {
             title: 'Settings',
             titleTemplate: '%s - Tline',
-            content: 'Explore new way to present your content based on timeline.'
+            meta: [
+                { name: 'description', content: 'Your account settings.'},
+                { property: 'og:url', content: 'https://www.tline.site/settings'},
+                { property: 'og:title', content: 'Settings - Tline' },
+                { property: 'og:descriprion', content: 'Your account settings.'},
+                { property: 'og:image', content: 'https://storage.googleapis.com/tline-files/settings.png' },
+                { property: 'twitter:card', content: 'summary_large_image'},
+                { property: 'twitter:url', content: 'https://www.tline.site/settings'},
+                { property: 'twitter:title', content: 'Settings - Tline'},
+                { property: 'twitter:description', content: 'Your account settings.'},
+                { property: 'twitter:image', content: 'https://storage.googleapis.com/tline-files/settings.png'}
+            ]
         }
     },
     data () {
@@ -112,6 +122,7 @@
       }
     },
     mounted() {
+        this.scrollToTop()
         document.getElementById("dropdown").style.display = "none"
         document.getElementById("dropdown-bg").style.display = "none"
     },
@@ -188,12 +199,12 @@
     color: #303030
     cursor: pointer
     font-size: 30px
-    width: 50%
+    width: 49%
     letter-spacing: 1px
     &.small
         font-size: 27px
     
-.controler
+.controler-settings
     user-select: none
     margin-bottom: 70px
     width: 80%

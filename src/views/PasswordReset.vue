@@ -29,13 +29,26 @@
         if (this.$route.params.id != 'true'){
             this.firstStage = false
         }
+    },
+    mounted() {
         this.scrollToTop()
     },
     metaInfo() {
         return {
-            title: 'Password Reset',
+            title: 'PasswordReset',
             titleTemplate: '%s - Tline',
-            content: 'Explore new way to present your content based on timeline.'
+            meta: [
+                { name: 'description', content: 'Reset your password!'},
+                { property: 'og:url', content: 'https://www.tline.site/passwordReset/true'},
+                { property: 'og:title', content: 'PasswordReset - Tline' },
+                { property: 'og:descriprion', content: 'Reset your password!'},
+                { property: 'og:image', content: 'https://storage.googleapis.com/tline-files/signup.png' },
+                { property: 'twitter:card', content: 'summary_large_image'},
+                { property: 'twitter:url', content: 'https://www.tline.site/passwordReset/true'},
+                { property: 'twitter:title', content: 'PasswordReset - Tline'},
+                { property: 'twitter:description', content: 'Reset your password!'},
+                { property: 'twitter:image', content: 'https://storage.googleapis.com/tline-files/signup.png'}
+            ]
         }
     },
     data () {

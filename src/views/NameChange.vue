@@ -21,14 +21,25 @@
 
   export default  {
     name: 'NameChange',
-    created() {
+    mounted() {
         this.scrollToTop()
     },
     metaInfo() {
         return {
-            title: 'Name Change',
+            title: 'NameChange',
             titleTemplate: '%s - Tline',
-            content: 'Explore new way to present your content based on timeline.'
+            meta: [
+                { name: 'description', content: 'Change your name!'},
+                { property: 'og:url', content: 'https://www.tline.site/nameChange'},
+                { property: 'og:title', content: 'NameChange - Tline' },
+                { property: 'og:descriprion', content: 'Change your name!'},
+                { property: 'og:image', content: 'https://storage.googleapis.com/tline-files/signup.png' },
+                { property: 'twitter:card', content: 'summary_large_image'},
+                { property: 'twitter:url', content: 'https://www.tline.site/nameChange'},
+                { property: 'twitter:title', content: 'NameChange - Tline'},
+                { property: 'twitter:description', content: 'Change your name!'},
+                { property: 'twitter:image', content: 'https://storage.googleapis.com/tline-files/signup.png'}
+            ]
         }
     },
     data () {

@@ -24,12 +24,23 @@
     name: 'EmailChange',
     metaInfo() {
         return {
-            title: 'Email Change',
+            title: 'EmailChange',
             titleTemplate: '%s - Tline',
-            content: 'Explore new way to present your content based on timeline.'
+            meta: [
+                { name: 'description', content: 'Change your email!'},
+                { property: 'og:url', content: 'https://www.tline.site/emailChange'},
+                { property: 'og:title', content: 'EmailChange - Tline' },
+                { property: 'og:descriprion', content: 'Change your email!'},
+                { property: 'og:image', content: 'https://storage.googleapis.com/tline-files/signup.png' },
+                { property: 'twitter:card', content: 'summary_large_image'},
+                { property: 'twitter:url', content: 'https://www.tline.site/emailChange'},
+                { property: 'twitter:title', content: 'EmailChange - Tline'},
+                { property: 'twitter:description', content: 'Change your email!'},
+                { property: 'twitter:image', content: 'https://storage.googleapis.com/tline-files/signup.png'}
+            ]
         }
     },
-    created() {
+    mounted() {
         this.scrollToTop()
     },
     data () {
