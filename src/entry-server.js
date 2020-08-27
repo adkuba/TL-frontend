@@ -7,7 +7,7 @@ export default context => {
     return new Promise((resolve, reject) => {
         const { app, router, store } = createApp();
         const meta = app.$meta()
-
+        
         // set server-side router's location
         router.push(context.url);
         context.meta = meta

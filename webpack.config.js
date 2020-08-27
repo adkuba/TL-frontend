@@ -13,14 +13,22 @@ module.exports = {
   module: {
     rules: [
       { 
-        test: /\.(s*)[a|c]ss$/,
+        test: /\.sass$/,
         use: [
             MiniCssExtractPlugin.loader,
             "css-loader",
             'postcss-loader',
             "sass-loader?indentedSyntax"
         ]
-    },
+      },
+      {
+        test: /\.css$/,
+        use: [
+            MiniCssExtractPlugin.loader,
+            "css-loader",
+            'postcss-loader',
+        ]
+      },
       {
         test: /\.vue$/,
         loader: 'vue-loader',
