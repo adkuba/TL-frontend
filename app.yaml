@@ -1,8 +1,13 @@
 runtime: nodejs
-env: flex
 instance_class: F1
 
 handlers:
+handlers:
+    # Serve all static files with urls ending with a file extension
+  - url: /(.*\..+)$ 
+    upload: (.*\..+)$
+    secure: always
+    
     #https
   - url: /.*
     script: auto
