@@ -11,7 +11,7 @@ const renderer = require('vue-server-renderer').createRenderer({
     template: fs.readFileSync('./index.html', 'utf-8')
 });
 
-server.use('/dist', express.static(path.join(__dirname, './dist')));
+server.use('/', express.static(path.join(__dirname, './')));
 
 //start server
 server.get('*', (req, res) => { 
