@@ -16,7 +16,7 @@ server.use('/dist', express.static(path.join(__dirname, './dist')));
 //start server
 server.get('*', (req, res) => { 
     
-    const context = { url: req.url }
+    const context = { url: req.url, meta: null }
     bundle.default({ url: req.url }).then((app) => {    
         renderer.renderToString(app, context, function (err, html) {   
             if (err) {
