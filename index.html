@@ -9,7 +9,8 @@
     <link rel="icon" href="https://storage.googleapis.com/tline-files/favicon.ico">
     <script src="https://www.google.com/recaptcha/api.js?onload=vueRecaptchaApiLoaded&render=explicit" async defer></script> 
     <link href="/dist/app.css" rel="stylesheet">
-    <title>{{ title }}</title>
+    {{{ meta.inject().title.text() }}}
+    {{{ meta.inject().meta.text() }}}
 </head>
 <body>
     <!--vue-ssr-outlet-->
