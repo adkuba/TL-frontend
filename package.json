@@ -1,6 +1,6 @@
 {
-  "name": "vue-ssr",
-  "description": "A Vue.js project",
+  "name": "tl-frontend",
+  "description": "Tline - frontend",
   "version": "1.0.0",
   "author": "Jakub Adamski <kuba@exemplum.pl>",
   "license": "",
