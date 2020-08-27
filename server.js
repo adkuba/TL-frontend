@@ -21,7 +21,7 @@ server.get('*', (req, res) => {
         //in the template for interpolation
         
         const context = {
-            title: 'Vue JS - Server Render',
+            title: 'Tline',
         };
 
         renderer.renderToString(app, context, function (err, html) {   

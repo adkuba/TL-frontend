@@ -2,7 +2,6 @@ var path = require('path')
 var webpack = require('webpack')
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   entry: './src/entry-client.js',
@@ -62,7 +61,6 @@ module.exports = {
       filename: "[name].css",
       chunkFilename: '[id].css',
   }),
-  //new HtmlWebpackPlugin()
   ]
 }
 

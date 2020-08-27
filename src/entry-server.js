@@ -16,6 +16,7 @@ export default context => {
         router.onReady(() => {
             const matchedComponents = router.getMatchedComponents();
             // no matched routes, reject with 404
+            //console.log(context.url)
             if (!matchedComponents.length) {
                 return reject({ code: 404 });
             }

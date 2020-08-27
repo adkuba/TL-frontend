@@ -11,12 +11,12 @@ import VueMeta from 'vue-meta';
 Vue.use(VueAxios, axios)
 Vue.use(VueMeta);
 Vue.use(VueMq, {
-  breakpoints: {
-    small: 750,
-    medium: 1430,
-    large: Infinity,
-  },
-  defaultBreakpoint: 'large'
+    breakpoints: {
+        small: 750,
+        medium: 1430,
+        large: Infinity,
+    },
+    defaultBreakpoint: 'large'
 })
 
 // export a factory function for creating fresh app, router and store
@@ -28,6 +28,20 @@ export function createApp() {
 
     // sync so that route state is available as part of the store
     sync(store, router)
+
+    router.beforeEach((to, from, next) => {
+        if (to.matched.some(record => record.meta.requiresAuth)) {
+            // this route requires auth, check if logged in
+            // if not, redirect to login page.
+            if (!store.state.jwt) {
+                next({ name: 'login', params: {path: to} })
+            } else {
+                next() // go to wherever I'm going
+            }
+        } else {
+            next() // does not require auth, make sure to always call next()!
+        }
+    })
 
     const app = new Vue({
         router,
