@@ -12,6 +12,13 @@ import PasswordChange from '../views/PasswordChange.vue'
 import EditorLoader from '../views/EditorLoader.vue'
 import Admin from '../views/Admin.vue'
 import Profile from '../views/Profile.vue'
+import Subscription from '../views/Subscription.vue'
+import Review from '../views/Review.vue'
+import About from '../views/About.vue'
+import PasswordReset from '../views/PasswordReset.vue'
+import Statistics from '../views/Statistics.vue'
+import Business from '../views/Business.vue'
+import Ola from '../views/Ola.vue'
 
 /*
 UWAGA
@@ -55,6 +62,13 @@ export function createRouter () {
             { path: '/editorLoader/:id', name: 'editorLoader', component: EditorLoader, meta: { requiresAuth: true } },
             { path: '/admin', name: 'admin', component: Admin, meta: { requiresAuth: true } },
             { path: '/profile/:id', name: 'profile', component: Profile },
+            { path: '/subscription', name: 'subscription', component: Subscription, meta: { requiresAuth: true } },
+            { path: '/review', name: 'review', component: Review, meta: { requiresAuth: true } },
+            { path: '/about', name: 'about', component: About },
+            { path: '/passwordReset/:id', name: 'passwordReset', component: PasswordReset },
+            { path: '/statistics/:id', name: 'statistics', component: Statistics, meta: { requiresAuth: true } },
+            { path: '/business', name: 'business', component: Business },
+            { path: '/ola', name: 'ola', component: Ola },
         ]
     });
 }
