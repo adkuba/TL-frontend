@@ -48,7 +48,6 @@ export function createApp() {
         store,
         // the root instance simply renders the App component.
         render: h => h(App),
-        //metaInfo: {}
     });
 
     return { app, router };

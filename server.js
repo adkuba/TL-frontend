@@ -16,17 +16,20 @@ server.use('/dist', express.static(path.join(__dirname, './dist')));
 //start server
 server.get('*', (req, res) => { 
     
-    const context = { url: req.url, meta: null }
     bundle.default({ url: req.url }).then((app) => {    
+        const meta = app.$meta()
+        const context = {
+            meta: meta
+        }
         renderer.renderToString(app, context, function (err, html) {   
             if (err) {
-              if (err.code === 404) {
-                res.status(404).end('Page not found')
-              } else {
-                res.status(500).end('Internal Server Error')
-              }
+                if (err.code === 404) {
+                    res.status(404).end('Page not found')
+                } else {
+                    res.status(500).end('Internal Server Error')
+                }
             } else {
-              res.end(html)
+                res.end(html)
             }
           });        
     }, (err) => {
