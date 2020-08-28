@@ -90,7 +90,9 @@ import ProfileTimeline from '../components/ProfileTimeline.vue'
     },
     watch: {
         '$route.params.id': function(){
-            window.location.reload()
+            if (typeof window =! 'undefined'){
+                window.location.reload()
+            }
         }
     },
     data () {
