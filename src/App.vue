@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <img src="./assets/images/Default1.png" style="display: none">
+    <img src="./assets/images/default/Default1.png" style="display: none">
     <div class="menu" :class="$mq">
         <router-link :to="{ name: 'home' }" class="home_b" :class="$mq">
             <img src="./assets/images/logo.png" width="27" height="27">
