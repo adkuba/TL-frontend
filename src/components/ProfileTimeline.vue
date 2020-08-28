@@ -47,6 +47,7 @@ export default {
     },
     data() {
         return {
+            baseApi: 'https://api.tline.site/api/',
             defaultImage: (Math.floor(Math.random() * 10) + 1)
         }
     },
