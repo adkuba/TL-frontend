@@ -157,7 +157,7 @@ export default {
         this.scrollToTop()
         window.addEventListener("resize", this.resize)
     },
-    created() {
+    async beforeCreate() {
         this.mainColor = this.circleColors[Math.floor(Math.random() * this.circleColors.length)]
         if (!this.mockEvents){
             var username = null
@@ -165,7 +165,7 @@ export default {
                 username = this.$store.state.jwt.user.username
             }
             var timelineApi = this.baseApi + 'timelines/public?username=' + username + '&id=' + this.$route.params.id
-            this.axios.get(timelineApi).then(response => {
+            await this.axios.get(timelineApi).then(response => {
                 if (response.data != null){
                     this.timeline = response.data;
                 } else {
