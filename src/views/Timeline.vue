@@ -138,18 +138,18 @@ export default {
     metaInfo() {
         return {
             title: this.$route.params.id.charAt(0).toUpperCase() + this.$route.params.id.slice(1),
-            titleTemplate: '%s - Tline',
+            titleTemplate: '%s timeline - Tline',
             meta: [
                 { name: 'description', content: this.timeline.description},
                 { property: 'og:url', content: 'https://www.tline.site/timeline/' + this.$route.params.id },
-                { property: 'og:title', content: this.$route.params.id.charAt(0).toUpperCase() + this.$route.params.id.slice(1) + ' - Tline' },
+                { property: 'og:title', content: this.$route.params.id.charAt(0).toUpperCase() + this.$route.params.id.slice(1) + ' timeline - Tline' },
                 { property: 'og:descriprion', content: this.timeline.description},
-                { property: 'og:image', content: this.timeline.pictures.length > 0 ? this.timeline.pictures[0] : 'https://storage.googleapis.com/tline-files/Default7.png' },
+                { property: 'og:image', content: 'https://storage.googleapis.com/tline-files/' + this.$route.params.id},
                 { property: 'twitter:card', content: 'summary_large_image'},
                 { property: 'twitter:url', content: 'https://www.tline.site/timeline/' + this.$route.params.id },
-                { property: 'twitter:title', content: this.$route.params.id.charAt(0).toUpperCase() + this.$route.params.id.slice(1) + ' - Tline' },
+                { property: 'twitter:title', content: this.$route.params.id.charAt(0).toUpperCase() + this.$route.params.id.slice(1) + ' timeline - Tline' },
                 { property: 'twitter:description', content: this.timeline.description },
-                { property: 'twitter:image', content: this.timeline.pictures.length > 0 ? this.timeline.pictures[0] : 'https://storage.googleapis.com/tline-files/Default7.png' }
+                { property: 'twitter:image', content: 'https://storage.googleapis.com/tline-files/' + this.$route.params.id }
             ]
         }
     },
@@ -157,7 +157,7 @@ export default {
         this.scrollToTop()
         window.addEventListener("resize", this.resize)
     },
-    async beforeCreate() {
+    created() {
         this.mainColor = this.circleColors[Math.floor(Math.random() * this.circleColors.length)]
         if (!this.mockEvents){
             var username = null
@@ -165,7 +165,7 @@ export default {
                 username = this.$store.state.jwt.user.username
             }
             var timelineApi = this.baseApi + 'timelines/public?username=' + username + '&id=' + this.$route.params.id
-            await this.axios.get(timelineApi).then(response => {
+            this.axios.get(timelineApi).then(response => {
                 if (response.data != null){
                     this.timeline = response.data;
                 } else {

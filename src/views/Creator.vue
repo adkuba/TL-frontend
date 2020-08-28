@@ -375,7 +375,7 @@
                         params: myParams
                     })
                     .then(response => {
-                        this.sendPictures(timelinesApi + "/" + response.data.id, this.timeline.pictures, this.timeline.picturesRaw)
+                        this.sendPictures(timelinesApi + "/" + response.data.id, this.timeline.pictures, this.timeline.picturesRaw, true)
                         //main timeline submitted now events
                         this.mainTimelineSubmit = response.data
                     })
@@ -402,7 +402,7 @@
                 }
             }
         },
-        sendPictures(url, array, arrayRaw){
+        sendPictures(url, array, arrayRaw, mainTL=false){
             //pictures
             var formData = new FormData()
             for (var i=0, len=arrayRaw.length; i<len; i++){
@@ -429,6 +429,16 @@
                 this.axios.post(url + "/picturesURL", urlList, {
                     headers: {
                         'Authorization': 'Bearer ' + this.$store.state.jwt.token,
+                    }
+                }).then(() => {
+                    if(mainTL){
+                        this.axios.post(this.baseApi + 'timelines/firstImage/' + this.timeline.id, null, 
+                            headers: {
+                                'Authorization': 'Bearer ' + this.$store.state.jwt.token,
+                            })
+                            .catch(error => {
+                                console.log(error)
+                            })
                     }
                 })
                 .catch(error => {

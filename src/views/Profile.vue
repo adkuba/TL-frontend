@@ -50,16 +50,16 @@ import ProfileTimeline from '../components/ProfileTimeline.vue'
     metaInfo() {
         return {
             title: this.$route.params.id.charAt(0).toUpperCase() + this.$route.params.id.slice(1),
-            titleTemplate: '%s - Tline',
+            titleTemplate: '%s profile - Tline',
             meta: [
                 { name: 'description', content: this.$route.params.id.charAt(0).toUpperCase() + this.$route.params.id.slice(1) + " profile on Tline. Check this user's activity!"},
                 { property: 'og:url', content: 'https://www.tline.site/profile/' + this.$route.params.id},
-                { property: 'og:title', content: this.$route.params.id.charAt(0).toUpperCase() + this.$route.params.id.slice(1) + ' - Tline' },
+                { property: 'og:title', content: this.$route.params.id.charAt(0).toUpperCase() + this.$route.params.id.slice(1) + ' profile - Tline' },
                 { property: 'og:descriprion', content: this.$route.params.id.charAt(0).toUpperCase() + this.$route.params.id.slice(1) + " profile on Tline. Check this user's activity!"},
                 { property: 'og:image', content: 'https://storage.googleapis.com/tline-files/profile.png' },
                 { property: 'twitter:card', content: 'summary_large_image'},
                 { property: 'twitter:url', content: 'https://www.tline.site/profile/' + this.$route.params.id},
-                { property: 'twitter:title', content: this.$route.params.id.charAt(0).toUpperCase() + this.$route.params.id.slice(1) + ' - Tline'},
+                { property: 'twitter:title', content: this.$route.params.id.charAt(0).toUpperCase() + this.$route.params.id.slice(1) + ' profile - Tline'},
                 { property: 'twitter:description', content: this.$route.params.id.charAt(0).toUpperCase() + this.$route.params.id.slice(1) + " profile on Tline. Check this user's activity!"},
                 { property: 'twitter:image', content: 'https://storage.googleapis.com/tline-files/profile.png'}
             ]
