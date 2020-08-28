@@ -432,13 +432,13 @@
                     }
                 }).then(() => {
                     if(mainTL){
-                        this.axios.post(this.baseApi + 'timelines/firstImage/' + this.timeline.id, null, 
+                        this.axios.post(this.baseApi + 'timelines/firstImage/' + this.timeline.id, null, {
                             headers: {
                                 'Authorization': 'Bearer ' + this.$store.state.jwt.token,
-                            })
-                            .catch(error => {
-                                console.log(error)
-                            })
+                            }
+                        }).catch(error => {
+                            console.log(error)
+                        })
                     }
                 })
                 .catch(error => {
