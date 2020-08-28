@@ -142,7 +142,7 @@ export default {
             meta: [
                 { name: 'description', content: this.timeline.description},
                 { property: 'og:url', content: 'https://www.tline.site/timeline/' + this.$route.params.id },
-                { property: 'og:title', content: this.timeline.descriptionTitle + ' - Tline' },
+                { property: 'og:title', content: this.gettl().descriptionTitle + ' - Tline' },
                 { property: 'og:descriprion', content: this.timeline.description},
                 { property: 'og:image', content: this.timeline.pictures.length > 0 ? this.timeline.pictures[0] : 'https://storage.googleapis.com/tline-files/Default7.png' },
                 { property: 'twitter:card', content: 'summary_large_image'},
@@ -157,7 +157,7 @@ export default {
         this.scrollToTop()
         window.addEventListener("resize", this.resize)
     },
-    created: async function () {
+    created() {
         this.mainColor = this.circleColors[Math.floor(Math.random() * this.circleColors.length)]
         if (!this.mockEvents){
             var username = null
@@ -165,7 +165,7 @@ export default {
                 username = this.$store.state.jwt.user.username
             }
             var timelineApi = this.baseApi + 'timelines/public?username=' + username + '&id=' + this.$route.params.id
-            await this.axios.get(timelineApi).then(response => {
+            this.axios.get(timelineApi).then(response => {
                 if (response.data != null){
                     this.timeline = response.data;
                 } else {
@@ -266,6 +266,14 @@ export default {
         }
     },
     methods: {
+        gettl: async function(){
+            var timeline = null
+            var timelineApi = this.baseApi + 'timelines/public?username=' + null + '&id=' + this.$route.params.id
+            await this.axios.get(timelineApi).then(response => {
+                timeline = response.data
+                }).catch(err => console.log(err));
+            return timeline
+        },
         resize(){
             if (this.mainImages){
                 this.changeImageContainerSize()
