@@ -2,6 +2,7 @@ var path = require('path')
 var webpack = require('webpack')
 var { merge } = require('webpack-merge')
 var baseWebpackConfig = require('./webpack.config')
+
 var webpackConfig = merge(baseWebpackConfig, {
     target: 'node',
     entry: {
@@ -17,7 +18,7 @@ var webpackConfig = merge(baseWebpackConfig, {
     plugins: [
         new webpack.DefinePlugin({
             'process.env': 'production'
-        })
+        }),
     ]
 })
 module.exports = webpackConfig

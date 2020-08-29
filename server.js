@@ -16,13 +16,11 @@ server.use('/dist', express.static(path.join(__dirname, './dist')));
 //start server
 server.get('*', (req, res) => { 
     
-    bundle.default({ url: req.url }).then((app) => {    
-        const meta = app.$meta()
-        const context = {
-            meta: meta
-        }
-        renderer.renderToString(app, context, function (err, html) {   
+    var context = { url: req.url }
+    bundle.default(context).then((app) => {    
+        renderer.renderToString(app, context, (err, html) => {   
             if (err) {
+                console.log(err)
                 if (err.code === 404) {
                     res.status(404).end('Page not found')
                 } else {

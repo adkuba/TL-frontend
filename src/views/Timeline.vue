@@ -144,45 +144,44 @@ export default {
                 { property: 'og:url', content: 'https://www.tline.site/timeline/' + this.$route.params.id },
                 { property: 'og:title', content: this.timeline.descriptionTitle + ' - Tline' },
                 { property: 'og:descriprion', content: this.timeline.description},
-                { property: 'og:image', content: this.timeline.pictures.length > 0 ? this.timeline.pictures[0] : 'https://storage.googleapis.com/tline-files/Default7.png' },
+                { property: 'og:image', content: this.timeline.pictures && this.timeline.pictures.length > 0 ? this.timeline.pictures[0] : 'https://storage.googleapis.com/tline-files/Default7.png' },
                 { property: 'twitter:card', content: 'summary_large_image'},
                 { property: 'twitter:url', content: 'https://www.tline.site/timeline/' + this.$route.params.id },
                 { property: 'twitter:title', content: this.timeline.descriptionTitle + ' - Tline' },
                 { property: 'twitter:description', content: this.timeline.description },
-                { property: 'twitter:image', content: this.timeline.pictures.length > 0 ? this.timeline.pictures[0] : 'https://storage.googleapis.com/tline-files/Default7.png' }
+                { property: 'twitter:image', content: this.timeline.pictures && this.timeline.pictures.length > 0 ? this.timeline.pictures[0] : 'https://storage.googleapis.com/tline-files/Default7.png' }
             ]
         }
     },
     mounted() {
         this.scrollToTop()
         window.addEventListener("resize", this.resize)
+        if (!this.timeline.descriptionTitle){
+            this.fetchTimeline()
+        } else {
+            if (this.timeline.id != this.$route.params.id){
+                this.fetchTimeline()
+            } else {
+                this.getEvents()
+            }
+        }
+        //console.log(this.timeline)
     },
     created () {
         this.mainColor = this.circleColors[Math.floor(Math.random() * this.circleColors.length)]
-        if (!this.mockEvents){
-            var username = null
-            if (this.$store.state.jwt){
-                username = this.$store.state.jwt.user.username
-            }
-            var timelineApi = this.baseApi + 'timelines/public?username=' + username + '&id=' + this.$route.params.id
-            this.axios.get(timelineApi).then(response => {
-                if (response.data != null){
-                    this.timeline = response.data;
-                } else {
-                    this.$router.push( {path: "/"} );
-                } }).catch(err => console.log(err));
-        } else {
-            this.mocking = true
-        }
+    },
+    serverPrefetch(){
+        return this.fetchTimeline()
+    },
+    computed: {
+        timeline(){
+            return this.$store.state.timeline
+        },
     },
     data() {
         return {
         baseApi: 'https://api.tline.site/api/',
         open: false,
-        timeline: {
-            description: 'Timeline',
-            pictures: []
-        },
         events: null,
         newPos: null,
         galleryScrolling: false,
@@ -218,15 +217,7 @@ export default {
             this.timeline = this.mockTimeline
         },
         timeline: function(){
-            if (!this.mockEvents){
-                var eventsApi = this.baseApi + 'events/public?timelineId=' + this.timeline.id;
-                this.axios.get(eventsApi, {
-                    params: {
-                        view: true
-                    }
-                })
-                .then(response => {this.events = response.data});
-            }
+            this.getEvents()
         },
         events: function(){
             this.eventsParsed = this.parseTimeline(JSON.parse(JSON.stringify(this.events))).reverse();
@@ -266,6 +257,30 @@ export default {
         }
     },
     methods: {
+        getEvents(){
+            if (!this.mockEvents){
+                var eventsApi = this.baseApi + 'events/public?timelineId=' + this.timeline.id;
+                this.axios.get(eventsApi, {
+                    params: {
+                        view: true
+                    }
+                })
+                .then(response => {this.events = response.data});
+            }
+        },
+        fetchTimeline(){
+            if (!this.mockEvents){
+                var username = null
+                if (this.$store.state.jwt){
+                    username = this.$store.state.jwt.user.username
+                }
+                var timelineApi = this.baseApi + 'timelines/public?username=' + username + '&id=' + this.$route.params.id
+                return this.$store.dispatch('fetchTimeline', timelineApi)
+            } else {
+                this.mocking = true
+                return
+            }
+        },
         resize(){
             if (this.mainImages){
                 this.changeImageContainerSize()

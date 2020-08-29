@@ -1,11 +1,13 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import axios from 'axios'
 
 Vue.use(Vuex)
 
 export function createStore () {
   return new Vuex.Store({
-    state: {
+    state: () => ({
+        timeline: {descriptionTitle: '', pictures: []},
         jwt: '',
         timelines: [],
         message: '',
@@ -14,8 +16,18 @@ export function createStore () {
           read: true,
           messages: []
         }
+      }),
+      actions: {
+        fetchTimeline({ commit }, timelineApi){
+          return axios.get(timelineApi).then(response => {
+            commit('setTimeline', response.data)
+          }).catch(err => console.log(err));
+        }
       },
       mutations: {
+        setTimeline(state, newTimeline){
+          state.timeline = newTimeline
+        },
         set (state, newJwt) {
           state.jwt = newJwt;
         },
