@@ -68,39 +68,42 @@ import ProfileTimeline from '../components/ProfileTimeline.vue'
     components: {
         ProfileTimeline
     },
-    created () {
-        this.axios.get(this.baseApi + 'users/public/' + this.$route.params.id + '?profile=true')
-            .then(response => {
-                if (response.data){
-                    this.user = response.data
-                    this.getTimelines()
-                    this.getLikes()
-                } else {
-                    this.$router.push( {path: "/"} )
-                }
-            }).catch(error => {
-                console.log(error)
-            })
-    },
     mounted() {
         this.scrollToTop()
+        if (!this.user){
+            this.fetchUser()
+        } else {
+            if (this.user.username != this.$route.params.id){
+                this.fetchUser()
+            } else {
+                this.getData()
+            }
+        }
         document.getElementById("dropdown").style.display = "none"
         document.getElementById("dropdown-bg").style.display = "none"
         document.getElementById("1").style.opacity = 1
     },
+    computed: {
+        user() {
+            return this.$store.state.profileUser
+        }
+    },
+    serverPrefetch(){
+        return this.fetchUser()
+    },
     watch: {
+        user: function(){
+            this.getData()
+        },
         '$route.params.id': function(){
-            window.location.reload()
+            this.fetchUser()
+            this.openTimelines()
         }
     },
     data () {
       return {
           baseApi: 'https://api.tline.site/api/',
           timelines: null,
-          user: {
-              fullName: '',
-              username: ''
-          },
           activeError: "",
           likes: [],
           selected: null,
@@ -108,6 +111,17 @@ import ProfileTimeline from '../components/ProfileTimeline.vue'
       }
     },
     methods: {
+        getData(){
+            if (this.user.username){
+                this.getTimelines()
+                this.getLikes()
+            } else {
+                this.$router.push( {path: "/"} )
+            }
+        },
+        fetchUser(){
+            return this.$store.dispatch('fetchUser', this.baseApi + 'users/public/' + this.$route.params.id + '?profile=true')
+        },
         scrollToTop() {
             const c = document.documentElement.scrollTop || document.body.scrollTop;
             if (c > 0) {

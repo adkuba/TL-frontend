@@ -100,7 +100,7 @@
                 </div>
             </div>
         </div>
-        <div class="like" v-bind:class="[{ shadow: !timeline.active}, $mq]">
+        <div class="like" v-bind:class="[{ shadow: !timeline.active}, $mq]" v-if="!mocking">
             <div v-if="$store.state.jwt">
                 <div v-if="$store.state.jwt.user.likes.includes(timeline.id)">
                     <div v-if="timeline.likes != null" class="like-action" v-on:click="dislikeTimeline()" :class="$mq"><div class="like-button" :class="{free: !timeline.user.subscriptionEnd}">Dislike</div>&middot; {{ timeline.likes.length }} &middot; views {{ timeline.views }}</div>
@@ -156,16 +156,19 @@ export default {
     mounted() {
         this.scrollToTop()
         window.addEventListener("resize", this.resize)
-        if (!this.timeline.descriptionTitle){
-            this.fetchTimeline()
-        } else {
-            if (this.timeline.id != this.$route.params.id){
+        if (!this.mockEvents){
+            if (!this.timeline.descriptionTitle){
                 this.fetchTimeline()
             } else {
-                this.getEvents()
+                if (this.timeline.id != this.$route.params.id){
+                    this.fetchTimeline()
+                } else {
+                    this.getEvents()
+                }
             }
+        } else {
+            this.mocking = true
         }
-        //console.log(this.timeline)
     },
     created () {
         this.mainColor = this.circleColors[Math.floor(Math.random() * this.circleColors.length)]
@@ -214,7 +217,7 @@ export default {
         },
         mockEvents: function(){
             this.events = this.mockEvents
-            this.timeline = this.mockTimeline
+            this.$store.commit('setTimeline', this.mockTimeline)
         },
         timeline: function(){
             this.getEvents()
@@ -259,27 +262,26 @@ export default {
     methods: {
         getEvents(){
             if (!this.mockEvents){
-                var eventsApi = this.baseApi + 'events/public?timelineId=' + this.timeline.id;
-                this.axios.get(eventsApi, {
-                    params: {
-                        view: true
-                    }
-                })
-                .then(response => {this.events = response.data});
+                if (!this.timeline){
+                    this.$router.push( {path: "/"} )
+                } else {
+                    var eventsApi = this.baseApi + 'events/public?timelineId=' + this.timeline.id;
+                    this.axios.get(eventsApi, {
+                        params: {
+                            view: true
+                        }
+                    })
+                    .then(response => {this.events = response.data});
+                }
             }
         },
         fetchTimeline(){
-            if (!this.mockEvents){
-                var username = null
-                if (this.$store.state.jwt){
-                    username = this.$store.state.jwt.user.username
-                }
-                var timelineApi = this.baseApi + 'timelines/public?username=' + username + '&id=' + this.$route.params.id
-                return this.$store.dispatch('fetchTimeline', timelineApi)
-            } else {
-                this.mocking = true
-                return
+            var username = null
+            if (this.$store.state.jwt){
+                username = this.$store.state.jwt.user.username
             }
+            var timelineApi = this.baseApi + 'timelines/public?username=' + username + '&id=' + this.$route.params.id
+            return this.$store.dispatch('fetchTimeline', timelineApi)
         },
         resize(){
             if (this.mainImages){
@@ -512,11 +514,11 @@ export default {
                 document.getElementById("evt_container").style.top = this.newPos + "px";
                 window.scroll({top: this.newPos-100, left: 0, behavior: 'smooth'});
 
-                document.getElementsByClassName("line").forEach(function moveLines(line) {line.classList.add('line_open');});
-                document.getElementsByClassName("circle").forEach(function moveCircles(circle) {circle.classList.add('circle_open');});
-                document.getElementsByClassName("year").forEach(function moveYears(year) {year.classList.add("year_open");});
-                document.getElementsByClassName("evt_date").forEach(function moveDates(date){date.classList.add("fade");});
-                document.getElementsByClassName("evt_text").forEach(function moveTexts(text){text.classList.add("fade");});
+                Array.from(document.getElementsByClassName("line")).forEach(function moveLines(line) {line.classList.add('line_open');});
+                Array.from(document.getElementsByClassName("circle")).forEach(function moveCircles(circle) {circle.classList.add('circle_open');});
+                Array.from(document.getElementsByClassName("year")).forEach(function moveYears(year) {year.classList.add("year_open");});
+                Array.from(document.getElementsByClassName("evt_date")).forEach(function moveDates(date){date.classList.add("fade");});
+                Array.from(document.getElementsByClassName("evt_text")).forEach(function moveTexts(text){text.classList.add("fade");});
                 
                 document.getElementById("evt_desc").classList.remove("fade");
                 this.open = !this.open;
@@ -539,12 +541,12 @@ export default {
             } else {
                 document.getElementById("timeline").style.paddingBottom = '150px'
                 this.padding = 150
-                document.getElementsByClassName("line").forEach(function centerLines(line) {line.classList.remove('line_open');});
-                document.getElementsByClassName("circle").forEach(function centerCircles(circle) {circle.classList.remove('circle_open');});
-                document.getElementsByClassName("year").forEach(function centerYears(year) {year.classList.remove('year_open');});
-                document.getElementsByClassName("evt_date").forEach(function centerDates(date){date.classList.remove("fade");});
-                document.getElementsByClassName("evt_text").forEach(function centerTexts(text){text.classList.remove("fade");});
-                document.getElementsByClassName("evt_text").forEach(function centerTexts(text){text.classList.remove("fade");});
+                Array.from(document.getElementsByClassName("line")).forEach(function centerLines(line) {line.classList.remove('line_open');});
+                Array.from(document.getElementsByClassName("circle")).forEach(function centerCircles(circle) {circle.classList.remove('circle_open');});
+                Array.from(document.getElementsByClassName("year")).forEach(function centerYears(year) {year.classList.remove('year_open');});
+                Array.from(document.getElementsByClassName("evt_date")).forEach(function centerDates(date){date.classList.remove("fade");});
+                Array.from(document.getElementsByClassName("evt_text")).forEach(function centerTexts(text){text.classList.remove("fade");});
+                Array.from(document.getElementsByClassName("evt_text")).forEach(function centerTexts(text){text.classList.remove("fade");});
                 
                 document.getElementById("evt_desc").classList.add("fade");
 

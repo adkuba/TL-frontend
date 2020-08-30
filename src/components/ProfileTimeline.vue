@@ -4,8 +4,8 @@
             <div class="title" v-bind:class="[{ shadow: !timeline.active}, $mq]">{{ timeline.descriptionTitle }}</div>
             <div class="descr" v-bind:class="[{ shadow: !timeline.active}, $mq]">{{ timeline.description.replace(/ \[([^\]]+)\]\(([^\)]+)\)/g, '') }}...</div>
             <div class="image-container" v-bind:class="[{ shadow: !timeline.active}, $mq]">
-                <img class="image" v-if="timeline.pictures && timeline.pictures.length > 0" :src="timeline.pictures[0]">
-                <img :class="$mq" v-else class="image" :src="require('../assets/images/default/Default' + defaultImage + '.png')">
+                <img class="image" v-if="timeline.pictures && timeline.pictures.length > 0" :src="timeline.pictures[0]" :class="$mq">
+                <img v-else class="image" :class="$mq" :src="require('../assets/images/default/Default' + defaultImage + '.png')">
             </div>
         </router-link>
         <div class="views-container" v-bind:class="[{ shadow: !timeline.active}, $mq]">
@@ -47,6 +47,7 @@ export default {
     },
     data() {
         return {
+            baseApi: 'https://api.tline.site/api/',
             defaultImage: (Math.floor(Math.random() * 10) + 1)
         }
     },
@@ -92,10 +93,6 @@ export default {
                     },
                 })
                 .then(() => {
-                    var index = this.timelines.indexOf(timeline)
-                    if (index > -1){
-                        this.timelines.splice(index, 1)
-                    }
                     window.location.reload()
                 })
                 .catch(error =>{

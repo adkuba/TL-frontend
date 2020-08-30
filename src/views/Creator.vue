@@ -83,6 +83,7 @@
   import Timeline from './Timeline.vue';
   import DatePicker from 'vue2-datepicker';
   import 'vue2-datepicker/index.css';
+  import { submitTimeline } from './submit.js'
 
   export default  {
     name: 'Creator',
@@ -130,14 +131,11 @@
       return {
           events: [{id: 'first', type: 'normal', title: '', pictures: [], picturesRaw: [], description: '', date: '', links: new Map(), sub: []}],
           eventsParsed: [],
-          eventsParsedSubmit: [],
           timeline: {pictures: [], picturesRaw: []},
           subEventsParsed: [],
           errorMessage: '',
           numberOfTimelines: null,
 
-          mainTimelineSubmit: {},
-          subTimelinesSubmitted: [],
           status: 'ok',
 
           openedPictures: -1,
@@ -168,116 +166,6 @@
                 
             }
         },
-        mainTimelineSubmit: function(){
-            if (this.mainTimelineSubmit){
-                var eventsApi = this.baseApi + 'events/multiple'
-                var eventsParsedSubmitTemp = JSON.parse(JSON.stringify(this.eventsParsed))
-
-                for (var i=0, len=eventsParsedSubmitTemp.length; i<len; i++){
-                    eventsParsedSubmitTemp[i].timelineId = this.mainTimelineSubmit.id
-                    delete eventsParsedSubmitTemp[i]['type']
-                    delete eventsParsedSubmitTemp[i]['id']
-                    delete eventsParsedSubmitTemp[i]['pictures']
-                    delete eventsParsedSubmitTemp[i]['picturesRaw']
-                }
-                this.axios.post(eventsApi, eventsParsedSubmitTemp, {
-                    headers: {
-                        'Authorization': 'Bearer ' + this.$store.state.jwt.token
-                    }
-                })
-                .then(response => {
-                    for (i=0, len=this.events.length; i<len; i++){
-                        this.sendPictures(this.baseApi + 'events/' + response.data[i].id, this.events[i].pictures, this.events[i].picturesRaw)
-                    }
-                    this.eventsParsedSubmit = response.data
-                })
-                .catch(error => {
-                    document.getElementById("ls").style.opacity = "0"
-                    console.log(error)
-                    this.status = "ok"
-                })
-            }
-        },
-        eventsParsedSubmit: function(){
-            if (this.eventsParsedSubmit){
-                var timelinesApi = this.baseApi + 'timelines/multiple'
-
-                var subTimelines = []
-                for (var i=0, len=this.eventsParsed.length; i<len; i++){
-                    var subEvtsTemp = JSON.parse(JSON.stringify(this.subEventsParsed.find(x => x.id === this.eventsParsed[i].id).subEvents))
-                    if (subEvtsTemp.length > 0){
-                        //found subTimeline
-                        var subTimeline = {
-                            id: this.mainTimelineSubmit.id + '-sub' + i,
-                            eventId: this.eventsParsedSubmit[i].id
-                        }
-
-                        subTimelines.push(subTimeline)
-                    }
-                }
-                if (subTimelines.length == 0){
-                    this.$store.commit('setMessage', "Submitted!")
-                    document.getElementById("modal").style.display = "block"
-                    this.$router.push({ path: '/profile/' + this.$store.state.jwt.user.username })
-
-                } else {
-                    this.axios.post(timelinesApi, subTimelines, {
-                        headers: {
-                            'Authorization': 'Bearer ' + this.$store.state.jwt.token
-                        },
-                    })
-                    .then(response => {
-                        this.subTimelinesSubmitted = response.data
-                    })
-                    .catch(error => {
-                        document.getElementById("ls").style.opacity = "0"
-                        console.log(error)
-                        this.status = "ok"
-                    })
-                }
-            }
-        },
-        subTimelinesSubmitted: async function(){
-            if(this.subTimelinesSubmitted){
-                var eventsApi = this.baseApi + 'events/multiple'
-                var counter = 0
-
-                for (var i=0, len=this.eventsParsed.length; i<len; i++){
-                    
-                    var subEvtsTemp = JSON.parse(JSON.stringify(this.subEventsParsed.find(x => x.id === this.eventsParsed[i].id).subEvents))
-                    if (subEvtsTemp.length > 0){
-                        for (var j=0, len2=subEvtsTemp.length; j<len2; j++){
-                            delete subEvtsTemp[j]['type']
-                            delete subEvtsTemp[j]['id']
-                            delete subEvtsTemp[j]['pictures']
-                            delete subEvtsTemp[j]['picturesRaw']
-                            subEvtsTemp[j].timelineId = this.subTimelinesSubmitted[counter].id
-                        }
-                        counter += 1
-                        await this.axios.post(eventsApi, subEvtsTemp, {
-                                headers: {
-                                    'Authorization': 'Bearer ' + this.$store.state.jwt.token
-                                }
-                            })
-                            .then(response => {
-                                //i sie nie zmienia bo jest await? O KURWA CHYBA DZIALA
-                                var subEvtsTemp = this.subEventsParsed.find(x => x.id === this.eventsParsed[i].id).subEvents.slice()
-                                for (var k=0, len3=subEvtsTemp.length; k<len3; k++){
-                                    this.sendPictures(this.baseApi + 'events/' + response.data[k].id, subEvtsTemp[k].pictures, subEvtsTemp[k].picturesRaw)
-                                }
-                            })
-                            .catch(error =>{
-                                document.getElementById("ls").style.opacity = "0"
-                                console.log(error)
-                                this.status = "ok"
-                            })
-                    }
-                }
-                this.$store.commit('setMessage', "Submitted!")
-                document.getElementById("modal").style.display = "block"
-                this.$router.push({ path: '/profile/' + this.$store.state.jwt.user.username })
-            }
-        }
     },
     methods: {
         close(){
@@ -346,102 +234,31 @@
                 }
             }            
         },
-        submit(){
+        async submit(){
             if (document.getElementById("tform").checkValidity()){
                 document.getElementById("ls").style.opacity = "1"
-                var timelinesApi = this.baseApi + 'timelines'
                 this.preview()
 
-                //main timeline
-                var myParams = {
-                    findUser: true,
-                    withDelete: true,
-                    add: true
-                }
-                if (this.editTimeline){
-                    myParams.add = false
-                }
-
-                var timelineCopy = JSON.parse(JSON.stringify(this.timeline))
-                delete timelineCopy["pictures"]
-                delete timelineCopy["picturesRaw"]
-                delete timelineCopy["user"]
                 this.status = "sending"
+                var sendStatus = await submitTimeline(this.baseApi, this.editTimeline, this.timeline, this.$store.state.jwt.token, this.eventsParsed, this.events, this.subEventsParsed, this.deletedPictures)
 
-                this.axios.post(timelinesApi, timelineCopy, {
-                        headers: {
-                            'Authorization': 'Bearer ' + this.$store.state.jwt.token
-                        },
-                        params: myParams
-                    })
-                    .then(response => {
-                        this.sendPictures(timelinesApi + "/" + response.data.id, this.timeline.pictures, this.timeline.picturesRaw)
-                        //main timeline submitted now events
-                        this.mainTimelineSubmit = response.data
-                    })
-                    .catch(error => {
-                        document.getElementById("ls").style.opacity = "0"
-                        console.log(error)
-                        if (error.toString().includes("409")){
-                            this.errorMessage = 'This ID is taken!'
-                            document.getElementById("timelineId").scrollIntoView({behavior: "smooth", block: "end", inline: "nearest"})
-                        }
-                        this.status = "ok"
-                    })
-                if (this.deletedPictures.length > 0){
-                    var formData = new FormData()
-                    for (var i=0, len=this.deletedPictures.length; i<len; i++){
-                        formData.append("urls", this.deletedPictures[i])
-                    }
-                    this.axios.delete(this.baseApi + 'files', {
-                        headers: {
-                            'Authorization': 'Bearer ' + this.$store.state.jwt.token
-                        },
-                        data: formData
-                    })
-                }
-            }
-        },
-        sendPictures(url, array, arrayRaw){
-            //pictures
-            var formData = new FormData()
-            for (var i=0, len=arrayRaw.length; i<len; i++){
-                formData.append("pictures", arrayRaw[i])
-            }
-            var urlList = new FormData()
-            for (i=0, len=array.length; i<len; i++){
-                if (array[i].substring(0,4) != 'data'){
-                    urlList.append("picturesURL", array[i])
-                }
-            }
-            if (!urlList.has("picturesURL")){
-                urlList.append("picturesURL", "")
-            }
-            
-            this.axios.post(url + "/pictures", formData, {
-                headers: {
-                    'Authorization': 'Bearer ' + this.$store.state.jwt.token,
-                    'Content-Type': 'multipart/form-data'
-                }
-            })
-            .then(() => {
-                //old pictures
-                this.axios.post(url + "/picturesURL", urlList, {
-                    headers: {
-                        'Authorization': 'Bearer ' + this.$store.state.jwt.token,
-                    }
-                })
-                .catch(error => {
+                if (sendStatus == 'taken'){
                     document.getElementById("ls").style.opacity = "0"
-                    console.log(error)
+                    this.errorMessage = "This ID is taken!"
+                    document.getElementById("timelineId").scrollIntoView({behavior: "smooth", block: "end", inline: "nearest"})
                     this.status = "ok"
-                })
-            })
-            .catch(error => {
-                document.getElementById("ls").style.opacity = "0"
-                console.log(error)
-                this.status = "ok"
-            })
+
+                } else if (sendStatus == "error"){
+                    document.getElementById("ls").style.opacity = "0"
+                    this.errorMessage = "Send error! Check console."
+                    this.status = "ok"
+
+                } else if (sendStatus == "ok"){
+                    this.$store.commit('setMessage', "Submitted!")
+                    document.getElementById("modal").style.display = "block"
+                    this.$router.push({ path: '/profile/' + this.$store.state.jwt.user.username })
+                }
+            }
         },
         preview() {
             if (document.getElementById("tform").checkValidity()){
@@ -682,14 +499,14 @@
         margin-left: 20px
     &.small
         position: absolute
-        right: 5%
-        transform: translateY(-20px)
+        right: 6%
+        transform: translateY(-80px)
         .normal &
-            transform: translateY(-75px)
-            right: 10%
+            transform: translateY(-120px)
+            right: 9%
         .sub &
-            transform: translateY(-75px)
-            right: 10%
+            transform: translateY(-120px)
+            right: 9%
 
 .desc-link
     display: inline
