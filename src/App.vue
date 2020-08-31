@@ -122,6 +122,9 @@ export default {
         },
         closeModal(){
             document.getElementById("modal").style.display = "none"
+            if (this.$store.state.message == "Submitted timeline!"){
+                window.location.reload()
+            }
         },
         closeInfo(){
             localStorage.setItem("regulations", true)

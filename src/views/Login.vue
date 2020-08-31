@@ -178,6 +178,9 @@ import VueRecaptcha from 'vue-recaptcha'
                         this.$store.commit('set', response.data)
                         this.getNotifications()
                         this.clearData()
+                        this.$store.commit('setTimelines', [])
+                        this.$store.commit('setTimeline', {descriptionTitle: '', pictures: []})
+                        this.$store.commit('setProfileUser', { fullName: '', username: '' })
                         self.$router.push({ path: this.routerPath })
                     })
                     .catch(error => {

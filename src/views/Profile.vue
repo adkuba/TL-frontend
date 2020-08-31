@@ -48,22 +48,40 @@ import ProfileTimeline from '../components/ProfileTimeline.vue'
   export default  {
     name: 'Profile',
     metaInfo() {
-        return {
-            title: this.user.fullName,
-            titleTemplate: '%s - Tline',
-            meta: [
-                { name: 'description', content: this.user.fullName + " profile on Tline. Check this user's activity!"},
-                { property: 'og:url', content: 'https://www.tline.site/profile/' + this.user.username},
-                { property: 'og:title', content: this.user.fullName + ' - Tline' },
-                { property: 'og:descriprion', content: this.user.fullName + " profile on Tline. Check this user's activity!"},
-                { property: 'og:image', content: 'https://storage.googleapis.com/tline-files/profile.png' },
-                { property: 'twitter:card', content: 'summary_large_image'},
-                { property: 'twitter:url', content: 'https://www.tline.site/profile/' + this.user.username},
-                { property: 'twitter:title', content: this.user.fullName + ' - Tline'},
-                { property: 'twitter:description', content: this.user.fullName + " profile on Tline. Check this user's activity!"},
-                { property: 'twitter:image', content: 'https://storage.googleapis.com/tline-files/profile.png'}
-            ]
-        }
+        if (this.user == null){
+            return {
+                title: 'Tline',
+                meta: [
+                    { name: 'description', content: 'Create content based on timeline! Present your projects, achievements, inspire others and develop connections!'},
+                    { property: 'og:url', content: 'https://www.tline.site/'},
+                    { property: 'og:title', content: 'Tline' },
+                    { property: 'og:descriprion', content: 'Create content based on timeline! Present your projects, achievements, inspire others and develop connections!'},
+                    { property: 'og:image', content: 'https://storage.googleapis.com/tline-files/meta.png' },
+                    { property: 'twitter:card', content: 'summary_large_image'},
+                    { property: 'twitter:url', content: 'https://www.tline.site/'},
+                    { property: 'twitter:title', content: 'Tline'},
+                    { property: 'twitter:description', content: 'Create content based on timeline! Present your projects, achievements, inspire others and develop connections!'},
+                    { property: 'twitter:image', content: 'https://storage.googleapis.com/tline-files/meta.png'}
+                ]
+            }
+        } else {
+            return {
+                title: this.user.fullName,
+                titleTemplate: '%s - Tline',
+                meta: [
+                    { name: 'description', content: this.user.fullName + " profile on Tline. Check this user's activity!"},
+                    { property: 'og:url', content: 'https://www.tline.site/profile/' + this.user.username},
+                    { property: 'og:title', content: this.user.fullName + ' - Tline' },
+                    { property: 'og:descriprion', content: this.user.fullName + " profile on Tline. Check this user's activity!"},
+                    { property: 'og:image', content: 'https://storage.googleapis.com/tline-files/profile.png' },
+                    { property: 'twitter:card', content: 'summary_large_image'},
+                    { property: 'twitter:url', content: 'https://www.tline.site/profile/' + this.$route.params.id},
+                    { property: 'twitter:title', content: this.user.fullName + ' - Tline'},
+                    { property: 'twitter:description', content: this.user.fullName + " profile on Tline. Check this user's activity!"},
+                    { property: 'twitter:image', content: 'https://storage.googleapis.com/tline-files/profile.png'}
+                ]
+            }
+        }    
     },
     components: {
         ProfileTimeline
@@ -97,7 +115,8 @@ import ProfileTimeline from '../components/ProfileTimeline.vue'
         },
         '$route.params.id': function(){
             this.fetchUser()
-            this.openTimelines()
+            if (typeof window === 'undefined'){}
+            else { this.openTimelines() }
         }
     },
     data () {

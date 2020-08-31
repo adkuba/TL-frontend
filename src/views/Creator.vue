@@ -254,7 +254,7 @@
                     this.status = "ok"
 
                 } else if (sendStatus == "ok"){
-                    this.$store.commit('setMessage', "Submitted!")
+                    this.$store.commit('setMessage', "Submitted timeline!")
                     document.getElementById("modal").style.display = "block"
                     this.$router.push({ path: '/profile/' + this.$store.state.jwt.user.username })
                 }

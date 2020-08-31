@@ -144,9 +144,12 @@
                             messages: []
                         }
                         this.$store.commit('setNotifications', notifications)
+                        this.$store.commit('setTimelines', [])
+                        this.$store.commit('setTimeline', {descriptionTitle: '', pictures: []})
+                        this.$store.commit('setProfileUser', { fullName: '', username: '' })
+                        this.$router.push({ path: '/home' })
                     })
                     .catch(error => {console.log(error)})
-            this.$router.push({ path: '/home' })
         },
         cancel(){
             document.getElementById("ls").style.opacity = "1"

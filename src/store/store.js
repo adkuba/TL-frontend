@@ -31,6 +31,9 @@ export function createStore () {
             }
         },
         mutations: {
+            setTimelines(state, newTimelines){
+                state.timelines = newTimelines
+            },
             setTimeline(state, newTimeline){
                 state.timeline = newTimeline
             },

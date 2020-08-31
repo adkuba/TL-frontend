@@ -123,7 +123,14 @@ export default {
         },
         getTimelines(withSpecial=false){
             var timelinesApi = this.baseApi + 'timelines/public/homepage'
-            this.axios.get(timelinesApi)
+            var username = null
+            if (this.$store.state.jwt){
+                username = this.$store.state.jwt.user.username
+            }
+            this.axios.post(timelinesApi, {
+                timelinesIDS: this.$store.state.timelines.map(o => o.id).filter(o => o != null),
+                username: username
+            })
             .then(response => {
                 this.$store.commit('addTimelines', response.data)
                 if (withSpecial){
