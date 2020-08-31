@@ -116,7 +116,7 @@
         createPaymentMethod(priceId) {
             document.getElementById("submit-button").style.background = "#932a24"
             document.getElementById("ls").style.opacity = "1"
-            return stripe
+            return this.stripe
                 .createPaymentMethod({
                     type: 'card',
                     card: this.cardElement,
@@ -182,7 +182,7 @@
             let paymentIntent = subscription.latest_invoice.payment_intent;
 
             if (paymentIntent && paymentIntent.status === 'requires_action') {
-                return stripe.confirmCardPayment(paymentIntent.client_secret, {
+                return this.stripe.confirmCardPayment(paymentIntent.client_secret, {
                     payment_method: paymentMethodId,
                 })
                 .then((result) => {
