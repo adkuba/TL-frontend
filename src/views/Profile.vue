@@ -48,7 +48,7 @@ import ProfileTimeline from '../components/ProfileTimeline.vue'
   export default  {
     name: 'Profile',
     metaInfo() {
-        if (this.user == null){
+        if (this.user.fullName === 'undefined'){
             return {
                 title: 'Tline',
                 meta: [
@@ -70,7 +70,7 @@ import ProfileTimeline from '../components/ProfileTimeline.vue'
                 titleTemplate: '%s - Tline',
                 meta: [
                     { name: 'description', content: this.user.fullName + " profile on Tline. Check this user's activity!"},
-                    { property: 'og:url', content: 'https://www.tline.site/profile/' + this.user.username},
+                    { property: 'og:url', content: 'https://www.tline.site/profile/' + this.$route.params.id},
                     { property: 'og:title', content: this.user.fullName + ' - Tline' },
                     { property: 'og:descriprion', content: this.user.fullName + " profile on Tline. Check this user's activity!"},
                     { property: 'og:image', content: 'https://storage.googleapis.com/tline-files/profile.png' },

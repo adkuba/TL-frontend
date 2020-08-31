@@ -136,7 +136,7 @@ export default {
         mockSubEvents: Array
     },
     metaInfo() {
-        if (this.timeline == null){
+        if (this.timeline.descriptionTitle === 'undefined'){
             return {
                 title: 'Tline',
                 meta: [
