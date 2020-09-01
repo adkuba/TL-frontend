@@ -78,7 +78,7 @@
                 })
                 .catch(error => {
                     console.log(error)
-                    this.errMessage = error.response.data.message
+                    this.errMessage = error.response.data
                     document.getElementById("ls").style.opacity = "0"
                     document.getElementById("submit-button").style.background = "#B8352D"
                 })
