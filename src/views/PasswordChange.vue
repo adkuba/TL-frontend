@@ -87,6 +87,8 @@
 
                         } else {
                             this.errMessage = error
+                            document.getElementById("ls").style.opacity = "0"
+                            document.getElementById("submit-button").style.background = "#B8352D"
                         }
                         this.clearData();
                     })

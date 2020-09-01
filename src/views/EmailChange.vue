@@ -78,7 +78,9 @@
                 })
                 .catch(error => {
                     console.log(error)
-                    this.errMessage = error
+                    this.errMessage = error.data
+                    document.getElementById("ls").style.opacity = "0"
+                    document.getElementById("submit-button").style.background = "#B8352D"
                 })
             } else{
                 this.errMessage = "Wrong email."
