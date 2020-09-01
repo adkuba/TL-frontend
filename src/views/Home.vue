@@ -13,11 +13,11 @@
                 <transition-group name="fade">
                     <div v-for="(timeline, idx) in $store.state.timelines" :key="timeline.id + idx.toString()">
                         <div v-if="timeline.data == null">
-                            <home-timeline v-bind:timeline="timeline" v-bind:search="false"></home-timeline>
+                            <home-timeline v-bind:timeline="timeline" v-bind:search="false" v-bind:idx="idx"></home-timeline>
                         </div>
                         <div v-else>
                             <div v-if="$mq == 'small'">
-                                <home-special v-bind:special="special" v-bind:mobile="true"></home-special>
+                                <home-special v-bind:special="special" v-bind:mobile="true" v-bind:idx="idx"></home-special>
                             </div>
                         </div>
                     </div>

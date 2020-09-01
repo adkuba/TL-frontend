@@ -254,9 +254,10 @@ export default {
 .dane
     color: #14426B
     vertical-align: top
-    display: inline-block
+    float: right
     width: 49%
     text-align: right
+
 
 .element
     font-family: OpenSans-Regular

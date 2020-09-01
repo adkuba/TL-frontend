@@ -23,7 +23,8 @@ export default {
     name: 'HomeElement',
     props: {
         timeline: Object,
-        search: Boolean
+        search: Boolean,
+        idx: Number
     },
     data() {
         return {
