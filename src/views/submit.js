@@ -1,7 +1,8 @@
 import axios from 'axios'
 
+var sendMessage = 'sending'
+
 export async function submitTimeline(baseApi, editTimeline, timeline, token, eventsParsed, events, subEventsParsed, deletedPictures){
-    var sendMessage = 'sending'
     var timelinesApi = baseApi + 'timelines'
     var myParams = {
         findUser: true,
@@ -35,9 +36,9 @@ export async function submitTimeline(baseApi, editTimeline, timeline, token, eve
     }
 
     //main timeline images
-    var picturesStatus = sendPictures(timelinesApi + "/" + timeline.id, timeline.pictures, timeline.picturesRaw, token)
-    if (picturesStatus == "error"){
-        return picturesStatus
+    await sendPictures(timelinesApi + "/" + timeline.id, timeline.pictures, timeline.picturesRaw, token)
+    if (sendMessage == "error"){
+        return sendMessage
     }
 
     //events
@@ -56,11 +57,11 @@ export async function submitTimeline(baseApi, editTimeline, timeline, token, eve
             'Authorization': 'Bearer ' + token
         }
     })
-    .then(response => {
+    .then(async (response) => {
         for (i=0, len=events.length; i<len; i++){
-            var picturesStatus = sendPictures(baseApi + 'events/' + response.data[i].id, events[i].pictures, events[i].picturesRaw, token)
-            if (picturesStatus == "error"){
-                sendMessage = "error"
+            await sendPictures(baseApi + 'events/' + response.data[i].id, events[i].pictures, events[i].picturesRaw, token)
+            if (sendMessage == "error"){
+                return
             }
         }
         eventsParsedSubmit = response.data
@@ -129,13 +130,13 @@ export async function submitTimeline(baseApi, editTimeline, timeline, token, eve
                         'Authorization': 'Bearer ' + token
                     }
                 })
-                .then(response => {
+                .then(async (response) => {
                     //"i" sie nie zmienia bo jest await
                     var subEvtsTemp = subEventsParsed.find(x => x.id === eventsParsed[i].id).subEvents.slice()
                     for (var k=0, len3=subEvtsTemp.length; k<len3; k++){
-                        var picturesStatus = sendPictures(baseApi + 'events/' + response.data[k].id, subEvtsTemp[k].pictures, subEvtsTemp[k].picturesRaw, token)
-                        if (picturesStatus == "error"){
-                            sendMessage = "error"
+                        await sendPictures(baseApi + 'events/' + response.data[k].id, subEvtsTemp[k].pictures, subEvtsTemp[k].picturesRaw, token)
+                        if (sendMessage == "error"){
+                            return
                         }
                     }
                 })
@@ -174,7 +175,6 @@ export async function submitTimeline(baseApi, editTimeline, timeline, token, eve
 }
 
 async function sendPictures(url, array, arrayRaw, token){
-    var picturesSendingStatus = 'sending'
     //pictures
     var formData = new FormData()
     for (var i=0, len=arrayRaw.length; i<len; i++){
@@ -197,11 +197,11 @@ async function sendPictures(url, array, arrayRaw, token){
             'Content-Type': 'multipart/form-data'
         }
     }).catch(error => {
-        picturesSendingStatus = "error"
+        sendMessage = "error"
         console.log(error)
     })
-    if (picturesSendingStatus == "error"){
-        return picturesSendingStatus
+    if (sendMessage == "error"){
+        return
     }
 
     //old pictures
@@ -211,14 +211,10 @@ async function sendPictures(url, array, arrayRaw, token){
         }
     })
     .catch(error => {
-        picturesSendingStatus == "error"
+        sendMessage == "error"
         console.log(error)
     })
-    if (picturesSendingStatus == "error"){
-        return picturesSendingStatus
+    if (sendMessage == "error"){
+        return
     }
-
-    //final
-    picturesSendingStatus = "ok"
-    return picturesSendingStatus
 }
