@@ -75,6 +75,7 @@ import VueRecaptcha from 'vue-recaptcha'
         this.scrollToTop()
         document.getElementById("dropdown").style.display = "none"
         document.getElementById("dropdown-bg").style.display = "none"
+        window.dataLayer = window.dataLayer || []
     },
     data () {
       return {
@@ -206,6 +207,8 @@ import VueRecaptcha from 'vue-recaptcha'
                     withCredentials: true
                 })
                 .then(() => {
+                    //report to google ads
+                    this.gtag_report_conversion()
                     document.getElementById("ls").style.opacity = "0"
                     this.$store.commit('setMessage', "Created!")
                     document.getElementById("modal").style.display = "block"
@@ -220,6 +223,21 @@ import VueRecaptcha from 'vue-recaptcha'
                     this.status = "ok"
                 })  
             }
+        },
+        gtag_report_conversion(url) {
+            var callback = function () {
+                if (typeof(url) != 'undefined') {
+                    window.location = url
+                }
+            }
+            this.gtag('event', 'conversion', {
+                'send_to': 'AW-649568508/qYBoCMrl09sBEPzB3rUC',
+                'event_callback': callback
+            })
+            return false
+        },
+        gtag(){
+            dataLayer.push(arguments)
         },
         getNotifications(){
             this.axios.get(this.baseApi + "users/notifications", {

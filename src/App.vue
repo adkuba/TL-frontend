@@ -65,6 +65,9 @@ export default {
         this.checkLocalStorage()
         this.refreshToken()
         this.tokenRefresh = setInterval(() => this.refreshToken(), 840000) //14min
+        window.dataLayer = window.dataLayer || []
+        this.gtag('js', new Date())
+        this.gtag('config', 'AW-649568508')
     },
     data(){
         return {
@@ -74,6 +77,9 @@ export default {
         }
     },
     methods: {
+        gtag(){
+            dataLayer.push(arguments)
+        },
         dropdown(){
             var dropdown = document.getElementById("dropdown")
             if (dropdown.style.display == "block"){
