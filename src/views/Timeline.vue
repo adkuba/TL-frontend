@@ -32,25 +32,11 @@
                     <div style="text-align: center">
                         <div class="sub" v-show="evt.title" v-for="(evt, index) in subTimelineEventsParsed" :key="index">
                             <div v-if="evt.type == 'circle'">
-                                <h1 class="sub_nav_h"  v-on:click="subScroll(index, true)"> {{ evt.title }} </h1>
+                                <h1 class="sub_nav_h" v-on:click="subevent(index)"> {{ evt.title }} </h1>
+                                <div class="sub-date" v-on:click="subevent(index)">{{ evt.date.slice(0,7) }}</div>
                                 <div class="hor-l"></div>
                             </div>
                         </div>
-                    </div>
-                    
-                    <div id="sub_timeline" :class="$mq" v-if="subTimelineEventsParsed">
-                        <div class="sub_fade sub_fade_left" :class="$mq"></div>
-                        <div class="sub_fade sub_fade_right" :class="$mq"></div>
-                        <div class="sub_sline"></div>
-                        <div class="sub" v-for="(evt, index) in subTimelineEventsParsed" :key="index">
-                            <div class="sub_line" v-if="evt.type == 'line'"></div>
-                            <div v-else-if="evt.type == 'circle'">
-                                <p class="sub_evt_p" v-on:click="subevent(index)"> {{ evt.description.substring(0, 20) }}... </p>
-                                <div class="sub_evt_date" v-on:click="subevent(index)"> {{ evt.date.slice(0,7) }} </div>
-                            </div>
-                            <div class="sub_year" v-else> {{ evt.message }} </div>
-                        </div>
-                        <div class="sub_sline"></div>
                     </div>
 
                     <div class="gallery-container" :class="$mq" v-if="openedSub">
@@ -419,18 +405,6 @@ export default {
             rightControl.style.height = height + 'px'
             rightControl.style.marginLeft = width/2 + 'px'
         },
-        subScroll(index, open=false){
-            var subT = document.getElementById("sub_timeline")
-            if (subT){
-                var searchedE = subT.children[index+3];
-                //subT.offsetLeft to margin sub timeline przy .large
-                var newScroll = searchedE.offsetLeft - subT.offsetWidth/2 + searchedE.offsetWidth/2 - subT.offsetLeft;
-                subT.scroll({top: 0, left: newScroll, behavior: 'smooth'});
-                if (open){
-                    this.subevent(index)
-                }
-            }
-        },
         parseTimeline(eventsList){
             eventsList = this.sortByDate(eventsList)
             var yearsParsed = [];
@@ -537,7 +511,7 @@ export default {
                 this.sub = false
                 this.eventsSub = this.eventsParsed
                 this.openedSub = this.openedEvent
-                window.scroll({top: this.newPos-100, left: 0, behavior: 'smooth'})
+                //window.scroll({top: this.newPos-100, left: 0, behavior: 'smooth'})
                 this.computeTimeline()
 
             } else {
@@ -560,7 +534,7 @@ export default {
             this.sub = true
             this.eventsSub = this.subTimelineEventsParsed
             this.openedSub = index
-            window.scroll({top: this.newPos-100, left: 0, behavior: 'smooth'})
+            //window.scroll({top: this.newPos-100, left: 0, behavior: 'smooth'})
             this.computeTimeline()
         },
         sortByDate(array){
@@ -580,9 +554,6 @@ export default {
         }
     },
     updated() {
-        if (this.openedSub == this.openedEvent){
-            this.subScroll(2)
-        }
         if (this.openedEvent){
             this.computeTimeline()
         }
@@ -842,68 +813,20 @@ export default {
         margin: 60px 10px
         margin-left: 0
 
-
-div#sub_timeline::-webkit-scrollbar
-    display: none
-
-.sub_fade
-    z-index: 4
-    position: absolute
-    width: 30px
-    height: 60px
-    background: $bg-color
-
-.sub_fade_left
-    background: linear-gradient(270deg, rgba($bg-color,0) 0%, rgba($bg-color,1) 91%)
-    transform: translateX(-2px)
-
-.sub_fade_right
-    right: 0
-    background: linear-gradient(90deg, rgba($bg-color,0) 0%, rgba($bg-color,1) 91%)
-    transform: translateX(+2px)
-    &.large
-        right: 12%
-
-.sub_evt_p
-    cursor: pointer
-    margin: 10px 30px
-    padding: 0
-
-.sub_line
-    transform: translateY(-20px)
-    width: 90px
-    height: 1px
-    background: #303030
-
-.sub_sline
-    display: inline-block
-    transform: translateY(-20px)
-    width: 20vw
-    height: 1px
-    background: #303030
-
-.sub_year
-    margin: 0 40px
-    font-size: 19px
-    letter-spacing: 2px
-
 .sub_nav_h
     cursor: pointer
     font-family: Raleway-Regular
     font-size: 20px
     letter-spacing: 1px
     margin: 10px 20px
+    margin-bottom: 2px
 
-.sub_evt_date
+.sub-date
     cursor: pointer
-    text-align: center
-    margin: 0 30px
-    font-size: 15px
-
-.sub
-    position: relative
-    z-index: 3
-    display: inline-block
+    font-family: OpenSans-Regular
+    margin-bottom: 10px
+    font-size: 13px
+    color: #7e7e7e
 
 #evt_desc_text
     min-height: 170px
@@ -921,25 +844,15 @@ div#sub_timeline::-webkit-scrollbar
 
 .sub_nav_right
     float: right
-    
-
-#sub_timeline
-    scrollbar-width: none
-    overflow-x: auto
-    overflow-y: hidden
-    white-space: nowrap
-    height: 80px
-    margin-top: 30px
-    &.large
-        margin-left: auto
-        margin-right: auto
-        width: 76%
-
 
 .hor-l
     height: 1px
     background: #b3b3b3
 
+.sub
+    position: relative
+    z-index: 3
+    display: inline-block
 
 .evt_desc_p
     white-space: pre-line
@@ -1113,7 +1026,7 @@ div#sub_timeline::-webkit-scrollbar
     display: block
     margin: 0 50%
     width: 2px
-    height: 80px
+    height: 45px
     background: #303030
     &.small
         margin: 0 15%
