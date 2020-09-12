@@ -75,7 +75,7 @@ import VueRecaptcha from 'vue-recaptcha'
         this.scrollToTop()
         document.getElementById("dropdown").style.display = "none"
         document.getElementById("dropdown-bg").style.display = "none"
-        window.dataLayer = window.dataLayer || []
+        //window.dataLayer = window.dataLayer || []
     },
     data () {
       return {
@@ -208,7 +208,7 @@ import VueRecaptcha from 'vue-recaptcha'
                 })
                 .then(() => {
                     //report to google ads
-                    this.gtag_report_conversion()
+                    //this.gtag_report_conversion()
                     document.getElementById("ls").style.opacity = "0"
                     this.$store.commit('setMessage', "Created!")
                     document.getElementById("modal").style.display = "block"
