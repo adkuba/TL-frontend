@@ -17,7 +17,9 @@ Learn more about the page on [tline.site](https://tline.site/about). Check out m
 ## Versions
 Current version uses server side rendering and I didn't implemented developer environment. You can run production version by installing dependencies <code>npm install</code> and then <code>npm run start-w-build</code>. <br><br>
 
-If you want to use prvious version without ssr but with development environment - hot reload etc go to <code>bae9b6d3a1650df180d978e6eeb4eecf11449ab1</code> [commit](https://github.com/adkuba/TL-frontend/tree/bae9b6d3a1650df180d978e6eeb4eecf11449ab1), install dependencies and run <code>npm run serve</code>
+If you want to use prvious version without ssr but with development environment - hot reload etc go to <code>bae9b6d3a1650df180d978e6eeb4eecf11449ab1</code> [commit](https://github.com/adkuba/TL-frontend/tree/bae9b6d3a1650df180d978e6eeb4eecf11449ab1), install dependencies and run <code>npm run serve</code> <br><br>
+
+![default](src/assets/images/default/Default1.png) <br><br>
 
 ## Initial idea
 A website that allows you to create your own portfolio, based on completed projects. <br>
