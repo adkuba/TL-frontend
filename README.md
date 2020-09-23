@@ -1,23 +1,22 @@
-# Table of contents
-* [About](#about)
+# Table of Contents
+* [What I've learned](#what-Ive-learned)
 * [Versions](#versions)
 * [Initial idea](#initial-idea)
 * [Wiki](#wiki)
 
 
-# About
-What have I learned?
+## What I've learned
 * How to make big social website in **Vue - Javascript, SASS, HTML**
 * Implementing subscription service with **Stripe**
 * Using multiple dependencies such as Google Recaptcha, Chart.js
-* Page deployment to **Google App Engine** on custom domain <br>
+* Page deployment to **Google App Engine** on custom domain with repository trigger<br>
 
-Learn more about the page on [tline.site](https://tline.site/about). Check out my [article](https://medium.com/@akuba_15181/digital-advertising-cb3d982a03d7) on advertising.
+Learn more about the page on [tline.site](https://tline.site/about). Check out my [article](https://medium.com/@akuba_15181/digital-advertising-cb3d982a03d7) about advertising.
 
 ## Versions
-Current version uses server side rendering and I didn't implemented developer environment. You can run production version by installing dependencies <code>npm install</code> and then <code>npm run start-w-build</code>. <br><br>
+Current version uses SSR - server side rendering and I didn't implement development environment. You can run production version by installing dependencies <code>npm install</code> and then <code>npm run start-w-build</code>. <br><br>
 
-If you want to use prvious version without ssr but with development environment - hot reload etc go to <code>bae9b6d3a1650df180d978e6eeb4eecf11449ab1</code> [commit](https://github.com/adkuba/TL-frontend/tree/bae9b6d3a1650df180d978e6eeb4eecf11449ab1), install dependencies and run <code>npm run serve</code> <br><br>
+If you want to use prvious version without SSR but with development environment - hot reload etc. go to <code>bae9b6d3a1650df180d978e6eeb4eecf11449ab1</code> [commit](https://github.com/adkuba/TL-frontend/tree/bae9b6d3a1650df180d978e6eeb4eecf11449ab1), install dependencies and run <code>npm run serve</code> <br><br>
 
 ![default](src/assets/images/default/Default1.png) <br><br>
 
@@ -44,4 +43,4 @@ Additional ideas:
 - the ability to create a backup of the given pages?
 
 ## Wiki
-I need to create frontend wiki, for more info look at Issues and read backend wiki on the other repository.
+For more info look at Issues and read [backend wiki](https://github.com/adkuba/TL-backend/wiki). Frontend wiki - to be done.
