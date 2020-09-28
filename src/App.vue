@@ -61,10 +61,12 @@
 
 export default {
     name: 'App',
+    created(){
+        this.tokenRefresh = setInterval(() => this.refreshToken(), 840000) //14min
+    },
     mounted(){
         this.checkLocalStorage()
         this.refreshToken()
-        this.tokenRefresh = setInterval(() => this.refreshToken(), 840000) //14min
         //window.dataLayer = window.dataLayer || []
         //this.gtag('js', new Date())
         //this.gtag('config', 'AW-649568508')
