@@ -68,8 +68,8 @@ export default {
         //window.dataLayer = window.dataLayer || []
         //this.gtag('js', new Date())
         //this.gtag('config', 'AW-649568508')
-        this.$store.commit('setMessage', "Our service is now turning off, due to lack of funding. It will still be available, but initial waiting time may be longer!")
-        document.getElementById("modal").style.display = "block"
+        //this.$store.commit('setMessage', "Our service is now turning off, due to lack of funding. It will still be available, but initial waiting time may be longer!")
+        //document.getElementById("modal").style.display = "block"
     },
     data(){
         return {
