@@ -143,7 +143,7 @@
           currentPictures: [],
           deletedPictures: [],
 
-          baseApi: 'https://api.tline.site/api/',
+          baseApi: 'http://api.tline.site/api/',
           }
     },
     updated() {
