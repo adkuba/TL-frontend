@@ -64,7 +64,7 @@ import StatisticsElement from '../components/StatisticsElement.vue'
     },
     data () {
       return {
-            baseApi: 'http://api.tline.site/api/',
+            baseApi: 'https://api.tline.site/api/',
             user: null,
             timelines: [],
       }

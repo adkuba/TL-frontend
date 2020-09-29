@@ -36,7 +36,7 @@
     },
     data () {
       return {
-          baseApi: 'http://api.tline.site/api/',
+          baseApi: 'https://api.tline.site/api/',
       }
     },
     methods: {

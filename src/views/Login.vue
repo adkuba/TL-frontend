@@ -79,7 +79,7 @@ import VueRecaptcha from 'vue-recaptcha'
     },
     data () {
       return {
-          baseApi: 'http://api.tline.site/api/',
+          baseApi: 'https://api.tline.site/api/',
           errMessage: '',
           routerPath: null,
           action: 'Sign in',

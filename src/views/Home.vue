@@ -90,7 +90,7 @@ export default {
     },
     data() {
         return {
-            baseApi: 'http://api.tline.site/api/',
+            baseApi: 'https://api.tline.site/api/',
             searchResults: [ ],
             details: null,
             counter: 0,
