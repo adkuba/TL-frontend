@@ -588,6 +588,7 @@ export default {
     position: fixed
     width: 100%
     height: 100%
+    background: rgba(0,0,0,0.85)
 
 .master-title
     cursor: pointer
@@ -770,7 +771,6 @@ export default {
     width: 80%
     height: 0
     left: 10%
-    box-shadow: 0px 0px 0px 1600px rgba(0,0,0,0.85)
     border-radius: 5px
     display: none
     &.small
