@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "autoprefixer": "^9.8.6",
-    "axios": "^0.20.0",
+    "axios": "^0.21.1",
     "chart.js": "^2.9.3",
     "express": "^4.17.1",
     "mini-css-extract-plugin": "^0.10.0",
