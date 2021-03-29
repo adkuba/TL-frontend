@@ -28,7 +28,7 @@ export default {
     },
     data() {
         return {
-            baseApi: 'https://api.tline.site/api/',
+            baseApi: 'https://api.quicpos.com/tline/api/',
             defaultImage: (Math.floor(Math.random() * 10) + 1)
         }
     },

@@ -42,7 +42,7 @@
     },
     data () {
       return {
-          baseApi: 'https://api.tline.site/api/'
+          baseApi: 'https://api.quicpos.com/tline/api/'
       }
     },
     methods: {

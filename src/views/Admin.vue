@@ -207,7 +207,7 @@ import BarChart from '../components/BarChart.vue'
     },
     data () {
       return {
-        baseApi: 'https://api.tline.site/api/',
+        baseApi: 'https://api.quicpos.com/tline/api/',
         allTimelines: [],
         allStats: [],
         allStatObject: null,
