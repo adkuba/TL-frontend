@@ -46,7 +46,7 @@
     },
     data () {
       return {
-          baseApi: 'https://api.quicpos.com/tline/api/',
+          baseApi: 'http://akuba.pl/api/tline/api/',
            errMessage: ''
       }
     },

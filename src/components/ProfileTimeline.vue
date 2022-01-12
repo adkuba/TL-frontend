@@ -47,7 +47,7 @@ export default {
     },
     data() {
         return {
-            baseApi: 'https://api.quicpos.com/tline/api/',
+            baseApi: 'http://akuba.pl/api/tline/api/',
             defaultImage: (Math.floor(Math.random() * 10) + 1)
         }
     },

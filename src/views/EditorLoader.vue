@@ -53,7 +53,7 @@ import Creator from './Creator.vue'
     },
     data () {
       return {
-          baseApi: 'https://api.quicpos.com/tline/api/',
+          baseApi: 'http://akuba.pl/api/tline/api/',
           timeline: null,
           events: null,
           subEvents: null,
