@@ -48,7 +48,7 @@ Router.prototype.push = function push(location, onResolve, onReject) {
 export function createRouter () {
     return new Router({
         mode: 'history',
-        base: '/',
+        base: '/tline/',
         routes: [
             { path: '/', redirect: '/home'},
             { path: '/home', name: "home", component: Home },
