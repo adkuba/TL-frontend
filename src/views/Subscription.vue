@@ -92,7 +92,7 @@
             cardElement: null,
             cardCvc: null,
             cardExpiry: null,
-            baseApi: 'http://akuba.pl/api/tline/api/',
+            baseApi: 'https://akuba.pl/api/tline/api/',
             stripe: null,
             elements: null
         }

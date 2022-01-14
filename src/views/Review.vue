@@ -42,7 +42,7 @@
     },
     data () {
       return {
-          baseApi: 'http://akuba.pl/api/tline/api/'
+          baseApi: 'https://akuba.pl/api/tline/api/'
       }
     },
     methods: {

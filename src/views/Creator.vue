@@ -143,7 +143,7 @@
           currentPictures: [],
           deletedPictures: [],
 
-          baseApi: 'http://akuba.pl/api/tline/api/',
+          baseApi: 'https://akuba.pl/api/tline/api/',
           }
     },
     updated() {

@@ -64,7 +64,7 @@ import StatisticsElement from '../components/StatisticsElement.vue'
     },
     data () {
       return {
-            baseApi: 'http://akuba.pl/api/tline/api/',
+            baseApi: 'https://akuba.pl/api/tline/api/',
             user: null,
             timelines: [],
       }

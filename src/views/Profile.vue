@@ -103,7 +103,7 @@ import ProfileTimeline from '../components/ProfileTimeline.vue'
     },
     data () {
       return {
-          baseApi: 'http://akuba.pl/api/tline/api/',
+          baseApi: 'https://akuba.pl/api/tline/api/',
           timelines: null,
           activeError: "",
           likes: [],

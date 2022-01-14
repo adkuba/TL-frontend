@@ -90,7 +90,7 @@ export default {
     },
     data() {
         return {
-            baseApi: 'http://akuba.pl/api/tline/api/',
+            baseApi: 'https://akuba.pl/api/tline/api/',
             searchResults: [ ],
             details: null,
             counter: 0,

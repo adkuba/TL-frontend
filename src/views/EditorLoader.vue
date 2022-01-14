@@ -53,7 +53,7 @@ import Creator from './Creator.vue'
     },
     data () {
       return {
-          baseApi: 'http://akuba.pl/api/tline/api/',
+          baseApi: 'https://akuba.pl/api/tline/api/',
           timeline: null,
           events: null,
           subEvents: null,
